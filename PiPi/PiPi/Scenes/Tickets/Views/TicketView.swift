@@ -44,7 +44,7 @@ class ActivityViewModel: ObservableObject {
 
 // TODO: 데이터 연결 예정 (현재 목업 데이터로 구성)
 struct TicketView: View {
-    @StateObject private var viewModel = ActivityViewModel()
+    @State private var activities: [Activity] = []
     @State private var isShowingTicketDetailView: Bool = false
     @State private var isParticipantTicket: Bool = false
     @State private var isLocationVisible: Bool = false
@@ -53,6 +53,8 @@ struct TicketView: View {
     @Binding var selectedItem: TicketType
     @Binding var isShowingSheet: Bool
     @Binding var isAuthDone: Bool
+    
+    private typealias DatabaseResult = Result<[String: Activity], Error>
     
     var body: some View {
         NavigationStack {
@@ -82,6 +84,16 @@ struct TicketView: View {
                 PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone)
             }
         }
+        .onAppear {
+            FirebaseDataManager.shared.fetchData(type: .activity) { (result: DatabaseResult) in
+                switch result {
+                case .success(let result):
+                    activities = Array(result.values)
+                case .failure(let error):
+                    dump(error)
+                }
+            }
+        }
         .navigationBarBackButtonHidden(true)
     }
 }
@@ -89,7 +101,7 @@ struct TicketView: View {
 fileprivate extension TicketView {
     func header() -> some View {
         VStack {
-            if let activity = viewModel.activity {
+            if let activity = activities.first {
                 HStack(alignment: .top) {
                     symbolItem(name: "figure.run.circle.fill", font: .title2, color: .white)
                     textItem(content: activity.title, font: .title2, weight: .bold)
@@ -126,7 +138,7 @@ fileprivate extension TicketView {
     
     func authenticationSection() -> some View {
         HStack(alignment: .bottom) {
-            if let activity = viewModel.activity {
+            if let activity = activities.first {
                 ticketInfoItem(title: "소요시간", content: "\(activity.estimatedTime ?? 0)분")
                 
                 Spacer()

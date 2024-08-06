@@ -11,14 +11,16 @@ import MapKit
 
 struct TicketDetailView: View {
     @Environment(\.dismiss) var dismiss
-    @StateObject private var viewModel = ActivityViewModel()
+    @State private var activities: [Activity] = []
     @Binding var isParticipantList: Bool
     @Binding var isLocationVisible: Bool
+    
+    private typealias DatabaseResult = Result<[String: Activity], Error>
     
     var body: some View {
         NavigationStack {
             VStack {
-                if let activity = viewModel.activity {
+                if let activity = activities.first {
                     if isParticipantList {
                         if activity.participantID.count > 0 {
                             Form {
@@ -44,6 +46,16 @@ struct TicketDetailView: View {
             .navigationBarItems(trailing: Button("완료", action: {
                 dismiss()
             }))
+        }
+        .onAppear {
+            FirebaseDataManager.shared.fetchData(type: .activity) { (result: DatabaseResult) in
+                switch result {
+                case .success(let result):
+                    activities = Array(result.values)
+                case .failure(let error):
+                    dump(error)
+                }
+            }
         }
         .foregroundColor(.black)
     }
