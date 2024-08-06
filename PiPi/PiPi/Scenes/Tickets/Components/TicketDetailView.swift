@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseDatabase
+import MapKit
 
 struct TicketDetailView: View {
     @Environment(\.dismiss) var dismiss
@@ -29,7 +30,10 @@ struct TicketDetailView: View {
                             Text("참가자가 아직 없습니다.")
                         }
                     } else if isLocationVisible {
-                        Text("위치: \(activity.coordinates)")
+                        Map() {
+                            Marker("약속 장소", coordinate: CLLocationCoordinate2D(latitude: activity.coordinates.latitude, longitude: activity.coordinates.longitude))
+                                .tint(.accent)
+                        }
                     } else {
                         Text("주최자 닉네임: \(activity.hostID)")
                     }

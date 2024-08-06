@@ -71,7 +71,10 @@ struct TicketView: View {
         .padding(.horizontal, 15)
         .padding(.bottom, 10)
         .sheet(isPresented: $isShowingModal) {
-            TicketDetailView(isParticipantList: $isParticipantTicket, isLocationVisible: $isLocationVisible)
+            TicketDetailView(
+                isParticipantList: $isParticipantTicket,
+                isLocationVisible: $isLocationVisible
+            )
         }
         .sheet(isPresented: $isPresentingScanner) {
             CodeScannerView(codeTypes: [.qr]) { response in
