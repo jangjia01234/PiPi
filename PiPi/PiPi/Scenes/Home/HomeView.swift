@@ -11,13 +11,23 @@ import MapKit
 struct HomeView: View {
     
     @Namespace private var mapScope
+    @State private var activities: [Activity] = []
     @State private var activityCreateViewIsPresented = false
+    @State private var selectedMarkerID: String?
+    
+    private typealias DatabaseResult = Result<[String: Activity], Error>
     
     var body: some View {
         NavigationStack {
             ZStack {
-                Map(scope: mapScope) {
-                    
+                Map(selection: $selectedMarkerID, scope: mapScope) {
+                    ForEach(activities, id: \.id) { activity in
+                        Marker(coordinate: activity.coordinates.toCLLocationCoordinate2D) {
+                            Image("\(activity.category.self).white")
+                            Text(activity.title)
+                        }
+                        .tint(.accent)
+                    }
                 }
                 .mapControlVisibility(.hidden)
                 .zIndex(1)
@@ -33,13 +43,6 @@ struct HomeView: View {
                         VStack(spacing: 10) {
                             Spacer()
                             VStack(spacing: 5) {
-                                Button(action: {
-                                    // TODO: 새로고침 동작 구현
-                                }) {
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                        .aspectRatio(contentMode: .fit)
-                                }
-                                .setSmallButtonAppearance()
                                 MapUserLocationButton(scope: mapScope)
                                     .setSmallButtonAppearance()
                             }
@@ -56,6 +59,19 @@ struct HomeView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            FirebaseDataManager.shared.observeData(eventType: .value, dataType: .activity) { (result: DatabaseResult) in
+                switch result {
+                case .success(let result):
+                    activities = Array(result.values)
+                case .failure(let error):
+                    dump(error)
+                }
+            }
+        }
+        .onChange(of: selectedMarkerID) {
+            //TODO: 활동 디테일 모달 표시
+        }
     }
     
 }

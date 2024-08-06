@@ -101,21 +101,6 @@ extension Activity {
         case alcohol = "술"
         case sport = "운동"
         case study = "공부"
-        
-        var imageName: String {
-            switch self {
-            case .meal:
-                "fork.knife"
-            case .cafe:
-                "cup.and.saucer.fill"
-            case .alcohol:
-                "wineglass.fill"
-            case .sport:
-                "sportscourt.fill"
-            case .study:
-                "pencil"
-            }
-        }
     }
     
 }

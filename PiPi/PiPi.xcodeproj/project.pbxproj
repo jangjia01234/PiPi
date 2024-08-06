@@ -19,7 +19,6 @@
 		444D2ED82C576CE60019A966 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2ED72C576CE60019A966 /* Activity.swift */; };
 		444D2EDF2C58B5A20019A966 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2EDE2C58B5A20019A966 /* HomeView.swift */; };
 		444D2EE22C58BF790019A966 /* CategoryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2EE12C58BF790019A966 /* CategoryFilterView.swift */; };
-		444D2EE42C58C1320019A966 /* CategoryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2EE32C58C1320019A966 /* CategoryButton.swift */; };
 		444D2EE62C58C9080019A966 /* TicketProfileButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2EE52C58C9080019A966 /* TicketProfileButtonView.swift */; };
 		444D2EE82C59B04A0019A966 /* ActivityCreateButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2EE72C59B04A0019A966 /* ActivityCreateButton.swift */; };
 		444D2EEB2C59BC2B0019A966 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2EEA2C59BC2B0019A966 /* View+.swift */; };
@@ -63,7 +62,6 @@
 		444D2ED72C576CE60019A966 /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		444D2EDE2C58B5A20019A966 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		444D2EE12C58BF790019A966 /* CategoryFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryFilterView.swift; sourceTree = "<group>"; };
-		444D2EE32C58C1320019A966 /* CategoryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryButton.swift; sourceTree = "<group>"; };
 		444D2EE52C58C9080019A966 /* TicketProfileButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketProfileButtonView.swift; sourceTree = "<group>"; };
 		444D2EE72C59B04A0019A966 /* ActivityCreateButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCreateButton.swift; sourceTree = "<group>"; };
 		444D2EEA2C59BC2B0019A966 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
@@ -199,7 +197,6 @@
 			children = (
 				444D2EDE2C58B5A20019A966 /* HomeView.swift */,
 				444D2EE12C58BF790019A966 /* CategoryFilterView.swift */,
-				444D2EE32C58C1320019A966 /* CategoryButton.swift */,
 				444D2EE52C58C9080019A966 /* TicketProfileButtonView.swift */,
 				444D2EE72C59B04A0019A966 /* ActivityCreateButton.swift */,
 			);
@@ -378,7 +375,6 @@
 				8D451A132C5AADE6005EA90A /* QRAuthView.swift in Sources */,
 				444D2EEB2C59BC2B0019A966 /* View+.swift in Sources */,
 				444D2EE62C58C9080019A966 /* TicketProfileButtonView.swift in Sources */,
-				444D2EE42C58C1320019A966 /* CategoryButton.swift in Sources */,
 				444D2ECB2C5767970019A966 /* ContentView.swift in Sources */,
 				8D5B59DA2C6095330096B5AF /* Date+.swift in Sources */,
 				444D2EEE2C59DB510019A966 /* ActivityCreateView.swift in Sources */,
@@ -521,7 +517,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = 888VRTGCXU;
+				DEVELOPMENT_TEAM = VV2G7CU8KX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
@@ -556,7 +552,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = 888VRTGCXU;
+				DEVELOPMENT_TEAM = VV2G7CU8KX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
