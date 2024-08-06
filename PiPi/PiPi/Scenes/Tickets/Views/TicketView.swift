@@ -211,21 +211,6 @@ fileprivate extension TicketView {
     }
 }
 
-// TODO: Color Extension 'Color+' 파일로 분리
-fileprivate extension Color {
-    static var lightPurple: Color {
-        return Color(Color(red: 166 / 255, green: 111 / 255, blue: 255 / 255))
-    }
-    
-    static var lightOrange: Color {
-        return Color(Color(red: 255 / 255, green: 135 / 255, blue: 109 / 255))
-    }
-    
-    static var lightGray: Color {
-        return Color(Color(red: 215 / 255, green: 215 / 255, blue: 215 / 255))
-    }
-}
-
 #Preview {
     TicketView(selectedItem: .constant(.participant), isShowingSheet: .constant(false), isAuthDone: .constant(false))
 }
