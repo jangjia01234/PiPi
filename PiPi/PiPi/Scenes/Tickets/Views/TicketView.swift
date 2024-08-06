@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CodeScanner
+import Firebase
 import FirebaseDatabase
 
 class ActivityViewModel: ObservableObject {
