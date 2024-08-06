@@ -20,10 +20,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct PiPiApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @State var isShowingSheet: Bool = false
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+//            ContentView()
+            TicketsView(isShowingSheet: $isShowingSheet)
         }
     }
 }
