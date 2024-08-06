@@ -31,6 +31,7 @@ struct TicketDetailView: View {
                         }
                     } else if isLocationVisible {
                         Map() {
+                            // TODO: Level 조절 필요 (더 멀리)
                             Marker("약속 장소", coordinate: CLLocationCoordinate2D(latitude: activity.coordinates.latitude, longitude: activity.coordinates.longitude))
                                 .tint(.accent)
                         }
