@@ -17,19 +17,21 @@ struct TicketDetailView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                // TODO: 데이터 연결 예정 (현재 목업 데이터로 구성)
                 if let activity = viewModel.activity {
                     if isParticipantList {
-                        Form {
-                            Text("참가자 1")
-                            Text("참가자 2")
-                            Text("참가자 3")
-                            Text("참가자 4")
+                        if activity.participantID.count > 0 {
+                            Form {
+                                ForEach(activity.participantID, id: \.self) { participant in
+                                    Text(participant)
+                                }
+                            }
+                        } else {
+                            Text("참가자가 아직 없습니다.")
                         }
                     } else if isLocationVisible {
-                        Text("Location: \(activity.coordinates)")
+                        Text("위치: \(activity.coordinates)")
                     } else {
-                        Text("Host ID: \(activity.hostID)")
+                        Text("주최자 닉네임: \(activity.hostID)")
                     }
                 }
             }

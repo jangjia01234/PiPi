@@ -21,7 +21,7 @@ class ActivityViewModel: ObservableObject {
     }
     
     func fetchActivityData() {
-        let activityID = "7C92703C-1958-433B-9648-CF49B1D84F7E"
+        let activityID = "10790E3E-B2AA-4AAF-9C17-43F30BF54B4A"
         
         ref.child("activities/\(activityID)").observeSingleEvent(of: .value) { snapshot in
             guard let value = snapshot.value as? [String: Any] else {
