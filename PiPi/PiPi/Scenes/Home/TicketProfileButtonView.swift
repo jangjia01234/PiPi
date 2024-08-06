@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct TicketProfileButtonView: View {
+    @State var isShowingSheet: Bool = false
     
     var body: some View {
         HStack {
             NavigationLink {
-                // TODO: 티켓 뷰 추가
+                TicketsView(isShowingSheet: $isShowingSheet)
             } label: {
                 Image(systemName: "ticket.fill")
                     .setAppearance()
