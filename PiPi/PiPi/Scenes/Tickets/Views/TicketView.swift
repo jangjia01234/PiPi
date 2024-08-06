@@ -42,14 +42,12 @@ class ActivityViewModel: ObservableObject {
     }
 }
 
-// TODO: 데이터 연결 예정 (현재 목업 데이터로 구성)
 struct TicketView: View {
     @State private var activities: [Activity] = []
     @State private var isShowingTicketDetailView: Bool = false
     @State private var isParticipantTicket: Bool = false
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
-    @State private var scannedCode: String? = nil
     @Binding var selectedItem: TicketType
     @Binding var isShowingSheet: Bool
     @Binding var isAuthDone: Bool
