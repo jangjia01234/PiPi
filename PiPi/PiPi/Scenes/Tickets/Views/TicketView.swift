@@ -10,6 +10,7 @@ import CodeScanner
 import Firebase
 import FirebaseDatabase
 
+// TODO: 분리 예정 (기존 코드 활용 후 삭제)
 class ActivityViewModel: ObservableObject {
     @Published var activity: Activity?
     
@@ -44,47 +45,44 @@ class ActivityViewModel: ObservableObject {
 // TODO: 데이터 연결 예정 (현재 목업 데이터로 구성)
 struct TicketView: View {
     @StateObject private var viewModel = ActivityViewModel()
-    @State private var isShowingModal: Bool = false
+    @State private var isShowingTicketDetailView: Bool = false
     @State private var isParticipantTicket: Bool = false
     @State private var isLocationVisible: Bool = false
-    @State private var isPresentingScanner = false
+    @State private var isPresentingPeerAuthView = false
     @State private var scannedCode: String? = nil
     @Binding var selectedItem: TicketType
     @Binding var isShowingSheet: Bool
     @Binding var isAuthDone: Bool
     
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(selectedItem == .participant ? Color.lightPurple : Color.lightOrange)
-            
-            VStack(alignment: .leading) {
-                header()
-                ticketDetailSection(selectedItem: selectedItem)
-                Spacer()
-                authenticationSection()
-            }
-            .foregroundColor(.white)
-            .padding()
-        }
-        .frame(height: 350)
-        .padding(.horizontal, 15)
-        .padding(.bottom, 10)
-        .sheet(isPresented: $isShowingModal) {
-            TicketDetailView(
-                isParticipantList: $isParticipantTicket,
-                isLocationVisible: $isLocationVisible
-            )
-        }
-        .sheet(isPresented: $isPresentingScanner) {
-            CodeScannerView(codeTypes: [.qr]) { response in
-                if case let .success(result) = response {
-                    scannedCode = result.string
-                    isPresentingScanner = false
-                    isShowingSheet = true
+        NavigationStack {
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(selectedItem == .participant ? Color.lightPurple : Color.lightOrange)
+                
+                VStack(alignment: .leading) {
+                    header()
+                    ticketDetailSection(selectedItem: selectedItem)
+                    Spacer()
+                    authenticationSection()
                 }
+                .foregroundColor(.white)
+                .padding()
+            }
+            .frame(height: 350)
+            .padding(.horizontal, 15)
+            .padding(.bottom, 10)
+            .sheet(isPresented: $isShowingTicketDetailView) {
+                TicketDetailView(
+                    isParticipantList: $isParticipantTicket,
+                    isLocationVisible: $isLocationVisible
+                )
+            }
+            .sheet(isPresented: $isPresentingPeerAuthView) {
+                PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone)
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -133,22 +131,13 @@ fileprivate extension TicketView {
                 
                 Spacer()
                 
-                // TODO: 인증 기능 구현 예정
-                if selectedItem == .participant {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .frame(width: 80, height: 80)
-                        
-                        GenerateQRCodeView(inputText: "pipi://auth")
-                            .frame(width: 60, height: 60)
-                    }
-                } else {
+                if selectedItem == .organizer {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
                             .frame(width: 60, height: 60)
                         
                         Button(action: {
-                            isPresentingScanner = true
+                            isPresentingPeerAuthView = true
                         }, label: {
                             symbolItem(name: "camera.fill", font: .title, color: .black)
                         })
@@ -194,17 +183,17 @@ fileprivate extension TicketView {
     func handleModalStatus(content: String) {
         switch content {
         case "리스트":
-            isShowingModal = true
+            isShowingTicketDetailView = true
             isParticipantTicket = true
             isLocationVisible = false
             return
         case "위치 확인":
-            isShowingModal = true
+            isShowingTicketDetailView = true
             isParticipantTicket = false
             isLocationVisible = true
             return
         default:
-            isShowingModal = true
+            isShowingTicketDetailView = true
             isParticipantTicket = false
             isLocationVisible = false
             break
@@ -212,6 +201,7 @@ fileprivate extension TicketView {
     }
 }
 
+// TODO: Color Extension 'Color+' 파일로 분리
 fileprivate extension Color {
     static var lightPurple: Color {
         return Color(Color(red: 166 / 255, green: 111 / 255, blue: 255 / 255))

@@ -14,8 +14,8 @@ enum TicketType : String, CaseIterable {
 
 struct TicketsView: View {
     @State private var selectedItem: TicketType = .participant
-    @State private var isShowingModal: Bool = false
-    @State private var isAuthenticated: Bool = false
+    @State private var isShowingTicketDetailView: Bool = false
+    @State private var isAuthDone: Bool = false
     @Binding var isShowingSheet: Bool
     
     var body: some View {
@@ -23,7 +23,7 @@ struct TicketsView: View {
             TicketSegmentedControl(selectedItem: $selectedItem)
             
             ScrollView {
-                TicketView(selectedItem: $selectedItem, isShowingSheet: $isShowingSheet, isAuthDone: $isAuthenticated)
+                TicketView(selectedItem: $selectedItem, isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone)
             }
             .scrollBounceBehavior(.basedOnSize)
             
@@ -31,7 +31,7 @@ struct TicketsView: View {
         }
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $isShowingSheet) {
-            QRAuthView(isShowingAuth: $isShowingSheet, isAuthDone: $isAuthenticated)
+            PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone)
         }
     }
 }

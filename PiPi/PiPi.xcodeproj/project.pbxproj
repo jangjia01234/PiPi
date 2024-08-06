@@ -36,6 +36,8 @@
 		8D451A132C5AADE6005EA90A /* QRAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D451A122C5AADE6005EA90A /* QRAuthView.swift */; };
 		8D451A1F2C5BD061005EA90A /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 8D451A1E2C5BD061005EA90A /* CodeScanner */; };
 		8D5B59DA2C6095330096B5AF /* Date+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5B59D92C6095330096B5AF /* Date+.swift */; };
+		8D5B59E02C62791F0096B5AF /* UWBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5B59DF2C62791F0096B5AF /* UWBManager.swift */; };
+		8D5B59E22C6279870096B5AF /* PeerAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5B59E12C6279870096B5AF /* PeerAuthView.swift */; };
 		8D8321592C5937CB00C9ABA1 /* TicketsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8321582C5937CB00C9ABA1 /* TicketsView.swift */; };
 		8D83215D2C59655800C9ABA1 /* TicketDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D83215C2C59655800C9ABA1 /* TicketDetailView.swift */; };
 		8D83215F2C5967B900C9ABA1 /* TicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D83215E2C5967B900C9ABA1 /* TicketView.swift */; };
@@ -76,6 +78,8 @@
 		8D451A112C5A9BEE005EA90A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D451A122C5AADE6005EA90A /* QRAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRAuthView.swift; sourceTree = "<group>"; };
 		8D5B59D92C6095330096B5AF /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
+		8D5B59DF2C62791F0096B5AF /* UWBManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UWBManager.swift; sourceTree = "<group>"; };
+		8D5B59E12C6279870096B5AF /* PeerAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerAuthView.swift; sourceTree = "<group>"; };
 		8D8321582C5937CB00C9ABA1 /* TicketsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketsView.swift; sourceTree = "<group>"; };
 		8D83215C2C59655800C9ABA1 /* TicketDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketDetailView.swift; sourceTree = "<group>"; };
 		8D83215E2C5967B900C9ABA1 /* TicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketView.swift; sourceTree = "<group>"; };
@@ -227,6 +231,7 @@
 			isa = PBXGroup;
 			children = (
 				44CB71352C5BA11B00CA5410 /* FirebaseDataManager.swift */,
+				8D5B59DF2C62791F0096B5AF /* UWBManager.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -247,6 +252,7 @@
 				8D83215E2C5967B900C9ABA1 /* TicketView.swift */,
 				8D451A0F2C5A994C005EA90A /* GenerateQRCodeView.swift */,
 				8D451A122C5AADE6005EA90A /* QRAuthView.swift */,
+				8D5B59E12C6279870096B5AF /* PeerAuthView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -376,6 +382,7 @@
 				444D2EEB2C59BC2B0019A966 /* View+.swift in Sources */,
 				444D2EE62C58C9080019A966 /* TicketProfileButtonView.swift in Sources */,
 				444D2ECB2C5767970019A966 /* ContentView.swift in Sources */,
+				8D5B59E22C6279870096B5AF /* PeerAuthView.swift in Sources */,
 				8D5B59DA2C6095330096B5AF /* Date+.swift in Sources */,
 				444D2EEE2C59DB510019A966 /* ActivityCreateView.swift in Sources */,
 				D3FFBBED2C58BA330042EAAD /* ActivityPinView.swift in Sources */,
@@ -383,6 +390,7 @@
 				8D8321592C5937CB00C9ABA1 /* TicketsView.swift in Sources */,
 				8D83215D2C59655800C9ABA1 /* TicketDetailView.swift in Sources */,
 				44CB71332C5B793A00CA5410 /* ActivityInformationFormView.swift in Sources */,
+				8D5B59E02C62791F0096B5AF /* UWBManager.swift in Sources */,
 				8D8321612C5968E400C9ABA1 /* TicketSegmentedControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -517,7 +525,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = VV2G7CU8KX;
+				DEVELOPMENT_TEAM = 888VRTGCXU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
@@ -552,7 +560,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = VV2G7CU8KX;
+				DEVELOPMENT_TEAM = 888VRTGCXU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
