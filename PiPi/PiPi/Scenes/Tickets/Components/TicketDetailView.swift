@@ -38,6 +38,7 @@ struct TicketDetailView: View {
                                 .tint(.accent)
                         }
                     } else {
+                        // TODO: ID 말고 닉네임 불러와야 함
                         Text("주최자 닉네임: \(activity.hostID)")
                     }
                 }
@@ -47,6 +48,7 @@ struct TicketDetailView: View {
                 dismiss()
             }))
         }
+        .foregroundColor(.black)
         .onAppear {
             FirebaseDataManager.shared.fetchData(type: .activity) { (result: DatabaseResult) in
                 switch result {
@@ -57,7 +59,6 @@ struct TicketDetailView: View {
                 }
             }
         }
-        .foregroundColor(.black)
     }
 }
 
