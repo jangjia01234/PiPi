@@ -9,6 +9,7 @@ import NearbyInteraction
 import SwiftUI
 
 struct PeerAuthView: View {
+    @AppStorage("userID") var userID: String?
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var uwb = CBUWB()
     @State var lastValidDirections = [NIDiscoveryToken: SIMD3<Float>]()
@@ -16,6 +17,10 @@ struct PeerAuthView: View {
     @State private var showingAlert = false
     @Binding var isShowingSheet: Bool
     @Binding var isAuthDone: Bool
+    
+    var activity: Activity
+    
+    private typealias ActivityDatabaseResult = Result<[String: Activity], Error>
     
     var body: some View {
         ZStack {
@@ -51,7 +56,11 @@ struct PeerAuthView: View {
             Alert(
                 title: Text("인증 완료"),
                 message: Text("참가자 인증이 완료되었어요"),
-                dismissButton: .default(Text("확인"), action: { dismiss() })
+                dismissButton: .default(Text("확인"), action: {
+                    isAuthDone = true
+                    saveAuthStatus()
+                    dismiss()
+                })
             )
         }
         .onReceive(uwb.$discoveredPeers) { peers in
@@ -79,8 +88,35 @@ struct PeerAuthView: View {
         
         return CGSize(width: x, height: -y)
     }
+    
+    private func saveAuthStatus() {
+        guard let userID = userID else { return }
+        
+        let activity = Activity(
+            id: userID,
+            hostID: activity.hostID,
+            title: activity.title,
+            description: activity.description,
+            maxPeopleNumber: activity.maxPeopleNumber,
+            participantID: activity.participantID,
+            category: activity.category,
+            startDateTime: activity.startDateTime,
+            estimatedTime: activity.estimatedTime,
+            coordinates: activity.coordinates
+            
+            // TODO: 인증 상태 가져와야함 (Activity 코드 업뎃 후 반영 예정)
+            // authentication: activity.authentication
+        )
+        
+        do {
+            try FirebaseDataManager.shared.updateData(activity, type: .activity, id: activity.id)
+            print("activity status 수정 성공")
+        } catch {
+            print("activity status 수정 실패: \(error.localizedDescription)")
+        }
+    }
 }
 
-#Preview {
-    PeerAuthView(isShowingSheet: .constant(false), isAuthDone: .constant(false))
-}
+//#Preview {
+//    PeerAuthView(isShowingSheet: .constant(false), isAuthDone: .constant(false))
+//}

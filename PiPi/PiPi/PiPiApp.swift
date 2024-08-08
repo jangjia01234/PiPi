@@ -24,8 +24,8 @@ struct PiPiApp: App {
     
     var body: some Scene {
         WindowGroup {
-//            ContentView()
-            TicketsView(isShowingSheet: $isShowingSheet)
+            ContentView()
+//            TicketsView(isShowingSheet: $isShowingSheet)
         }
     }
 }

@@ -9,39 +9,8 @@ import SwiftUI
 import Firebase
 import FirebaseDatabase
 
-// TODO: 분리 예정 (기존 코드 활용 후 삭제)
-class ActivityViewModel: ObservableObject {
-    @Published var activity: Activity?
-    
-    private var ref: DatabaseReference!
-    
-    init() {
-        ref = Database.database().reference()
-        fetchActivityData()
-    }
-    
-    func fetchActivityData() {
-        let activityID = "10790E3E-B2AA-4AAF-9C17-43F30BF54B4A"
-        
-        ref.child("activities/\(activityID)").observeSingleEvent(of: .value) { snapshot in
-            guard let value = snapshot.value as? [String: Any] else {
-                return
-            }
-            
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: value)
-                let activity = try JSONDecoder().decode(Activity.self, from: jsonData)
-                DispatchQueue.main.async {
-                    self.activity = activity
-                }
-            } catch let error {
-                print("Error decoding activity data: \(error.localizedDescription)")
-            }
-        }
-    }
-}
-
 struct TicketView: View {
+    @State private var activities: [Activity] = []
     @State private var isShowingTicketDetailView: Bool = false
     @State private var isParticipantTicket: Bool = false
     @State private var isLocationVisible: Bool = false
@@ -50,8 +19,11 @@ struct TicketView: View {
     @Binding var isShowingSheet: Bool
     @Binding var isAuthDone: Bool
     
-    private typealias DatabaseResult = Result<[String: Activity], Error>
     var activity: Activity
+    var userProfile: UserProfile
+    
+    private typealias ActivityDatabaseResult = Result<[String: Activity], Error>
+    private typealias UserDatabaseResult = Result<UserProfile, Error>
     
     var body: some View {
         NavigationStack {
@@ -74,11 +46,13 @@ struct TicketView: View {
             .sheet(isPresented: $isShowingTicketDetailView) {
                 TicketDetailView(
                     isParticipantList: $isParticipantTicket,
-                    isLocationVisible: $isLocationVisible
+                    isLocationVisible: $isLocationVisible,
+                    activity: activity,
+                    userProfile: userProfile
                 )
             }
             .sheet(isPresented: $isPresentingPeerAuthView) {
-                PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone)
+                PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone, activity: activity)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -192,6 +166,38 @@ fileprivate extension TicketView {
             isParticipantTicket = false
             isLocationVisible = false
             break
+        }
+    }
+}
+
+// TODO: 분리 예정 (기존 코드 활용 후 삭제)
+class ActivityViewModel: ObservableObject {
+    @Published var activity: Activity?
+    
+    private var ref: DatabaseReference!
+    
+    init() {
+        ref = Database.database().reference()
+        fetchActivityData()
+    }
+    
+    func fetchActivityData() {
+        let activityID = "10790E3E-B2AA-4AAF-9C17-43F30BF54B4A"
+        
+        ref.child("activities/\(activityID)").observeSingleEvent(of: .value) { snapshot in
+            guard let value = snapshot.value as? [String: Any] else {
+                return
+            }
+            
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: value)
+                let activity = try JSONDecoder().decode(Activity.self, from: jsonData)
+                DispatchQueue.main.async {
+                    self.activity = activity
+                }
+            } catch let error {
+                print("Error decoding activity data: \(error.localizedDescription)")
+            }
         }
     }
 }

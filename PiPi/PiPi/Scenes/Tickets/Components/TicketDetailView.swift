@@ -15,7 +15,11 @@ struct TicketDetailView: View {
     @Binding var isParticipantList: Bool
     @Binding var isLocationVisible: Bool
     
-    private typealias DatabaseResult = Result<[String: Activity], Error>
+    var activity: Activity
+    var userProfile: UserProfile
+    
+    private typealias ActivityDatabaseResult = Result<[String: Activity], Error>
+    private typealias UserDatabaseResult = Result<UserProfile, Error>
     
     var body: some View {
         NavigationStack {
@@ -38,8 +42,9 @@ struct TicketDetailView: View {
                                 .tint(.accent)
                         }
                     } else {
-                        // TODO: ID 말고 닉네임 불러와야 함
-                        Text("주최자 닉네임: \(activity.hostID)")
+                        if activity.hostID == userProfile.id {
+                            Text("주최자 닉네임: \(userProfile.nickname)")
+                        }
                     }
                 }
             }
@@ -50,10 +55,10 @@ struct TicketDetailView: View {
         }
         .foregroundColor(.black)
         .onAppear {
-            FirebaseDataManager.shared.fetchData(type: .activity) { (result: DatabaseResult) in
+            FirebaseDataManager.shared.observeData(eventType: .value, dataType: .activity) { (result: Result<[String: Activity], Error>) in
                 switch result {
                 case .success(let result):
-                    activities = Array(result.values)
+                    dump(result)
                 case .failure(let error):
                     dump(error)
                 }
@@ -62,6 +67,6 @@ struct TicketDetailView: View {
     }
 }
 
-#Preview {
-    TicketDetailView(isParticipantList: .constant(false), isLocationVisible: .constant(false))
-}
+//#Preview {
+//    TicketDetailView(isParticipantList: .constant(false), isLocationVisible: .constant(false))
+//}
