@@ -26,12 +26,15 @@ struct PiPiApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @AppStorage("userID") var userID: String = ""
     
+    @State var isShowingSheet: Bool = false
+    var activity: Activity = Activity.sampleData
+    
     var body: some Scene {
         WindowGroup {
             if userID.isEmpty {
                 OnboardingTabView()
             } else {
-                ContentView()
+                ContentView(isShowingSheet: $isShowingSheet, activity: activity)
             }
         }
     }

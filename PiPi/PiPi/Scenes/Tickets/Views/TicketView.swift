@@ -53,7 +53,7 @@ struct TicketView: View {
                 )
             }
             .sheet(isPresented: $isPresentingPeerAuthView) {
-                PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone, activity: activity)
+                PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone, selectedItem: $selectedItem, activity: activity)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -102,7 +102,8 @@ fileprivate extension TicketView {
             
             Spacer()
             
-            if selectedItem == .organizer {
+            // FIXME: 인증 테스트용 주석 처리
+//            if selectedItem == .organizer {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
                         .frame(width: 60, height: 60)
@@ -112,7 +113,7 @@ fileprivate extension TicketView {
                     }, label: {
                         symbolItem(name: "camera.fill", font: .title, color: .black)
                     })
-                }
+//                }
             }
         }
     }

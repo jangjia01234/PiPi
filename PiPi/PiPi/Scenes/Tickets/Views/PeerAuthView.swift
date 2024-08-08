@@ -17,6 +17,7 @@ struct PeerAuthView: View {
     @State private var showingAlert = false
     @Binding var isShowingSheet: Bool
     @Binding var isAuthDone: Bool
+    @Binding var selectedItem: TicketType
     
     var activity: Activity
     
@@ -26,11 +27,6 @@ struct PeerAuthView: View {
         ZStack {
             VStack {
                 if uwb.discoveredPeers.count > 0 {
-                    Text("거리: \(uwb.discoveredPeers.last!.distance)m")
-                        .multilineTextAlignment(.center)
-                        .font(.title3)
-                        .padding(.bottom, 100)
-                    
                     if uwb.discoveredPeers.last!.distance > 0.2 {
                         Text("아직 좀 멀어요...")
                             .multilineTextAlignment(.center)
@@ -44,7 +40,7 @@ struct PeerAuthView: View {
                             .foregroundColor(.accent)
                             .padding(.bottom, 10)
                         
-                        Text("발견된 Peer가 없어요")
+                        Text("아직 좀 멀어요...")
                             .multilineTextAlignment(.center)
                             .font(.title3)
                             .padding(.bottom, 100)
@@ -73,7 +69,12 @@ struct PeerAuthView: View {
             if uwb.discoveredPeers.count > 0 &&
                 uwb.discoveredPeers.last!.distance < 0.2 {
                 isConfirmed = true
-                showingAlert = true
+            
+                if selectedItem == .organizer {
+                    showingAlert = true
+                } else {
+                    dismiss()
+                }
             }
         }
     }

@@ -58,7 +58,7 @@ struct TicketsView: View {
         }
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $isShowingSheet) {
-            PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone, activity: activity)
+            PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone, selectedItem: $selectedItem, activity: activity)
         }
         .onAppear {
             FirebaseDataManager.shared.fetchData(type: .activity) { (result: ActivityDatabaseResult) in
