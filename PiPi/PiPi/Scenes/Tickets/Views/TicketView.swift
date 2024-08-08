@@ -97,7 +97,7 @@ fileprivate extension TicketView {
     
     func authenticationSection() -> some View {
         HStack(alignment: .bottom) {
-            ticketInfoItem(title: "소요시간", content: "\(activity.estimatedTime ?? 0)분")
+            ticketInfoItem(title: "소요시간", content: "\(activity.estimatedTime ?? 0)시간")
             
             Spacer()
             
