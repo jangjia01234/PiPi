@@ -19,6 +19,7 @@ struct Activity: Identifiable {
     let startDateTime: Date
     let estimatedTime: Int?
     let coordinates: Coordinates
+    let authentication: [String: Bool]
     
     init(
         id: String = UUID().uuidString,
@@ -30,7 +31,8 @@ struct Activity: Identifiable {
         category: Category,
         startDateTime: Date,
         estimatedTime: Int?,
-        coordinates: Coordinates
+        coordinates: Coordinates,
+        authentication: [String: Bool] = [:]
     ) {
         self.id = id
         self.hostID = hostID
@@ -42,6 +44,7 @@ struct Activity: Identifiable {
         self.startDateTime = startDateTime
         self.estimatedTime = estimatedTime
         self.coordinates = coordinates
+        self.authentication = authentication
     }
     
     init(from decoder: any Decoder) throws {
@@ -57,6 +60,7 @@ struct Activity: Identifiable {
         self.startDateTime = try container.decode(Date.self, forKey: .startDateTime)
         self.estimatedTime = try container.decodeIfPresent(Int.self, forKey: .estimatedTime) ?? nil
         self.coordinates = try container.decode(Coordinates.self, forKey: .coordinates)
+        self.authentication = try container.decodeIfPresent([String: Bool].self, forKey: .authentication) ?? [:]
     }
     
     func addingParticipant(_ participant: String) -> Activity {
@@ -70,8 +74,25 @@ struct Activity: Identifiable {
             category: category,
             startDateTime: startDateTime,
             estimatedTime: estimatedTime,
-            coordinates: coordinates
+            coordinates: coordinates,
+            authentication: authentication.merging([participant: false]) { (_, new) in new}
         )
+    }
+    
+    var status: State {
+        (participantID.count < maxPeopleNumber) ? .open : .closed
+    }
+    
+}
+
+extension Activity: Equatable, Hashable {
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
     }
     
 }
@@ -89,6 +110,7 @@ extension Activity: Codable {
         case startDateTime = "start_date_time"
         case estimatedTime = "estimated_time"
         case coordinates
+        case authentication
     }
     
 }
@@ -101,6 +123,11 @@ extension Activity {
         case alcohol = "술"
         case sport = "운동"
         case study = "공부"
+    }
+    
+    enum State: String {
+        case open = "모집중"
+        case closed = "모집완료"
     }
     
 }

@@ -9,6 +9,7 @@ import SwiftUI
 import Firebase
 import FirebaseDatabase
 
+// TODO: 데이터 연결 예정 (현재 목업 데이터로 구성)
 struct TicketView: View {
     @State private var activities: [Activity] = []
     @State private var isShowingTicketDetailView: Bool = false

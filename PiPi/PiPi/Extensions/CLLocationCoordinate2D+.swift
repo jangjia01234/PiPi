@@ -9,8 +9,6 @@ import MapKit
 
 extension CLLocationCoordinate2D {
     
-    static let postech: Self = .init(latitude: 36.015501, longitude: 129.322548)
-    
     init(_ coordinates: Coordinates) {
         self.init(
             latitude: coordinates.latitude,

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ActivityCreateView: View {
     
+    @AppStorage("userID") private var userID: String = ""
+    
     @Environment(\.dismiss) private var dismiss
     @FocusState private var isFocused
     
@@ -74,13 +76,18 @@ struct ActivityCreateView: View {
                 Text("이벤트를 직접 개설한 후에는 수정할 수 없습니다.")
             }
         }
+        .onAppear {
+            if userID.isEmpty {
+                fatalError("userID is empty!!")
+            }
+        }
     }
     
     private func registerActivity() {
         guard let location else { return }
         
         let activity = Activity(
-            hostID: UUID().uuidString,
+            hostID: userID,
             title: title,
             description: description,
             maxPeopleNumber: maxPeopleNumber,

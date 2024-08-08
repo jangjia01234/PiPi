@@ -61,7 +61,7 @@ struct OnboardingLastPageView: View {
                 .padding(.leading, 280)
             }
             .navigationDestination(isPresented: $navigateToProfile) {
-                OnboardingProfileView(isFirstLaunching: $isFirstLaunching)
+                OnboardingProfileView()
             }
         }
     }

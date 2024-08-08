@@ -114,6 +114,7 @@ struct ProfileView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
     private func loadProfile(userID: String) {
         databaseManager.fetchData(type: .user, dataID: userID) { (result: Result<UserProfile, Error>) in

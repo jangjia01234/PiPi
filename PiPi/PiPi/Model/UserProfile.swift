@@ -31,6 +31,14 @@ struct UserProfile: Identifiable, Codable {
     
 }
 
+extension UserProfile: Equatable {
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+}
+
 enum Affiliation: String, Codable, CaseIterable {
     case postech = "포항공대"
     case apple = "애플 디벨로퍼 아카데미"

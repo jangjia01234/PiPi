@@ -9,7 +9,8 @@ import SwiftUI
 import MapKit
 
 struct SelectedMapView: View {
-    var coordinate: CLLocationCoordinate2D
+    
+    let coordinate: CLLocationCoordinate2D
     
     @State private var region: MKCoordinateRegion
     @Environment(\.dismiss) private var dismiss

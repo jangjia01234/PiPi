@@ -9,23 +9,31 @@ import SwiftUI
 import FirebaseCore
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
+    ) -> Bool {
         FirebaseApp.configure()
         return true
     }
+    
 }
 
 @main
 struct PiPiApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @State var isShowingSheet: Bool = false
+    @AppStorage("userID") var userID: String = ""
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-//            TicketsView(isShowingSheet: $isShowingSheet)
+            if userID.isEmpty {
+                OnboardingTabView()
+            } else {
+                ContentView()
+            }
         }
     }
+    
 }
