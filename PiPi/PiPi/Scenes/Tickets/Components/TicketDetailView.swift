@@ -32,8 +32,11 @@ struct TicketDetailView: View {
                     if isParticipantList {
                         if activity.participantID.count > 0 {
                             Form {
+                                // TODO: 닉네임 리스트 잘 가져오는지 확인 필요
                                 ForEach(activity.participantID, id: \.self) { participant in
-                                    Text(participant)
+                                    if participant == userProfile.id {
+                                        Text(userProfile.nickname)
+                                    }
                                 }
                             }
                         } else {
