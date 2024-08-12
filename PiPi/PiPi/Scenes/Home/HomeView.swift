@@ -102,11 +102,13 @@ struct HomeView: View {
             activitiesToShow = activities.filter { $0.status == .open }
         }
         .onChange(of: selectedCategory) {
-            guard let selectedCategory else {
+            selectedMarkerActivity = nil
+            
+            if let selectedCategory {
+                activitiesToShow = activities.filter { ($0.category == selectedCategory) && ($0.status == .open) }
+            } else {
                 activitiesToShow = activities.filter { $0.status == .open }
-                return
             }
-            activitiesToShow = activities.filter { ($0.category == selectedCategory) && ($0.status == .open) }
         }
     }
     

@@ -86,6 +86,15 @@ final class FirebaseDataManager {
         }
     }
     
+    func removeObserver(dataType: DataType, dataID: String? = nil) {
+        var databaseRef = ref.child(dataType.key)
+        if let dataID {
+            databaseRef = databaseRef.child(dataID)
+        }
+        
+        databaseRef.removeAllObservers()
+    }
+    
     private func handleSnapshot<T: Decodable>(
         snapshot: DataSnapshot,
         dataID: String?
