@@ -19,7 +19,6 @@ struct ActivityDetailView: View {
     
     @State private var showJoinAlertView = false
     @State private var showMessageView = false
-    @State private var showLocationView = false
     @State private var showActivityIndicator = true
     
     init(activityID: String, hostID: String) {
@@ -36,19 +35,11 @@ struct ActivityDetailView: View {
                 .padding([.top, .horizontal])
                 
                 Form {
-                    ActivityInformationSectionView(
-                        activity: activity,
-                        showLocationView: $showLocationView
-                    )
+                    ActivityInformationSectionView(activity: activity)
                     HostInformationSectionView(host: host)
                 }
                 .scrollContentBackground(.hidden)
                 .scrollBounceBehavior(.basedOnSize)
-                .sheet(isPresented: $showLocationView) {
-                    if let activity = viewModel.activity {
-                        SelectedMapView(coordinate: activity.coordinates)
-                    }
-                }
                 .sheet(isPresented: $showMessageView) {
                     if let host = viewModel.host {
                         iMessageConnect(email: host.email)

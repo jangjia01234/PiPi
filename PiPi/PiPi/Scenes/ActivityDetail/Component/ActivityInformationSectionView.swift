@@ -11,7 +11,6 @@ import Combine
 struct ActivityInformationSectionView: View {
     
     let activity: Activity
-    @Binding var showLocationView: Bool
     
     var body: some View {
         Section {
@@ -26,9 +25,6 @@ struct ActivityInformationSectionView: View {
             }
             row(title: "카테고리") {
                 Text(activity.category.rawValue)
-            }
-            row(title: "위치") {
-                Button("지도 보기") { showLocationView = true }
             }
         }
         .listRowBackground(Color(.secondarySystemBackground))
