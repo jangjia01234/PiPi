@@ -55,7 +55,10 @@ struct HomeView: View {
                     VStack {
                         Spacer()
                         MapUserLocationButton(scope: mapScope)
-                            .setSmallButtonAppearance()
+                            .background(.white)
+                            .tint(.accent)
+                            .clipShape(Circle())
+                            .setShadow()
                         ActivityCreateButton(isPresented: $activityCreateViewIsPresented)
                     }
                 }
@@ -105,18 +108,6 @@ struct HomeView: View {
             }
             activitiesToShow = activities.filter { ($0.category == selectedCategory) && ($0.status == .open) }
         }
-    }
-    
-}
-
-fileprivate extension View {
-    
-    func setSmallButtonAppearance() -> some View {
-        self
-            .background(.white)
-            .tint(.accent)
-            .clipShape(Circle())
-            .setShadow()
     }
     
 }
