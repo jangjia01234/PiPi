@@ -20,6 +20,7 @@
 		4411F9B52C64A60900FF4845 /* ActivityInformationSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411F9B42C64A60900FF4845 /* ActivityInformationSectionView.swift */; };
 		4411F9B72C64A69D00FF4845 /* HostInformationSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411F9B62C64A69D00FF4845 /* HostInformationSectionView.swift */; };
 		441FBFD12C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FBFD02C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift */; };
+		441FBFD32C6A5C8B00EEEFD9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FBFD22C6A5C8B00EEEFD9 /* LocationManager.swift */; };
 		444D2ECB2C5767970019A966 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2ECA2C5767970019A966 /* ContentView.swift */; };
 		444D2ECD2C5767980019A966 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444D2ECC2C5767980019A966 /* Assets.xcassets */; };
 		444D2ED02C5767980019A966 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444D2ECF2C5767980019A966 /* Preview Assets.xcassets */; };
@@ -64,6 +65,7 @@
 		4411F9B42C64A60900FF4845 /* ActivityInformationSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityInformationSectionView.swift; sourceTree = "<group>"; };
 		4411F9B62C64A69D00FF4845 /* HostInformationSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostInformationSectionView.swift; sourceTree = "<group>"; };
 		441FBFD02C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailViewModel.swift; sourceTree = "<group>"; };
+		441FBFD22C6A5C8B00EEEFD9 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		444D2EC52C5767970019A966 /* PiPi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PiPi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		444D2EC82C5767970019A966 /* PiPiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPiApp.swift; sourceTree = "<group>"; };
 		444D2ECA2C5767970019A966 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				444D2EDE2C58B5A20019A966 /* HomeView.swift */,
 				444D2EE12C58BF790019A966 /* CategoryFilterView.swift */,
 				444D2EE72C59B04A0019A966 /* ActivityCreateButton.swift */,
+				441FBFD22C6A5C8B00EEEFD9 /* LocationManager.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -395,6 +398,7 @@
 				444D2EF42C5B2CD80019A966 /* LocationSelectView.swift in Sources */,
 				444D2ED82C576CE60019A966 /* Activity.swift in Sources */,
 				444D2EDF2C58B5A20019A966 /* HomeView.swift in Sources */,
+				441FBFD32C6A5C8B00EEEFD9 /* LocationManager.swift in Sources */,
 				4411F9B72C64A69D00FF4845 /* HostInformationSectionView.swift in Sources */,
 				444D2EE82C59B04A0019A966 /* ActivityCreateButton.swift in Sources */,
 				444D2EE22C58BF790019A966 /* CategoryFilterView.swift in Sources */,
@@ -550,6 +554,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = Hi;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -587,6 +594,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = Hi;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

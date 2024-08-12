@@ -21,8 +21,17 @@ struct ActivityDetailView: View {
     @State private var showMessageView = false
     @State private var showActivityIndicator = true
     
+    let activityID: String
+    let hostID: String
+    
     init(activityID: String, hostID: String) {
-        _viewModel = StateObject(wrappedValue: ActivityDetailViewModel(activityID: activityID, hostID: hostID))
+        self.activityID = activityID
+        self.hostID = hostID
+        
+        _viewModel = StateObject(wrappedValue: ActivityDetailViewModel(
+            activityID: activityID,
+            hostID: hostID
+        ))
     }
     
     var body: some View {
@@ -62,6 +71,9 @@ struct ActivityDetailView: View {
                     message: Text("신청이 완료된 이벤트는 티켓에 추가됩니다."),
                     primaryButton: firstButton, secondaryButton: secondButton
                 )
+            }
+            .onChange(of: [activityID, hostID]) {
+                viewModel.refresh(newActivityID: activityID, newHostID: hostID)
             }
         } else {
             ProgressView()

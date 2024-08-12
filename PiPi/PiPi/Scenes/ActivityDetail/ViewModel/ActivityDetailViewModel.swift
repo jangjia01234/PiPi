@@ -14,8 +14,8 @@ final class ActivityDetailViewModel: ObservableObject {
     @Published var canJoin = false
     
     private let userID: String
-    private let activityID: String
-    private let hostID: String
+    private var activityID: String
+    private var hostID: String
     
     init(activityID: String, hostID: String) {
         guard let userID = UserDefaults.standard.string(forKey: "userID") else {
@@ -27,6 +27,10 @@ final class ActivityDetailViewModel: ObservableObject {
         
         observeActivityData()
         observeHostData()
+    }
+    
+    deinit {
+        removeAllObservers()
     }
     
     func addParticipant() {
@@ -41,6 +45,16 @@ final class ActivityDetailViewModel: ObservableObject {
                 print("Error updating activity: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func refresh(newActivityID: String, newHostID: String) {
+        removeAllObservers()
+        
+        self.activityID = newActivityID
+        self.hostID = newHostID
+        
+        observeActivityData()
+        observeHostData()
     }
     
     private func observeActivityData() {
@@ -78,6 +92,11 @@ final class ActivityDetailViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    private func removeAllObservers() {
+        FirebaseDataManager.shared.removeObserver(dataType: .activity, dataID: activityID)
+        FirebaseDataManager.shared.removeObserver(dataType: .user, dataID: userID)
     }
     
 }

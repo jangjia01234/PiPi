@@ -23,12 +23,13 @@ struct HomeView: View {
     
     private let minPresentationDetents = PresentationDetent.height(150)
     private let maxPresentationDetents = PresentationDetent.height(600)
+    private let locationManager = LocationManager()
     
     var body: some View {
         ZStack {
             Map(
                 position: $cameraPosition,
-                interactionModes: [.zoom, .pan],
+                interactionModes: [.zoom, .pan, .rotate],
                 selection: $selectedMarkerActivity,
                 scope: mapScope
             ) {
@@ -42,7 +43,6 @@ struct HomeView: View {
                     .tint(.accent)
                 }
             }
-            .mapControlVisibility(.hidden)
             .zIndex(1)
             
             ZStack {
@@ -54,6 +54,11 @@ struct HomeView: View {
                     Spacer()
                     VStack {
                         Spacer()
+                        MapUserLocationButton(scope: mapScope)
+                            .background(.white)
+                            .tint(.accent)
+                            .clipShape(Circle())
+                            .setShadow()
                         ActivityCreateButton(isPresented: $activityCreateViewIsPresented)
                     }
                 }
@@ -97,25 +102,14 @@ struct HomeView: View {
             activitiesToShow = activities.filter { $0.status == .open }
         }
         .onChange(of: selectedCategory) {
-            guard let selectedCategory else {
+            selectedMarkerActivity = nil
+            
+            if let selectedCategory {
+                activitiesToShow = activities.filter { ($0.category == selectedCategory) && ($0.status == .open) }
+            } else {
                 activitiesToShow = activities.filter { $0.status == .open }
-                return
             }
-            activitiesToShow = activities.filter { ($0.category == selectedCategory) && ($0.status == .open) }
         }
-    }
-    
-}
-
-fileprivate extension View {
-    
-    func setSmallButtonAppearance() -> some View {
-        self
-            .frame(width: 38, height: 38)
-            .tint(.accent)
-            .background(.white)
-            .clipShape(Circle())
-            .setShadow()
     }
     
 }
