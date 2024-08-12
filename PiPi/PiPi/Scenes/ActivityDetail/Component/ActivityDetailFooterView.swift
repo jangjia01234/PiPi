@@ -13,8 +13,6 @@ struct ActivityDetailFooterView: View {
     @Binding var showMessageView: Bool
     @Binding var disableJoinButton: Bool
     
-    let addParticipant: () -> Void
-    
     var body: some View {
         HStack {
             Button(action: {
@@ -50,5 +48,5 @@ struct ActivityDetailFooterView: View {
         showJoinAlertView: .constant(false),
         showMessageView: .constant(false),
         disableJoinButton: .constant(false)
-    ) {}
+    )
 }

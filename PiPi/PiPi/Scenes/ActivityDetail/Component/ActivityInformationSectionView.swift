@@ -6,42 +6,38 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ActivityInformationSectionView: View {
     
-    let startDateTime: Date
-    let estimatedTime: Int?
-    let maxPeopleNumber: Int
-    let currentPeopleNumber: Int
-    let category: Activity.Category
-    
+    let activity: Activity
     @Binding var showLocationView: Bool
     
     var body: some View {
         Section {
-            informationRow(title: "시작 일시") {
-                Text(startDateTime.toString())
+            row(title: "시작 일시") {
+                Text("\(activity.startDateTime.toString())")
             }
-            informationRow(title: "예상 소요시간") {
-                Text((estimatedTime == nil) ? "미정" : "\(estimatedTime!)시간")
+            row(title: "예상 소요시간") {
+                Text((activity.estimatedTime == nil) ? "미정" : "\(activity.estimatedTime!)시간")
             }
-            informationRow(title: "인원") {
-                Text("\(currentPeopleNumber) / \(maxPeopleNumber)명")
+            row(title: "인원") {
+                Text("\(activity.participantID.count) / \(activity.maxPeopleNumber)명")
             }
-            informationRow(title: "카테고리") {
-                Text(category.rawValue)
+            row(title: "카테고리") {
+                Text(activity.category.rawValue)
             }
-            informationRow(title: "위치") {
+            row(title: "위치") {
                 Button("지도 보기") { showLocationView = true }
             }
         }
         .listRowBackground(Color(.secondarySystemBackground))
     }
     
-    private func informationRow(title: String, @ViewBuilder content: () -> some View) -> some View {
+    private func row(title: String, content: () -> some View) -> some View {
         HStack {
             Text(title)
-                .frame(width: 120, alignment: .leading)
+                .frame(width: 130, alignment: .leading)
             content()
         }
     }

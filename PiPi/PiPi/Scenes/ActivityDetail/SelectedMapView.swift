@@ -10,22 +10,22 @@ import MapKit
 
 struct SelectedMapView: View {
     
-    let coordinate: CLLocationCoordinate2D
+    let coordinates: CLLocationCoordinate2D
     
     @State private var region: MKCoordinateRegion
     @Environment(\.dismiss) private var dismiss
     
-    init(coordinate: CLLocationCoordinate2D) {
-        self.coordinate = coordinate
+    init(coordinate: Coordinates) {
+        self.coordinates = coordinate.toCLLocationCoordinate2D
         _region = State(initialValue: MKCoordinateRegion(
-            center: coordinate,
+            center: coordinates,
             span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         ))
     }
     
     var body: some View {
         ZStack {
-            Map(coordinateRegion: $region, annotationItems: [Annotation(coordinate: coordinate)]) { annotation in
+            Map(coordinateRegion: $region, annotationItems: [Annotation(coordinate: coordinates)]) { annotation in
                 MapAnnotation(coordinate: annotation.coordinate) {
                     Image(systemName: "mappin.and.ellipse")
                         .resizable()
@@ -68,5 +68,5 @@ extension Coordinates {
     }
 }
 #Preview {
-    SelectedMapView(coordinate: CLLocationCoordinate2D(latitude: 36.015501, longitude: 129.322548))
+    SelectedMapView(coordinate: .init(latitude: 36.015501, longitude: 129.322548))
 }
