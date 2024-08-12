@@ -9,9 +9,6 @@ import SwiftUI
 
 struct TicketsView: View {
     @AppStorage("userID") var userID: String?
-    
-    // MARK: - 🤔 활동 리스트 담을 배열 선언
-    // 왜 이렇게 선언해야 하지? 꼭 필요한가?
     @State private var activities: [Activity] = []
     
     // MARK: - 🤔 유저 프로필 선언 및 초기화
@@ -25,14 +22,7 @@ struct TicketsView: View {
     )
     
     @State private var selectedItem: TicketType = .participant
-    
-    // MARK: - 🤔 TicketDetailView 시트의 상태
-    // 어떤 식으로 관리되고 있는지 확인 필요
-    @State private var isShowingTicketDetailView: Bool = false
-    
-    // MARK: - 🔥
-    // 확인 및 네이밍 개선 필요
-    @State private var isAuthDone: Bool = false
+    @State private var authSuccess: Bool = false
     
     // MARK: - 🔥
     // 확인 및 네이밍 개선 필요
@@ -56,8 +46,9 @@ struct TicketsView: View {
             // MARK: - PeerAuthView 시트 상태관리
                 .sheet(isPresented: $isShowingSheet) {
                     PeerAuthView(
+                        selectedItem: $selectedItem,
                         isShowingSheet: $isShowingSheet,
-                        isAuthDone: $isAuthDone,
+                        authSuccess: $authSuccess,
                         activity: activity
                     )
                 }
@@ -74,7 +65,7 @@ struct TicketsView: View {
                     TicketView(
                         selectedItem: $selectedItem,
                         isShowingSheet: $isShowingSheet,
-                        isAuthDone: $isAuthDone,
+                        authSuccess: $authSuccess,
                         activity: activity,
                         userProfile: userProfile
                     )

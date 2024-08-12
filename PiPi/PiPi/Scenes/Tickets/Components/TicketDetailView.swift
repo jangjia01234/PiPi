@@ -19,7 +19,6 @@ struct TicketDetailView: View {
     @State private var hostProfile: UserProfile?
     @State private var isLoadingHostProfile: Bool = false
     
-    
     var body: some View {
         NavigationStack {
             VStack {

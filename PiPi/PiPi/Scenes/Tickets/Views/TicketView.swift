@@ -11,14 +11,7 @@ import FirebaseDatabase
 
 // TODO: 데이터 연결 예정 (현재 목업 데이터로 구성)
 struct TicketView: View {
-    // MARK: - 🤔 TicketDetailView 시트의 상태
-    // 어떤 식으로 관리되고 있는지 확인 필요
-    // 매번 State로 새로 선언해야하나? 내려주면 안되나?
-    @State private var isShowingTicketDetailView: Bool = false
-    
-    // MARK: - 🔥
-    // 참가자의 티켓인지 여부 (이게 뭐더라.. 어디서 쓰였는지 확인 필요)
-    @State private var isParticipantTicket: Bool = false
+    @State private var showTicketDetailView: Bool = false
     
     // MARK: - 🔥
     // 위치가 보이는지? (이것도 확인 필요)
@@ -35,7 +28,7 @@ struct TicketView: View {
     
     // MARK: - 🔥
     // (State 선언부에서) 확인 및 네이밍 개선 필요
-    @Binding var isAuthDone: Bool
+    @Binding var authSuccess: Bool
     
     var activity: Activity
     var userProfile: UserProfile
@@ -46,7 +39,6 @@ struct TicketView: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(selectedItem == .participant ? Color.lightPurple : Color.lightOrange)
                 
-                // MARK: - 사각형 위에 올라가는 정보들
                 VStack(alignment: .leading) {
                     header()
                     ticketDetailSection(selectedItem: selectedItem)
@@ -61,7 +53,7 @@ struct TicketView: View {
             .padding(.bottom, 10)
             
             // MARK: - TicketDetailView 시트의 상태관리
-            .sheet(isPresented: $isShowingTicketDetailView) {
+            .sheet(isPresented: $showTicketDetailView) {
                 TicketDetailView(
                     isLocationVisible: $isLocationVisible,
                     activity: activity,
@@ -70,7 +62,7 @@ struct TicketView: View {
             }
             // MARK: - PeerView 시트 표시
             .sheet(isPresented: $isPresentingPeerAuthView) {
-                PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone, activity: activity)
+                PeerAuthView(selectedItem: $selectedItem, isShowingSheet: $isShowingSheet, authSuccess: $authSuccess, activity: activity)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -152,8 +144,6 @@ fileprivate extension TicketView {
         }
     }
     
-    // --------------------------------------------
-    
     // MARK: - 텍스트 레이아웃 템플릿
     func ticketInfoItem(align: HorizontalAlignment = .leading, title: String, content: String, isText: Bool = true) -> some View {
         VStack(alignment: align) {
@@ -192,18 +182,15 @@ fileprivate extension TicketView {
     func handleModalStatus(content: String) {
         switch content {
         case "리스트":
-            isShowingTicketDetailView = true
-            isParticipantTicket = true
+            showTicketDetailView = true
             isLocationVisible = false
             return
         case "위치 확인":
-            isShowingTicketDetailView = true
-            isParticipantTicket = false
+            showTicketDetailView = true
             isLocationVisible = true
             return
         default:
-            isShowingTicketDetailView = true
-            isParticipantTicket = false
+            showTicketDetailView = true
             isLocationVisible = false
             break
         }
