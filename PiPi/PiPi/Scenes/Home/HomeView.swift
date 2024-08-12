@@ -23,12 +23,13 @@ struct HomeView: View {
     
     private let minPresentationDetents = PresentationDetent.height(150)
     private let maxPresentationDetents = PresentationDetent.height(600)
+    private let locationManager = LocationManager()
     
     var body: some View {
         ZStack {
             Map(
                 position: $cameraPosition,
-                interactionModes: [.zoom, .pan],
+                interactionModes: [.zoom, .pan, .rotate],
                 selection: $selectedMarkerActivity,
                 scope: mapScope
             ) {
@@ -42,7 +43,6 @@ struct HomeView: View {
                     .tint(.accent)
                 }
             }
-            .mapControlVisibility(.hidden)
             .zIndex(1)
             
             ZStack {
@@ -54,6 +54,8 @@ struct HomeView: View {
                     Spacer()
                     VStack {
                         Spacer()
+                        MapUserLocationButton(scope: mapScope)
+                            .setSmallButtonAppearance()
                         ActivityCreateButton(isPresented: $activityCreateViewIsPresented)
                     }
                 }
@@ -111,9 +113,8 @@ fileprivate extension View {
     
     func setSmallButtonAppearance() -> some View {
         self
-            .frame(width: 38, height: 38)
-            .tint(.accent)
             .background(.white)
+            .tint(.accent)
             .clipShape(Circle())
             .setShadow()
     }
