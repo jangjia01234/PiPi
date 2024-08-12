@@ -80,7 +80,7 @@ struct Activity: Identifiable {
     }
     
     var status: State {
-        (participantID.count < maxPeopleNumber) ? .open : .closed
+        (participantID.count + 1 < maxPeopleNumber) ? .open : .closed
     }
     
 }
@@ -125,6 +125,7 @@ extension Activity {
         case alcohol = "술"
         case sport = "운동"
         case study = "공부"
+        case unspecified = "기타"
     }
     
     enum State: String {

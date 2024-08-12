@@ -22,7 +22,7 @@ struct ActivityInformationSectionView: View {
                 Text((activity.estimatedTime == nil) ? "미정" : "\(activity.estimatedTime!)시간")
             }
             row(title: "인원") {
-                Text("\(activity.participantID.count) / \(activity.maxPeopleNumber)명")
+                Text("\(activity.participantID.count + 1) / \(activity.maxPeopleNumber)명")
             }
             row(title: "카테고리") {
                 Text(activity.category.rawValue)
