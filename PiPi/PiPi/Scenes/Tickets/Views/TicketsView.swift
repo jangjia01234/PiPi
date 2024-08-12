@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct TicketsView: View {
-    // MARK: - 유저의 앱스토리지 ID 선언
-    // 매번 불러와야 하나?
     @AppStorage("userID") var userID: String?
     
     // MARK: - 🤔 활동 리스트 담을 배열 선언
@@ -19,14 +17,13 @@ struct TicketsView: View {
     // MARK: - 🤔 유저 프로필 선언 및 초기화
     // 왜 이렇게 선언해야 하지? 꼭 필요한가?
     @State private var userProfile: UserProfile = UserProfile(
-            id: "6F0457BD-1AC9-4368-926A-634853569179",
-            nickname: "",
-            affiliation: "",
-            email: "",
-            level: 1
-        )
+        id: "6F0457BD-1AC9-4368-926A-634853569179",
+        nickname: "",
+        affiliation: "",
+        email: "",
+        level: 1
+    )
     
-    // MARK: - ✅ 티켓 타입별로 선택된 아이템 (기본 설정: 참가자)
     @State private var selectedItem: TicketType = .participant
     
     // MARK: - 🤔 TicketDetailView 시트의 상태
@@ -54,52 +51,52 @@ struct TicketsView: View {
             TicketSegmentedControl(selectedItem: $selectedItem)
             
             ticketsList
-            // MARK: - 🤔 ScrollView 관련 설정 (확인 필요, 우선순위 낮음)
-            .scrollBounceBehavior(.basedOnSize)
-            .navigationBarBackButtonHidden(true)
+                .scrollBounceBehavior(.basedOnSize)
+                .navigationBarBackButtonHidden(true)
             // MARK: - PeerAuthView 시트 상태관리
-            .sheet(isPresented: $isShowingSheet) {
-                PeerAuthView(
-                    isShowingSheet: $isShowingSheet,
-                    isAuthDone: $isAuthDone,
-                    activity: activity
-                )
-            }
-
+                .sheet(isPresented: $isShowingSheet) {
+                    PeerAuthView(
+                        isShowingSheet: $isShowingSheet,
+                        isAuthDone: $isAuthDone,
+                        activity: activity
+                    )
+                }
+            
             Spacer()
         }
-        // MARK: - Firebase RDB에서 데이터 불러오기 (최초 1회)
         .onAppear(perform: loadData)
     }
     
     private var ticketsList: some View {
         ScrollView {
-            // ForEach로 activities 리스트를 받아와서 여러 티켓 나열
             ForEach(activities, id: \.id) { activity in
-                // userID 언래핑
-                if let userID = userID {
-                    // 선택된 탭이 참가자 / 주최자 중 어느 쪽인지 확인
-                    if selectedItem == .participant {
-                        // participantID 리스트 중 userID와 일치하는 게 있을 때
-                        if activity.participantID.contains(userID) {
-                            // TicketView 보여주기
-                            TicketView(selectedItem: $selectedItem, isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone, activity: activity, userProfile: userProfile)
-                        }
-                    } else {
-                        // 주최자의 ID와 유저 ID가 일치할 때
-                        if activity.hostID == userID {
-                            // TicketView 보여주기
-                            TicketView(selectedItem: $selectedItem, isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone, activity: activity, userProfile: userProfile)
-                        }
-                    }
+                if shouldDisplayTicket(for: activity, userID: userID) {
+                    TicketView(
+                        selectedItem: $selectedItem,
+                        isShowingSheet: $isShowingSheet,
+                        isAuthDone: $isAuthDone,
+                        activity: activity,
+                        userProfile: userProfile
+                    )
                 }
             }
         }
     }
     
+    private func shouldDisplayTicket(for activity: Activity, userID: String?) -> Bool {
+        guard let userID = userID else { return false }
+        
+        switch selectedItem {
+        case .participant:
+            return activity.participantID.contains(userID)
+        case .organizer:
+            return activity.hostID == userID
+        }
+    }
+    
     private func loadData() {
-            fetchActivities()
-            fetchUserProfile()
+        fetchActivities()
+        fetchUserProfile()
     }
     
     private func fetchActivities() {
@@ -128,8 +125,6 @@ struct TicketsView: View {
     }
 }
 
-// MARK: - 티켓의 타입: 참가자 / 주최자
-// 별도로 분리 필요
 enum TicketType : String, CaseIterable {
     case participant = "참가자"
     case organizer = "주최자"

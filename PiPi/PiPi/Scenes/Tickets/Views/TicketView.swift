@@ -43,13 +43,7 @@ struct TicketView: View {
     // (State 선언부에서) 확인 및 네이밍 개선 필요
     @Binding var isAuthDone: Bool
     
-    // MARK: - 🤔 Activity 타입의 변수 선언
-    // 왜 이렇게 선언해야 하지? 꼭 필요한가?
     var activity: Activity
-    
-    // MARK: - 🤔 UserProfile 타입의 변수 선언
-    // 왜 이렇게 선언해야 하지? 꼭 필요한가?
-    // 둘 중에 뭘 언제 쓰는거지. 언제 어디까지 필요한건지 확인해야함.
     var userProfile: UserProfile
     
     // MARK: - 🫥 확인 필요
@@ -58,7 +52,6 @@ struct TicketView: View {
     
     var body: some View {
         // MARK: - 다른 화면으로 이동하기 위해 NavigationStack으로 감싸기
-        // 여기 위치에 쓰는게 맞는지 확인하기. 더 위에 해야하는건가?
         NavigationStack {
             // MARK: - 카드 뷰를 위해 ZStack으로 구성
             ZStack {
