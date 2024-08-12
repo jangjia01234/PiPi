@@ -16,8 +16,8 @@ struct TicketDetailView: View {
     var activity: Activity
     var userProfile: UserProfile
     
-    @State private var hostProfile: UserProfile? // 호스트 프로필을 저장하는 상태 변수
-    @State private var isLoadingHostProfile: Bool = false // 데이터 로딩 상태
+    @State private var hostProfile: UserProfile?
+    @State private var isLoadingHostProfile: Bool = false
     
     
     var body: some View {
