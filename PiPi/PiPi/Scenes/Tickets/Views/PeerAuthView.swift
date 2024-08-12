@@ -15,7 +15,7 @@ struct PeerAuthView: View {
     @State var lastValidDirections = [NIDiscoveryToken: SIMD3<Float>]()
     @Binding var selectedItem: TicketType
     @Binding var authSuccess: Bool
-    private var activity: Activity
+    var activity: Activity
     
     var body: some View {
         ZStack {

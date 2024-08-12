@@ -10,9 +10,6 @@ import SwiftUI
 struct TicketsView: View {
     @AppStorage("userID") var userID: String?
     @State private var activities: [Activity] = []
-    
-    // MARK: - 🤔 유저 프로필 선언 및 초기화
-    // 왜 이렇게 선언해야 하지? 꼭 필요한가?
     @State private var userProfile: UserProfile = UserProfile(
         id: "6F0457BD-1AC9-4368-926A-634853569179",
         nickname: "",
@@ -20,7 +17,6 @@ struct TicketsView: View {
         email: "",
         level: 1
     )
-    
     @State private var selectedItem: TicketType = .participant
     @State private var authSuccess: Bool = false
     
@@ -28,11 +24,7 @@ struct TicketsView: View {
     // 확인 및 네이밍 개선 필요
     @Binding var isShowingSheet: Bool
     
-    // MARK: - 🤔 Activity 타입의 변수 선언
-    // 왜 이렇게 선언해야 하지? 꼭 필요한가?
     var activity: Activity
-    
-    // MARK: - 🫥 확인 필요
     private typealias ActivityDatabaseResult = Result<[String: Activity], Error>
     private typealias UserDatabaseResult = Result<UserProfile, Error>
     
@@ -47,7 +39,6 @@ struct TicketsView: View {
                 .sheet(isPresented: $isShowingSheet) {
                     PeerAuthView(
                         selectedItem: $selectedItem,
-                        isShowingSheet: $isShowingSheet,
                         authSuccess: $authSuccess,
                         activity: activity
                     )
@@ -120,8 +111,3 @@ enum TicketType : String, CaseIterable {
     case participant = "참가자"
     case organizer = "주최자"
 }
-
-// MARK: - 에러를 없애기 위해 프리뷰 주석처리
-//#Preview {
-//    TicketsView(isShowingSheet: .constant(false))
-//}
