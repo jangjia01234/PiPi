@@ -106,7 +106,3 @@ struct TicketDetailView: View {
         }
     }
 }
-
-//#Preview {
-//    TicketDetailView(isParticipantList: .constant(false), isLocationVisible: .constant(false))
-//}
