@@ -94,16 +94,17 @@ struct HomeView: View {
             showActivityDetail = (selectedMarkerActivity != nil)
         }
         .onChange(of: activities) {
-            activitiesToShow = activities
+            activitiesToShow = activities.filter { $0.status == .open }
         }
         .onChange(of: selectedCategory) {
             guard let selectedCategory else {
-                activitiesToShow = activities
+                activitiesToShow = activities.filter { $0.status == .open }
                 return
             }
-            activitiesToShow = activities.filter { $0.category == selectedCategory }
+            activitiesToShow = activities.filter { ($0.category == selectedCategory) && ($0.status == .open) }
         }
     }
+    
 }
 
 fileprivate extension View {
