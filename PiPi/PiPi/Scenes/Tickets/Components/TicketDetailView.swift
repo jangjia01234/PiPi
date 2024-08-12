@@ -56,9 +56,6 @@ struct TicketDetailView: View {
     
     private var detailsView: some View {
         VStack {
-            Text("activity.hostID: \(activity.hostID)")
-            Text("userProfile.id: \(userProfile.id)")
-            
             if activity.hostID == userProfile.id {
                 if activity.participantID.count > 0 {
                     participantListView
