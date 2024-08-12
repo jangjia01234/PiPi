@@ -56,9 +56,8 @@ final class ActivityDetailViewModel: ObservableObject {
                 case .success(let fetchedActivity):
                     self.activity = fetchedActivity
                     self.canJoin = (fetchedActivity.hostID != self.userID) && (fetchedActivity.status == .open) && (!fetchedActivity.participantID.contains(self.userID))
-                    dump(self.canJoin)
                 case .failure(let error):
-                    dump(error)
+                    dump("Activity data not found: \(error)")
                 }
             }
         }
@@ -75,7 +74,7 @@ final class ActivityDetailViewModel: ObservableObject {
                 case .success(let fetchedUser):
                     self?.host = fetchedUser
                 case .failure(let error):
-                    dump(error)
+                    dump("Host data not found: \(error)")
                 }
             }
         }
