@@ -21,20 +21,20 @@ struct HomeView: View {
     
     private typealias DatabaseResult = Result<[String: Activity], Error>
     
+    private let minPresentationDetents = PresentationDetent.height(150)
+    private let maxPresentationDetents = PresentationDetent.height(600)
+    private let locationManager = LocationManager()
+    
     var body: some View {
         ZStack {
             Map(
                 position: $cameraPosition,
-                bounds: .init(
-                    centerCoordinateBounds: .cameraBoundary,
-                    minimumDistance: 500,
-                    maximumDistance: 3000
-                ),
+                interactionModes: [.zoom, .pan, .rotate],
                 selection: $selectedMarkerActivity,
                 scope: mapScope
             ) {
                 ForEach(activitiesToShow, id: \.self) { activity in
-                    Marker(coordinate: activity.coordinates.toCLLocationCoordinate2D) {
+                    Marker(coordinate: CLLocationCoordinate2D(activity.coordinates)) {
                         Image("\(activity.category.self).white")
                         Text(activity.title)
                             .font(.callout)
@@ -43,7 +43,6 @@ struct HomeView: View {
                     .tint(.accent)
                 }
             }
-            .mapControlVisibility(.hidden)
             .zIndex(1)
             
             ZStack {
@@ -55,6 +54,11 @@ struct HomeView: View {
                     Spacer()
                     VStack {
                         Spacer()
+                        MapUserLocationButton(scope: mapScope)
+                            .background(.white)
+                            .tint(.accent)
+                            .clipShape(Circle())
+                            .setShadow()
                         ActivityCreateButton(isPresented: $activityCreateViewIsPresented)
                     }
                 }
@@ -73,8 +77,9 @@ struct HomeView: View {
                     hostID: selectedActivity.hostID
                 )
                 .background(Color(.white))
-                .presentationDetents([.height(150), .height(650)])
+                .presentationDetents([minPresentationDetents, maxPresentationDetents])
                 .presentationDragIndicator(.visible)
+                .presentationBackgroundInteraction(.enabled(upThrough: minPresentationDetents))
                 .onDisappear {
                     selectedMarkerActivity = nil
                 }
@@ -94,27 +99,17 @@ struct HomeView: View {
             showActivityDetail = (selectedMarkerActivity != nil)
         }
         .onChange(of: activities) {
-            activitiesToShow = activities
+            activitiesToShow = activities.filter { $0.status == .open }
         }
         .onChange(of: selectedCategory) {
-            guard let selectedCategory else {
-                activitiesToShow = activities
-                return
+            selectedMarkerActivity = nil
+            
+            if let selectedCategory {
+                activitiesToShow = activities.filter { ($0.category == selectedCategory) && ($0.status == .open) }
+            } else {
+                activitiesToShow = activities.filter { $0.status == .open }
             }
-            activitiesToShow = activities.filter { $0.category == selectedCategory }
         }
-    }
-}
-
-fileprivate extension View {
-    
-    func setSmallButtonAppearance() -> some View {
-        self
-            .frame(width: 38, height: 38)
-            .tint(.accent)
-            .background(.white)
-            .clipShape(Circle())
-            .setShadow()
     }
     
 }
