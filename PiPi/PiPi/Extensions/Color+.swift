@@ -13,7 +13,7 @@ extension Color {
     }
     
     static var lightOrange: Color {
-        return Color(Color(red: 255 / 255, green: 135 / 255, blue: 109 / 255))
+        return Color(Color(red: 255 / 255, green: 134 / 255, blue: 66 / 255))
     }
     
     static var lightGray: Color {

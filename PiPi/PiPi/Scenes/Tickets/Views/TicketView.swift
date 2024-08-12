@@ -11,11 +11,6 @@ import FirebaseDatabase
 
 // TODO: 데이터 연결 예정 (현재 목업 데이터로 구성)
 struct TicketView: View {
-    // MARK: - 🤔 활동 리스트 담을 배열 선언
-    // 왜 이렇게 선언해야 하지? 꼭 필요한가?
-    // 매번 State로 새로 선언해야하나? 내려주면 안되나?
-    @State private var activities: [Activity] = []
-    
     // MARK: - 🤔 TicketDetailView 시트의 상태
     // 어떤 식으로 관리되고 있는지 확인 필요
     // 매번 State로 새로 선언해야하나? 내려주면 안되나?
@@ -32,7 +27,6 @@ struct TicketView: View {
     // MARK: - 🤔 PeerAuthView 시트의 상태
     @State private var isPresentingPeerAuthView = false
     
-    // MARK: - ✅ 티켓 타입별로 선택된 아이템 Binding
     @Binding var selectedItem: TicketType
     
     // MARK: - 🔥
@@ -46,16 +40,9 @@ struct TicketView: View {
     var activity: Activity
     var userProfile: UserProfile
     
-    // MARK: - 🫥 확인 필요
-    private typealias ActivityDatabaseResult = Result<[String: Activity], Error>
-    private typealias UserDatabaseResult = Result<UserProfile, Error>
-    
     var body: some View {
-        // MARK: - 다른 화면으로 이동하기 위해 NavigationStack으로 감싸기
         NavigationStack {
-            // MARK: - 카드 뷰를 위해 ZStack으로 구성
             ZStack {
-                // MARK: - 카드의 밑바탕이 되는 사각형 선언
                 RoundedRectangle(cornerRadius: 20)
                     .fill(selectedItem == .participant ? Color.lightPurple : Color.lightOrange)
                 
@@ -69,13 +56,12 @@ struct TicketView: View {
                 .foregroundColor(.white)
                 .padding()
             }
-            // MARK: - 한 카드의 전체 레이아웃
             .frame(height: 350)
             .padding(.horizontal, 15)
             .padding(.bottom, 10)
+            
             // MARK: - TicketDetailView 시트의 상태관리
             .sheet(isPresented: $isShowingTicketDetailView) {
-                // MARK: - TicketDetailView 보여주기
                 TicketDetailView(
                     isLocationVisible: $isLocationVisible,
                     activity: activity,
@@ -87,19 +73,18 @@ struct TicketView: View {
                 PeerAuthView(isShowingSheet: $isShowingSheet, isAuthDone: $isAuthDone, activity: activity)
             }
         }
-        // MARK: - 뒤로가기 버튼 숨김
         .navigationBarBackButtonHidden(true)
     }
 }
 
 // MARK: - Ticket View 관련 코드 분리
 fileprivate extension TicketView {
-
     // MARK: - 상단 헤더 (카테고리 심볼 / 타이틀 / 날짜 / 상태관리)
     func header() -> some View {
         VStack {
             HStack(alignment: .top) {
                 // MARK: - 심볼
+                // 🔥 TODO: 조건에 따라 심볼 바꿔줘야됨
                 symbolItem(name: "figure.run.circle.fill", font: .title2, color: .white)
                 // MARK: - 타이틀
                 textItem(content: activity.title, font: .title2, weight: .bold)
@@ -125,7 +110,6 @@ fileprivate extension TicketView {
         VStack(alignment: .leading) {
             HStack {
                 VStack(alignment: .leading) {
-                    // MARK: - 주최자 / 참가자
                     ticketInfoItem(align: .leading, title: selectedItem == .participant ? "주최자" : "참가자", content: selectedItem == .organizer ? "리스트" : "닉네임", isText: false)
                 }
                 
@@ -133,7 +117,6 @@ fileprivate extension TicketView {
             }
             .padding(.bottom, 10)
             
-            // MARK: - 장소
             ticketInfoItem(title: "장소", content: "위치 확인", isText: false)
         }
     }
@@ -142,48 +125,50 @@ fileprivate extension TicketView {
     func authenticationSection() -> some View {
         HStack(alignment: .bottom) {
             // MARK: - 소요시간
-            // 🔥 FIXME: 일반 시간도 있어야 함 (?)
-            ticketInfoItem(title: "소요시간", content: "\(activity.estimatedTime ?? 0)시간")
+            // 🔥 FIXME: 시작 시간은 merge하고 반영
+            VStack(alignment: .leading) {
+                ticketInfoItem(title: "시작시간", content: "\(activity.startDateTime.toString())시간")
+                    .padding(.bottom, 10)
+                
+                ticketInfoItem(title: "소요시간", content: "\(activity.estimatedTime ?? 0)시간")
+            }
             
             Spacer()
             
             // MARK: - 인증 버튼
-            // FIXME: 인증 테스트용 주석 처리
-//            if selectedItem == .organizer {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .frame(width: 60, height: 60)
-                    
-                    Button(action: {
-                        isPresentingPeerAuthView = true
-                    }, label: {
-                        // 🔥 FIXME: 카메라 말고 다른, 인증을 나타내는 심볼 필요
-                        symbolItem(name: "camera.fill", font: .title, color: .black)
-                    })
-//                }
+            // 🔥 FIXME: 인증 상태 반영 필요
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .frame(width: 60, height: 60)
+                
+                Button(action: {
+                    isPresentingPeerAuthView = true
+                }, label: {
+                    // 🔥 FIXME: 인증 상태 반영 필요
+                    // 인증되면 색상O / 안되면 그레이
+                    symbolItem(name: "link", font: .title, color: .gray)
+                })
             }
         }
     }
     
+    // --------------------------------------------
+    
     // MARK: - 텍스트 레이아웃 템플릿
     func ticketInfoItem(align: HorizontalAlignment = .leading, title: String, content: String, isText: Bool = true) -> some View {
         VStack(alignment: align) {
-            // 타이틀
             textItem(content: title, font: .caption, weight: .bold, color: Color.lightGray)
             
-            // 내용 (텍스트 or 버튼)
-            if isText {
-                textItem(content: content, font: .callout)
-            } else {
-                Button {
-                    if !isText {
-                        handleModalStatus(content: content)
-                    }
-                } label: {
+            Group {
+                if isText {
                     textItem(content: content, font: .callout)
+                } else {
+                    Button(action: { handleModalStatus(content: content) }) {
+                        textItem(content: content, font: .callout)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(selectedItem == .participant ? .accentColor : Color("SubColor"))
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(selectedItem == .participant ? .accentColor : Color("SubColor"))
             }
         }
     }
