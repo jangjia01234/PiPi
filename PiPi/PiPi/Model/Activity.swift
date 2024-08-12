@@ -93,6 +93,8 @@ extension Activity: Equatable, Hashable {
     
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
+        && lhs.participantID == rhs.participantID
+        && lhs.authentication == rhs.authentication
     }
     
 }
