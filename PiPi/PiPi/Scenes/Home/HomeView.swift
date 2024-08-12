@@ -33,7 +33,7 @@ struct HomeView: View {
                 scope: mapScope
             ) {
                 ForEach(activitiesToShow, id: \.self) { activity in
-                    Marker(coordinate: activity.coordinates.toCLLocationCoordinate2D) {
+                    Marker(coordinate: CLLocationCoordinate2D(activity.coordinates)) {
                         Image("\(activity.category.self).white")
                         Text(activity.title)
                             .font(.callout)
