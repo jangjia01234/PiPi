@@ -9,8 +9,6 @@ import SwiftUI
 
 struct ActivityInformationFormView: View {
     
-    @FocusState private var isFocused
-    
     @Binding var title: String
     @Binding var description: String
     @Binding var maxPeopleNumber: Int
@@ -27,14 +25,6 @@ struct ActivityInformationFormView: View {
             categoryPicker
             dateTimeLocationSection
         }
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("완료") {
-                    isFocused = false
-                }
-            }
-        }
     }
 }
 
@@ -42,8 +32,7 @@ private extension ActivityInformationFormView {
     
     var titleSection: some View {
         Section {
-            TextField("", text: $title)
-                .focused($isFocused)
+            TextField("제목을 입력해주세요.", text: $title)
         } header: {
             header(title: "제목", subtitle: nil)
         }
@@ -52,7 +41,6 @@ private extension ActivityInformationFormView {
     var descriptionSection: some View {
         Section {
             TextEditor(text: $description)
-                .focused($isFocused)
         } header: {
             header(title: "설명", subtitle: nil)
         }

@@ -21,20 +21,19 @@ struct HomeView: View {
     
     private typealias DatabaseResult = Result<[String: Activity], Error>
     
+    private let minPresentationDetents = PresentationDetent.height(150)
+    private let maxPresentationDetents = PresentationDetent.height(600)
+    
     var body: some View {
         ZStack {
             Map(
                 position: $cameraPosition,
-                bounds: .init(
-                    centerCoordinateBounds: .cameraBoundary,
-                    minimumDistance: 500,
-                    maximumDistance: 3000
-                ),
+                interactionModes: [.zoom, .pan],
                 selection: $selectedMarkerActivity,
                 scope: mapScope
             ) {
                 ForEach(activitiesToShow, id: \.self) { activity in
-                    Marker(coordinate: activity.coordinates.toCLLocationCoordinate2D) {
+                    Marker(coordinate: CLLocationCoordinate2D(activity.coordinates)) {
                         Image("\(activity.category.self).white")
                         Text(activity.title)
                             .font(.callout)
@@ -73,8 +72,9 @@ struct HomeView: View {
                     hostID: selectedActivity.hostID
                 )
                 .background(Color(.white))
-                .presentationDetents([.height(150), .height(650)])
+                .presentationDetents([minPresentationDetents, maxPresentationDetents])
                 .presentationDragIndicator(.visible)
+                .presentationBackgroundInteraction(.enabled(upThrough: minPresentationDetents))
                 .onDisappear {
                     selectedMarkerActivity = nil
                 }
@@ -94,16 +94,17 @@ struct HomeView: View {
             showActivityDetail = (selectedMarkerActivity != nil)
         }
         .onChange(of: activities) {
-            activitiesToShow = activities
+            activitiesToShow = activities.filter { $0.status == .open }
         }
         .onChange(of: selectedCategory) {
             guard let selectedCategory else {
-                activitiesToShow = activities
+                activitiesToShow = activities.filter { $0.status == .open }
                 return
             }
-            activitiesToShow = activities.filter { $0.category == selectedCategory }
+            activitiesToShow = activities.filter { ($0.category == selectedCategory) && ($0.status == .open) }
         }
     }
+    
 }
 
 fileprivate extension View {

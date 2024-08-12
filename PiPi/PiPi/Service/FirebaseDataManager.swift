@@ -45,7 +45,9 @@ final class FirebaseDataManager {
         }
         
         databaseRef.observeSingleEvent(of: .value) { [weak self] snapshot in
-            self?.handleSnapshot(snapshot: snapshot, dataID: dataID, completion: completion)
+            guard let self else { return }
+            
+            completion(self.handleSnapshot(snapshot: snapshot, dataID: dataID))
         }
     }
     
@@ -61,7 +63,9 @@ final class FirebaseDataManager {
         }
         
         databaseRef.observe(eventType) { [weak self] snapshot in
-            self?.handleSnapshot(snapshot: snapshot, dataID: dataID, completion: completion)
+            guard let self else { return }
+            
+            completion(self.handleSnapshot(snapshot: snapshot, dataID: dataID))
         }
     }
     
@@ -84,18 +88,17 @@ final class FirebaseDataManager {
     
     private func handleSnapshot<T: Decodable>(
         snapshot: DataSnapshot,
-        dataID: String?,
-        completion: (Result<T, Error>) -> Void
-    ) {
+        dataID: String?
+    ) -> Result<T, Error> {
         if snapshot.exists() {
             do {
                 let decodedData: T = try self.decode(id: dataID, value: snapshot.value)
-                completion(.success(decodedData))
+                return .success(decodedData)
             } catch {
-                completion(.failure(error))
+                return .failure(error)
             }
         } else {
-            completion(.failure(FirebaseError.dataNotFound))
+            return .failure(FirebaseError.dataNotFound)
         }
     }
     

@@ -9,22 +9,25 @@ import SwiftUI
 
 struct HostInformationSectionView: View {
     
-    let nickname: String
-    let level: Int
+    let host: UserProfile
     
     var body: some View {
         Section {
-            informationRow(label: "주최자", data: nickname)
-            informationRow(label: "참여도", data: "Lv.\(level)")
+            row(title: "주최자") {
+                Text(host.nickname)
+            }
+            row(title: "참여도") {
+                Text("Lv. \(host.level)")
+            }
         }
         .listRowBackground(Color(.secondarySystemBackground))
     }
     
-    private func informationRow(label: String, data: String) -> some View {
+    private func row(title: String, content: () -> some View) -> some View {
         HStack {
-            Text(label)
-                .frame(width: 120, alignment: .leading)
-            Text(data)
+            Text(title)
+                .frame(width: 130, alignment: .leading)
+            content()
         }
     }
     

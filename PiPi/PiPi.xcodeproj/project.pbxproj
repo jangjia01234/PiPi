@@ -19,6 +19,7 @@
 		4411F9AD2C64728F00FF4845 /* ActivityDetailHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411F9AC2C64728F00FF4845 /* ActivityDetailHeaderView.swift */; };
 		4411F9B52C64A60900FF4845 /* ActivityInformationSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411F9B42C64A60900FF4845 /* ActivityInformationSectionView.swift */; };
 		4411F9B72C64A69D00FF4845 /* HostInformationSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411F9B62C64A69D00FF4845 /* HostInformationSectionView.swift */; };
+		441FBFD12C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FBFD02C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift */; };
 		444D2ECB2C5767970019A966 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2ECA2C5767970019A966 /* ContentView.swift */; };
 		444D2ECD2C5767980019A966 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444D2ECC2C5767980019A966 /* Assets.xcassets */; };
 		444D2ED02C5767980019A966 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444D2ECF2C5767980019A966 /* Preview Assets.xcassets */; };
@@ -45,7 +46,6 @@
 		8D83215D2C59655800C9ABA1 /* TicketDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D83215C2C59655800C9ABA1 /* TicketDetailView.swift */; };
 		8D83215F2C5967B900C9ABA1 /* TicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D83215E2C5967B900C9ABA1 /* TicketView.swift */; };
 		8D8321612C5968E400C9ABA1 /* TicketSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8321602C5968E400C9ABA1 /* TicketSegmentedControl.swift */; };
-		D32FE2602C5E57960048FDBD /* SelectedMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32FE25F2C5E57960048FDBD /* SelectedMapView.swift */; };
 		D3AE25262C5A5C28009BC64C /* iMessageConnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AE25252C5A5C28009BC64C /* iMessageConnect.swift */; };
 		D3FFBBEF2C58BB6A0042EAAD /* ActivityDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FFBBEE2C58BB6A0042EAAD /* ActivityDetailView.swift */; };
 /* End PBXBuildFile section */
@@ -63,6 +63,7 @@
 		4411F9AC2C64728F00FF4845 /* ActivityDetailHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailHeaderView.swift; sourceTree = "<group>"; };
 		4411F9B42C64A60900FF4845 /* ActivityInformationSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityInformationSectionView.swift; sourceTree = "<group>"; };
 		4411F9B62C64A69D00FF4845 /* HostInformationSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostInformationSectionView.swift; sourceTree = "<group>"; };
+		441FBFD02C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailViewModel.swift; sourceTree = "<group>"; };
 		444D2EC52C5767970019A966 /* PiPi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PiPi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		444D2EC82C5767970019A966 /* PiPiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPiApp.swift; sourceTree = "<group>"; };
 		444D2ECA2C5767970019A966 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -88,7 +89,6 @@
 		8D83215C2C59655800C9ABA1 /* TicketDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketDetailView.swift; sourceTree = "<group>"; };
 		8D83215E2C5967B900C9ABA1 /* TicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketView.swift; sourceTree = "<group>"; };
 		8D8321602C5968E400C9ABA1 /* TicketSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketSegmentedControl.swift; sourceTree = "<group>"; };
-		D32FE25F2C5E57960048FDBD /* SelectedMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedMapView.swift; sourceTree = "<group>"; };
 		D3AE25252C5A5C28009BC64C /* iMessageConnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageConnect.swift; sourceTree = "<group>"; };
 		D3FFBBEE2C58BB6A0042EAAD /* ActivityDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -124,6 +124,14 @@
 				24334D5D2C5E5AB300F1B66E /* ProfileView.swift */,
 			);
 			path = Profile;
+			sourceTree = "<group>";
+		};
+		441FBFCF2C6A0B1F00EEEFD9 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				441FBFD02C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		444D2EBC2C5767970019A966 = {
@@ -281,10 +289,10 @@
 		D3FFBBE42C58B95C0042EAAD /* ActivityDetail */ = {
 			isa = PBXGroup;
 			children = (
+				441FBFCF2C6A0B1F00EEEFD9 /* ViewModel */,
 				D3D2A8322C625CFD00DC291B /* Component */,
 				D3FFBBEE2C58BB6A0042EAAD /* ActivityDetailView.swift */,
 				D3AE25252C5A5C28009BC64C /* iMessageConnect.swift */,
-				D32FE25F2C5E57960048FDBD /* SelectedMapView.swift */,
 			);
 			path = ActivityDetail;
 			sourceTree = "<group>";
@@ -385,7 +393,6 @@
 				242DF4532C58C5CE006D8627 /* OnboardingPageView.swift in Sources */,
 				24334D5E2C5E5AB300F1B66E /* ProfileView.swift in Sources */,
 				444D2EF42C5B2CD80019A966 /* LocationSelectView.swift in Sources */,
-				D32FE2602C5E57960048FDBD /* SelectedMapView.swift in Sources */,
 				444D2ED82C576CE60019A966 /* Activity.swift in Sources */,
 				444D2EDF2C58B5A20019A966 /* HomeView.swift in Sources */,
 				4411F9B72C64A69D00FF4845 /* HostInformationSectionView.swift in Sources */,
@@ -397,6 +404,7 @@
 				444D2ECB2C5767970019A966 /* ContentView.swift in Sources */,
 				4411F9AA2C63605A00FF4845 /* ActivityDetailFooterView.swift in Sources */,
 				8D5B59DA2C6095330096B5AF /* Date+.swift in Sources */,
+				441FBFD12C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift in Sources */,
 				444D2EEE2C59DB510019A966 /* ActivityCreateView.swift in Sources */,
 				D3FFBBEF2C58BB6A0042EAAD /* ActivityDetailView.swift in Sources */,
 				8D8321592C5937CB00C9ABA1 /* TicketsView.swift in Sources */,
