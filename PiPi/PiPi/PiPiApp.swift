@@ -36,6 +36,11 @@ struct PiPiApp: App {
             } else {
                 ContentView(isShowingSheet: $isShowingSheet, activity: activity)
             }
+//            
+//            TicketsView(
+//                isShowingSheet: $isShowingSheet,
+//                activity: activity
+//            )
         }
     }
     

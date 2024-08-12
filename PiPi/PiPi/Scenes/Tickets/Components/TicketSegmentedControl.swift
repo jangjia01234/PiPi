@@ -38,12 +38,6 @@ struct TicketSegmentedControl: View {
         }
         .navigationTitle("내 티켓")
         .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            Button { dismiss() } label: {
-                Image(systemName: "house.fill")
-                    .foregroundColor(.gray)
-            }
-        }
         .padding(.top, 25)
         .padding(.bottom, 20)
     }

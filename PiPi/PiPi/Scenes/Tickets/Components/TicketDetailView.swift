@@ -6,78 +6,103 @@
 //
 
 import SwiftUI
-import FirebaseDatabase
 import MapKit
 
 struct TicketDetailView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var activities: [Activity] = []
-    @Binding var isParticipantList: Bool
     @Binding var isLocationVisible: Bool
-    
-    // TODO: 머지 후 주석 해제 (지도 코드 활용)
-    // @Namespace private var mapScope
-    // @State private var cameraPosition: MapCameraPosition = .defaultPosition
+    @State private var cameraPosition: MapCameraPosition = .defaultPosition
     
     var activity: Activity
     var userProfile: UserProfile
     
-    private typealias ActivityDatabaseResult = Result<[String: Activity], Error>
-    private typealias UserDatabaseResult = Result<UserProfile, Error>
+    @State private var hostProfile: UserProfile? // 호스트 프로필을 저장하는 상태 변수
+    @State private var isLoadingHostProfile: Bool = false // 데이터 로딩 상태
+    
     
     var body: some View {
         NavigationStack {
             VStack {
-                if let activity = activities.first {
-                    if isParticipantList {
-                        if activity.participantID.count > 0 {
-                            Form {
-                                // TODO: 닉네임 리스트 잘 가져오는지 확인 필요
-                                ForEach(activity.participantID, id: \.self) { participant in
-                                    if participant == userProfile.id {
-                                        Text(userProfile.nickname)
-                                    }
-                                }
-                            }
-                        } else {
-                            Text("참가자가 아직 없습니다.")
-                        }
-                    } else if isLocationVisible {
-                        // TODO: 머지 후 주석 해제 (지도 코드 활용)
-//                        Map(
-//                            position: $cameraPosition,
-//                            bounds: .init(
-//                                centerCoordinateBounds: .cameraBoundary,
-//                                minimumDistance: 500,
-//                                maximumDistance: 3000
-//                            ),
-//                            scope: mapScope
-//                        ) {
-//                            Marker("\(activity.title)", coordinate: CLLocationCoordinate2D(latitude: activity.coordinates.latitude, longitude: activity.coordinates.longitude))
-//                                .tint(.accent)
-//                        }
-                    } else {
-                        if activity.hostID == userProfile.id {
-                            Text("주최자 닉네임: \(userProfile.nickname)")
-                        }
-                    }
+                if isLocationVisible {
+                    mapView
+                } else {
+                    detailsView
                 }
             }
+            .foregroundColor(.black)
             .navigationBarTitle("상세정보", displayMode: .inline)
-            .navigationBarItems(trailing: Button("완료", action: {
-                dismiss()
-            }))
-        }
-        .foregroundColor(.black)
-        .onAppear {
-            FirebaseDataManager.shared.observeData(eventType: .value, dataType: .activity) { (result: Result<[String: Activity], Error>) in
-                switch result {
-                case .success(let result):
-                    dump(result)
-                case .failure(let error):
-                    dump(error)
+            .navigationBarItems(trailing: doneButton)
+            .onAppear {
+                if activity.hostID != userProfile.id {
+                    fetchHostProfile()
                 }
             }
+        }
+    }
+    
+    private var mapView: some View {
+        Map(
+            position: $cameraPosition,
+            bounds: .init(
+                centerCoordinateBounds: .cameraBoundary,
+                minimumDistance: 500,
+                maximumDistance: 3000
+            )
+        ) {
+            Marker("\(activity.title)", coordinate: CLLocationCoordinate2D(latitude: activity.coordinates.latitude, longitude: activity.coordinates.longitude))
+                .tint(.accent)
+        }
+    }
+    
+    private var detailsView: some View {
+        VStack {
+            Text("activity.hostID: \(activity.hostID)")
+            Text("userProfile.id: \(userProfile.id)")
+            
+            if activity.hostID == userProfile.id {
+                if activity.participantID.count > 0 {
+                    participantListView
+                } else {
+                    Text("참가자가 아직 없습니다.")
+                }
+            } else {
+                if let hostProfile = hostProfile {
+                    Text("주최자 닉네임: \(nicknameOrPlaceholder(hostProfile.nickname))")
+                }
+            }
+        }
+    }
+    
+    private var participantListView: some View {
+        Form {
+            ForEach(activity.participantID, id: \.self) { participant in
+                if participant == userProfile.id {
+                    Text(userProfile.nickname)
+                }
+            }
+        }
+    }
+    
+    private var doneButton: some View {
+        Button("완료") {
+            dismiss()
+        }
+    }
+    
+    private func nicknameOrPlaceholder(_ nickname: String) -> String {
+        return nickname.isEmpty ? "닉네임이 없습니다." : nickname
+    }
+    
+    private func fetchHostProfile() {
+        isLoadingHostProfile = true
+        FirebaseDataManager.shared.fetchData(type: .user, dataID: activity.hostID) { (result: Result<UserProfile, Error>) in
+            switch result {
+            case .success(let profile):
+                self.hostProfile = profile
+            case .failure(let error):
+                print("호스트 프로필 가져오기 실패: \(error)")
+            }
+            self.isLoadingHostProfile = false
         }
     }
 }

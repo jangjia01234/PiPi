@@ -123,6 +123,7 @@ extension Activity {
         case alcohol = "술"
         case sport = "운동"
         case study = "공부"
+        case etc = "기타"
     }
     
     enum State: String {
