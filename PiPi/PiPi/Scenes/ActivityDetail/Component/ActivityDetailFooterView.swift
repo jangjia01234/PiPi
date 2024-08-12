@@ -11,7 +11,7 @@ struct ActivityDetailFooterView: View {
     
     @Binding var showJoinAlertView: Bool
     @Binding var showMessageView: Bool
-    @Binding var disableJoinButton: Bool
+    @Binding var enableJoinButton: Bool
     
     var body: some View {
         HStack {
@@ -24,10 +24,10 @@ struct ActivityDetailFooterView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 50)
-            .background(disableJoinButton ? Color(.lightGray) : Color.accent)
+            .background(!enableJoinButton ? Color(.lightGray) : Color.accent)
             .tint(.white)
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .disabled(disableJoinButton)
+            .disabled(!enableJoinButton)
             
             Button(action: {
                 showMessageView = true
@@ -47,6 +47,6 @@ struct ActivityDetailFooterView: View {
     ActivityDetailFooterView(
         showJoinAlertView: .constant(false),
         showMessageView: .constant(false),
-        disableJoinButton: .constant(false)
+        enableJoinButton: .constant(false)
     )
 }

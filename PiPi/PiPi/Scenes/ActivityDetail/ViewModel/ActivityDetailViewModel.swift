@@ -11,6 +11,7 @@ final class ActivityDetailViewModel: ObservableObject {
     
     @Published var activity: Activity? = nil
     @Published var host: UserProfile? = nil
+    @Published var canJoin = false
     
     private let userID: String
     private let activityID: String
@@ -26,12 +27,6 @@ final class ActivityDetailViewModel: ObservableObject {
         
         observeActivityData()
         observeHostData()
-    }
-    
-    func canJoin() -> Bool {
-        guard let activity else { return false }
-        
-        return (activity.hostID != userID) && (activity.status == .open) && (!activity.participantID.contains(userID))
     }
     
     func addParticipant() {
@@ -54,10 +49,14 @@ final class ActivityDetailViewModel: ObservableObject {
             dataType: .activity,
             dataID: activityID
         ) { [weak self] (result: Result<Activity, Error>) in
+            guard let self else { return }
+            
             DispatchQueue.main.async {
                 switch result {
                 case .success(let fetchedActivity):
-                    self?.activity = fetchedActivity
+                    self.activity = fetchedActivity
+                    self.canJoin = (fetchedActivity.hostID != self.userID) && (fetchedActivity.status == .open) && (!fetchedActivity.participantID.contains(self.userID))
+                    dump(self.canJoin)
                 case .failure(let error):
                     dump(error)
                 }

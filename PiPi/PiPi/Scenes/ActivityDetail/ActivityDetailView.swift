@@ -21,7 +21,6 @@ struct ActivityDetailView: View {
     @State private var showMessageView = false
     @State private var showLocationView = false
     @State private var showActivityIndicator = true
-    @State private var disableJoinButton = false
     
     init(activityID: String, hostID: String) {
         _viewModel = StateObject(wrappedValue: ActivityDetailViewModel(activityID: activityID, hostID: hostID))
@@ -59,7 +58,7 @@ struct ActivityDetailView: View {
             ActivityDetailFooterView(
                 showJoinAlertView: $showJoinAlertView,
                 showMessageView: $showMessageView,
-                disableJoinButton: $disableJoinButton
+                enableJoinButton: $viewModel.canJoin
             )
             .padding(.horizontal)
             .alert(isPresented: $showJoinAlertView) {
@@ -73,19 +72,9 @@ struct ActivityDetailView: View {
                     primaryButton: firstButton, secondaryButton: secondButton
                 )
             }
-            .onChange(of: viewModel.activity) {
-                disableJoinButton = !viewModel.canJoin()
-            }
         } else {
             ProgressView()
         }
     }
     
-}
-
-#Preview {
-    ActivityDetailView(
-        activityID: "689C0C05-B7A0-4115-ADE0-97C8EF0C9920",
-        hostID: "5D9BCEA9-5BA2-4464-94FA-6F574DA1BBD4"
-    )
 }
