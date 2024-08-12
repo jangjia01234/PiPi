@@ -15,134 +15,69 @@ struct ActivityDetailView: View {
     
     @AppStorage("userID") private var userID: String?
     
-    let activityID: String
-    let hostID: String
-    
-    @State private var activity: Activity?
-    @State private var host: UserProfile?
+    @StateObject private var viewModel: ActivityDetailViewModel
     
     @State private var showJoinAlertView = false
     @State private var showMessageView = false
     @State private var showLocationView = false
     @State private var showActivityIndicator = true
     @State private var disableJoinButton = false
-    @State private var errorMessage: String?
+    
+    init(activityID: String, hostID: String) {
+        _viewModel = StateObject(wrappedValue: ActivityDetailViewModel(activityID: activityID, hostID: hostID))
+    }
     
     var body: some View {
-        if let activity,
-           let host {
+        if let activity = viewModel.activity,
+           let host = viewModel.host {
             VStack {
                 ActivityDetailHeaderView(
-                    activity: $activity
+                    activity: $viewModel.activity
                 )
                 .padding([.top, .horizontal])
                 
                 Form {
                     ActivityInformationSectionView(
-                        startDateTime: activity.startDateTime,
-                        estimatedTime: activity.estimatedTime,
-                        maxPeopleNumber: activity.maxPeopleNumber,
-                        currentPeopleNumber: activity.participantID.count,
-                        category: activity.category,
+                        activity: activity,
                         showLocationView: $showLocationView
                     )
-                    
-                    HostInformationSectionView(
-                        nickname: host.nickname,
-                        level: host.level
-                    )
+                    HostInformationSectionView(host: host)
                 }
                 .scrollContentBackground(.hidden)
                 .scrollBounceBehavior(.basedOnSize)
                 .sheet(isPresented: $showLocationView) {
-                    SelectedMapView(coordinate: activity.coordinates.toCLLocationCoordinate2D)
+                    if let activity = viewModel.activity {
+                        SelectedMapView(coordinate: activity.coordinates)
+                    }
                 }
                 .sheet(isPresented: $showMessageView) {
-                    iMessageConnect(email: host.email)
+                    if let host = viewModel.host {
+                        iMessageConnect(email: host.email)
+                    }
                 }
             }
-        }
-        ActivityDetailFooterView(
-            showJoinAlertView: $showJoinAlertView,
-            showMessageView: $showMessageView,
-            disableJoinButton: $disableJoinButton,
-            addParticipant: addParticipant
-        )
-        .padding(.horizontal)
-        .alert(isPresented: $showJoinAlertView) {
-            let firstButton = Alert.Button.cancel(Text("취소")) {}
-            let secondButton = Alert.Button.default(Text("신청")) {
-                addParticipant()
-            }
-            return Alert(
-                title: Text("신청하시겠습니까?"),
-                message: Text("신청이 완료된 이벤트는 티켓에 추가됩니다."),
-                primaryButton: firstButton, secondaryButton: secondButton
+            ActivityDetailFooterView(
+                showJoinAlertView: $showJoinAlertView,
+                showMessageView: $showMessageView,
+                disableJoinButton: $disableJoinButton
             )
-        }
-        .overlay {
+            .padding(.horizontal)
+            .alert(isPresented: $showJoinAlertView) {
+                let firstButton = Alert.Button.cancel(Text("취소")) {}
+                let secondButton = Alert.Button.default(Text("신청")) {
+                    viewModel.addParticipant()
+                }
+                return Alert(
+                    title: Text("신청하시겠습니까?"),
+                    message: Text("신청이 완료된 이벤트는 티켓에 추가됩니다."),
+                    primaryButton: firstButton, secondaryButton: secondButton
+                )
+            }
+            .onChange(of: viewModel.activity) {
+                disableJoinButton = !viewModel.canJoin()
+            }
+        } else {
             ProgressView()
-                .opacity(showActivityIndicator ? 1 : 0)
-        }
-        .onAppear {
-            fetchData()
-        }
-        .onChange(of: activity) {
-            showActivityIndicator = (activity == nil) || (host == nil)
-            disableJoinButton = !canJoin()
-        }
-        .onChange(of: host) {
-            showActivityIndicator = (activity == nil) || (host == nil)
-        }
-    }
-    
-    private func fetchData() {
-        FirebaseDataManager.shared.observeData(
-            eventType: .value,
-            dataType: .activity,
-            dataID: activityID
-        ) { (result: Result<Activity, Error>) in
-            switch result {
-            case .success(let fetchedActivity):
-                activity = fetchedActivity
-            case .failure(let error):
-                errorMessage = error.localizedDescription
-            }
-        }
-        
-        FirebaseDataManager.shared.fetchData(
-            type: .user,
-            dataID: hostID
-        ) { (result: Result<UserProfile, Error>) in
-            switch result {
-            case .success(let fetchedUser):
-                host = fetchedUser
-            case .failure(let error):
-                errorMessage = error.localizedDescription
-            }
-        }
-    }
-    
-    private func canJoin() -> Bool {
-        guard let activity,
-              let userID else { return false }
-        
-        return (activity.hostID != userID) && (activity.status == .open) && (!activity.participantID.contains(userID))
-    }
-    
-    private func addParticipant() {
-        guard let userID else { fatalError("userID missing!") }
-        guard let activity else { return }
-        
-        if !activity.participantID.contains(userID) {
-            let newActivity = activity.addingParticipant(userID)
-            
-            do {
-                try FirebaseDataManager.shared.updateData(newActivity, type: .activity, id: activityID)
-                disableJoinButton = true
-            } catch {
-                print("Error updating activity: \(error.localizedDescription)")
-            }
         }
     }
     
