@@ -12,7 +12,6 @@ struct OnboardingPageView: View {
     let imageName: String
     let title: String
     let subtitle: String
-    @Binding var navigateToProfile: Bool
     
     var body: some View {
         ZStack{
@@ -34,17 +33,7 @@ struct OnboardingPageView: View {
                 Spacer()
             }
             .padding(.bottom, 20)
-            
-            Button {
-                //버튼을 누르면 OnboardingProfileView로 이동
-                navigateToProfile = true
-            } label: {
-                Text("건너뛰기")
-                    .foregroundColor(.accent)
-                    .font(.system(size: 16))
-            }
-            .padding(.bottom, 720)
-            .padding(.leading, 280)
         }
-    } 
+    }
+    
 }

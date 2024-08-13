@@ -10,7 +10,6 @@
 		242DF4532C58C5CE006D8627 /* OnboardingPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242DF4522C58C5CE006D8627 /* OnboardingPageView.swift */; };
 		242DF4552C58C6C3006D8627 /* OnboardingTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242DF4542C58C6C3006D8627 /* OnboardingTabView.swift */; };
 		242DF4572C5902F2006D8627 /* OnboardingProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242DF4562C5902F2006D8627 /* OnboardingProfileView.swift */; };
-		242DF4592C5A08B4006D8627 /* OnboardingLastPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242DF4582C5A08B4006D8627 /* OnboardingLastPageView.swift */; };
 		24334D5E2C5E5AB300F1B66E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24334D5D2C5E5AB300F1B66E /* ProfileView.swift */; };
 		246339A62C5E60B900998095 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246339A52C5E60B900998095 /* UserProfile.swift */; };
 		4411F9A62C6291A800FF4845 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411F9A52C6291A800FF4845 /* Constants.swift */; };
@@ -21,6 +20,7 @@
 		4411F9B72C64A69D00FF4845 /* HostInformationSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411F9B62C64A69D00FF4845 /* HostInformationSectionView.swift */; };
 		441FBFD12C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FBFD02C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift */; };
 		441FBFD32C6A5C8B00EEEFD9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FBFD22C6A5C8B00EEEFD9 /* LocationManager.swift */; };
+		441FBFD52C6A9E5700EEEFD9 /* UserDataEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441FBFD42C6A9E5700EEEFD9 /* UserDataEntryView.swift */; };
 		444D2ECB2C5767970019A966 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2ECA2C5767970019A966 /* ContentView.swift */; };
 		444D2ECD2C5767980019A966 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444D2ECC2C5767980019A966 /* Assets.xcassets */; };
 		444D2ED02C5767980019A966 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444D2ECF2C5767980019A966 /* Preview Assets.xcassets */; };
@@ -56,7 +56,6 @@
 		242DF4522C58C5CE006D8627 /* OnboardingPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageView.swift; sourceTree = "<group>"; };
 		242DF4542C58C6C3006D8627 /* OnboardingTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTabView.swift; sourceTree = "<group>"; };
 		242DF4562C5902F2006D8627 /* OnboardingProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProfileView.swift; sourceTree = "<group>"; };
-		242DF4582C5A08B4006D8627 /* OnboardingLastPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingLastPageView.swift; sourceTree = "<group>"; };
 		24334D5D2C5E5AB300F1B66E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		246339A52C5E60B900998095 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		4411F9A52C6291A800FF4845 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -67,6 +66,7 @@
 		4411F9B62C64A69D00FF4845 /* HostInformationSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostInformationSectionView.swift; sourceTree = "<group>"; };
 		441FBFD02C6A0B2F00EEEFD9 /* ActivityDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailViewModel.swift; sourceTree = "<group>"; };
 		441FBFD22C6A5C8B00EEEFD9 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		441FBFD42C6A9E5700EEEFD9 /* UserDataEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataEntryView.swift; sourceTree = "<group>"; };
 		444D2EC52C5767970019A966 /* PiPi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PiPi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		444D2EC82C5767970019A966 /* PiPiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPiApp.swift; sourceTree = "<group>"; };
 		444D2ECA2C5767970019A966 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -116,8 +116,8 @@
 			children = (
 				242DF4542C58C6C3006D8627 /* OnboardingTabView.swift */,
 				242DF4522C58C5CE006D8627 /* OnboardingPageView.swift */,
-				242DF4582C5A08B4006D8627 /* OnboardingLastPageView.swift */,
 				242DF4562C5902F2006D8627 /* OnboardingProfileView.swift */,
+				441FBFD42C6A9E5700EEEFD9 /* UserDataEntryView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -385,6 +385,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44CB71362C5BA11B00CA5410 /* FirebaseDataManager.swift in Sources */,
+				441FBFD52C6A9E5700EEEFD9 /* UserDataEntryView.swift in Sources */,
 				246339A62C5E60B900998095 /* UserProfile.swift in Sources */,
 				444D2EF72C5B5AA20019A966 /* PiPiApp.swift in Sources */,
 				444D2EF62C5B2D5A0019A966 /* CLLocationCoordinate2D+.swift in Sources */,
@@ -394,7 +395,6 @@
 				242DF4572C5902F2006D8627 /* OnboardingProfileView.swift in Sources */,
 				242DF4552C58C6C3006D8627 /* OnboardingTabView.swift in Sources */,
 				444D2EF22C5B2BC60019A966 /* Coordinates.swift in Sources */,
-				242DF4592C5A08B4006D8627 /* OnboardingLastPageView.swift in Sources */,
 				242DF4532C58C5CE006D8627 /* OnboardingPageView.swift in Sources */,
 				24334D5E2C5E5AB300F1B66E /* ProfileView.swift in Sources */,
 				444D2EF42C5B2CD80019A966 /* LocationSelectView.swift in Sources */,
