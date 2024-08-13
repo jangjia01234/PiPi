@@ -31,16 +31,11 @@ struct PiPiApp: App {
     
     var body: some Scene {
         WindowGroup {
-//            if userID.isEmpty {
-//                OnboardingTabView()
-//            } else {
+            if userID.isEmpty {
+                OnboardingTabView()
+            } else {
                 ContentView(isShowingSheet: $isShowingSheet, activity: activity)
-//            }
-//            
-//            TicketsView(
-//                isShowingSheet: $isShowingSheet,
-//                activity: activity
-//            )
+            }
         }
     }
     

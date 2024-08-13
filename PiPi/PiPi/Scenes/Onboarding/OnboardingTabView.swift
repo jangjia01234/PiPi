@@ -23,7 +23,7 @@ struct OnboardingTabView: View {
                 Button {
                     moveToProfile = true
                 } label: {
-                    Text("건너뛰기")
+                    Text("시작하기")
                         .foregroundColor(.accent)
                         .font(.callout)
                 }
@@ -73,7 +73,7 @@ private extension OnboardingTabView {
             ),
             OnboardingInfo(
                 imageName: "onboarding4",
-                title: "QR로 활동을\n 인증해요",
+                title: "핸드폰을 가까이 대서\n활동을 인증해요",
                 subtitle: "직접 만나 활동을 인증하고 우리 사이 원 만들기"
             )
         ]
