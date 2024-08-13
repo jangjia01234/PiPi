@@ -11,16 +11,12 @@ import FirebaseDatabase
 
 struct TicketView: View {
     @AppStorage("userID") var userID: String?
-    @State private var nickname: String = ""
+    @State private var hostNickname: String = ""
     @State private var showTicketDetailView: Bool = false
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
     @Binding var selectedItem: TicketType
-    
-    // MARK: - 🔥
-    // (State 선언부에서) 확인 및 네이밍 개선 필요
     @Binding var isShowingSheet: Bool
-    
     @Binding var authSuccess: Bool
     
     private let databaseManager = FirebaseDataManager.shared
@@ -53,7 +49,6 @@ struct TicketView: View {
                     userProfile: userProfile
                 )
             }
-            // MARK: - PeerView 시트 표시
             .sheet(isPresented: $isPresentingPeerAuthView) {
                 PeerAuthView(
                     selectedItem: $selectedItem,
@@ -64,11 +59,7 @@ struct TicketView: View {
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            if let userID = userID {
-                loadProfile(userID: userID)
-            } else {
-                print("User ID is not set")
-            }
+            loadHostProfile(hostID: activity.hostID)
         }
     }
 }
@@ -77,7 +68,6 @@ fileprivate extension TicketView {
     func header() -> some View {
         VStack {
             HStack(alignment: .top) {
-                // MARK: - 심볼
                 // 🔥 TODO: 조건에 따라 심볼 바꿔줘야됨
                 symbolItem(name: "figure.run.circle.fill", font: .title2, color: .white)
                 textItem(content: activity.title, font: .title2, weight: .bold)
@@ -97,9 +87,9 @@ fileprivate extension TicketView {
             HStack {
                 VStack(alignment: .leading) {
                     if selectedItem == .participant {
-                        ticketInfoItem(align: .leading, title: "참가자", content:  "리스트", isText: false)
+                        ticketInfoItem(align: .leading, title: "주최자", content:  "\(hostNickname)")
                     } else {
-                        ticketInfoItem(align: .leading, title: "주최자", content:  "\(nickname)")
+                        ticketInfoItem(align: .leading, title: "참가자", content:  "리스트", isText: false)
                     }
                 }
                 
@@ -122,8 +112,6 @@ fileprivate extension TicketView {
             
             Spacer()
             
-            // MARK: - 인증 버튼
-            // 🔥 FIXME: 인증 상태 반영 필요
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .frame(width: 60, height: 60)
@@ -131,7 +119,6 @@ fileprivate extension TicketView {
                 Button(action: {
                     isPresentingPeerAuthView = true
                 }, label: {
-                    // 인증되면 색상O / 안되면 그레이
                     symbolItem(name: "link", font: .title, color: .gray)
                 })
             }
@@ -184,16 +171,16 @@ fileprivate extension TicketView {
         }
     }
     
-    private func loadProfile(userID: String) {
-        databaseManager.fetchData(type: .user, dataID: userID) { (result: Result<UserProfile, Error>) in
+    private func loadHostProfile(hostID: String) {
+        databaseManager.fetchData(type: .user, dataID: hostID) { (result: Result<UserProfile, Error>) in
             switch result {
             case .success(let profile):
                 DispatchQueue.main.async {
-                    self.nickname = profile.nickname
+                    self.hostNickname = profile.nickname
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
-                    print("Error fetching profile: \(error.localizedDescription)")
+                    print("Error fetching host profile: \(error.localizedDescription)")
                 }
             }
         }
