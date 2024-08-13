@@ -133,4 +133,15 @@ extension Activity {
         case closed = "모집완료"
     }
     
+    static let sampleData: Self = .init(
+        hostID: UUID().uuidString,
+        title: "",
+        description: "",
+        maxPeopleNumber: 0,
+        category: .alcohol,
+        startDateTime: Date(),
+        estimatedTime: 1,
+        coordinates: Coordinates(latitude: 37.5665, longitude: 126.9780)
+    )
+    
 }

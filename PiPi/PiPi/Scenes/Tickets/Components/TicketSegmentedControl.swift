@@ -8,47 +8,47 @@
 import SwiftUI
 
 struct TicketSegmentedControl: View {
-    @Environment(\.dismiss) var dismiss
     @Binding var selectedItem: TicketType
     
     var body: some View {
-        ZStack {
+        VStack {
             HStack {
                 ForEach(TicketType.allCases, id: \.self) { item in
-                    VStack {
-                        Text(item.rawValue)
-                            .frame(maxWidth: .infinity/4, minHeight: 25)
-                            .foregroundColor(selectedItem == item ? .black : .gray)
-                            .fontWeight(selectedItem == item ? .semibold : .regular)
-                        
-                        if selectedItem == item {
-                            Rectangle()
-                                .foregroundColor(.black)
-                                .frame(width: 84, height: 3)
-                        }
-                    }
-                    .onTapGesture {
-                        self.selectedItem = item
-                    }
+                    SegmentedControlItem(
+                        item: item,
+                        isSelected: selectedItem == item,
+                        action: { self.selectedItem = item }
+                    )
                 }
             }
+            .padding(.top, 25)
             
             Divider()
-                .padding(.top, 35)
+                .padding(.bottom, 10)
         }
         .navigationTitle("내 티켓")
         .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            Button { dismiss() } label: {
-                Image(systemName: "house.fill")
-                    .foregroundColor(.gray)
-            }
-        }
-        .padding(.top, 25)
-        .padding(.bottom, 20)
     }
 }
 
-#Preview {
-    TicketSegmentedControl(selectedItem: .constant(.participant))
+private struct SegmentedControlItem: View {
+    let item: TicketType
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        VStack {
+            Text(item.rawValue)
+                .frame(maxWidth: .infinity / 4, minHeight: 25)
+                .foregroundColor(isSelected ? .black : .gray)
+                .fontWeight(isSelected ? .semibold : .regular)
+            
+            if isSelected {
+                Rectangle()
+                    .foregroundColor(.black)
+                    .frame(width: 84, height: 3)
+            }
+        }
+        .onTapGesture { action() }
+    }
 }

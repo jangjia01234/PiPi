@@ -28,12 +28,6 @@ struct ProfileView: View {
                         .font(.system(size: 28))
                         .padding(. leading, 23)
                     Spacer()
-                    
-                    NavigationLink(destination: HomeView()) {
-                        Image(systemName: "house.fill")
-                            .foregroundColor(.gray)
-                            .padding(.trailing, 23)
-                    }
                 }
                 .padding(.bottom, 20)
                 

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Binding var isShowingSheet: Bool
+    var activity: Activity
     
     var body: some View {
         TabView {
@@ -17,7 +19,11 @@ struct ContentView: View {
                     Text("홈")
                 }
             
-            // TODO: TicketsView 추가
+            TicketsView(isShowingSheet: $isShowingSheet, activity: activity)
+                .tabItem {
+                    Image(systemName: "ticket.fill")
+                    Text("내 티켓")
+                }
             
             ProfileView()
                 .tabItem {
@@ -31,5 +37,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(isShowingSheet: .constant(false), activity: Activity.sampleData)
 }
