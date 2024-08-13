@@ -18,7 +18,7 @@ struct TicketView: View {
     // MARK: - 🔥
     // (State 선언부에서) 확인 및 네이밍 개선 필요
     @Binding var isShowingSheet: Bool
-
+    
     @Binding var authSuccess: Bool
     
     var activity: Activity
@@ -74,7 +74,7 @@ fileprivate extension TicketView {
                 Spacer()
                 
                 VStack(alignment: .trailing) {
-                    ticketInfoItem(align: .trailing, title: "날짜", content: "\(activity.startDateTime.toString())")
+                    ticketInfoItem(align: .trailing, title: "날짜", content: "\(activity.startDateTime.toString().split(separator: "\n").first ?? "")")
                 }
             }
         }
@@ -98,10 +98,8 @@ fileprivate extension TicketView {
     
     func authenticationSection() -> some View {
         HStack(alignment: .bottom) {
-            // MARK: - 소요시간
-            // 🔥 FIXME: 시작 시간은 merge하고 반영
             VStack(alignment: .leading) {
-                ticketInfoItem(title: "시작시간", content: "\(activity.startDateTime.toString())시간")
+                ticketInfoItem(title: "시작시간", content: "\(activity.startDateTime.toString().split(separator: "\n").last ?? "")")
                     .padding(.bottom, 10)
                 
                 ticketInfoItem(title: "소요시간", content: "\(activity.estimatedTime ?? 0)시간")
@@ -163,6 +161,7 @@ fileprivate extension TicketView {
             return
         case "위치 확인":
             showTicketDetailView = true
+            isLocationVisible = true
             return
         default:
             showTicketDetailView = true

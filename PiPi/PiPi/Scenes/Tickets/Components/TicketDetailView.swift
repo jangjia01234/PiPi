@@ -22,6 +22,7 @@ struct TicketDetailView: View {
     var body: some View {
         NavigationStack {
             VStack {
+                // FIXME: 위치 확인 문제 해결 필요
                 if isLocationVisible {
                     mapView
                 } else {
@@ -81,6 +82,7 @@ struct TicketDetailView: View {
     
     private var doneButton: some View {
         Button("완료") {
+            isLocationVisible = false
             dismiss()
         }
     }
