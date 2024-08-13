@@ -82,10 +82,13 @@ struct TicketsView: View {
     }
     
     private func fetchActivities() {
-        FirebaseDataManager.shared.fetchData(type: .activity) { (result: ActivityDatabaseResult) in
+        FirebaseDataManager.shared.observeData(
+            eventType: .value,
+            dataType: .activity
+        ) { (result: ActivityDatabaseResult) in
             switch result {
             case .success(let result):
-                activities = Array(result.values)
+                self.activities = Array(result.values)
             case .failure(let error):
                 dump(error)
             }
