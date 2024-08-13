@@ -11,14 +11,14 @@ struct UserProfile: Identifiable, Codable {
     
     let id: String
     let nickname: String
-    let affiliation: String
+    let affiliation: Affiliation
     let email: String
     let level: Int
     
     init(
         id: String = UUID().uuidString,
         nickname: String,
-        affiliation: String,
+        affiliation: Affiliation,
         email: String,
         level: Int = 1
     ) {

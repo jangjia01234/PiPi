@@ -11,7 +11,7 @@ import FirebaseDatabase
 struct ProfileView: View {
     
     @State private var nickname: String = ""
-    @State private var affiliation: String = ""
+    @State private var affiliation: Affiliation = .postech
     @State private var email: String = ""
     @State private var level: Int = 1
     @State private var isEditing: Bool = false
@@ -80,7 +80,7 @@ struct ProfileView: View {
                             HStack {
                                 Text("소속")
                                     .frame(width: 60, alignment: .leading)
-                                Text(affiliation)
+                                Text(affiliation.rawValue)
                                     .padding(.leading, 10)
                                 Spacer()
                             }
