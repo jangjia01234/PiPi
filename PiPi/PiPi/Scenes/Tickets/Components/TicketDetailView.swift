@@ -17,12 +17,13 @@ struct TicketDetailView: View {
     var userProfile: UserProfile
     
     @State private var hostProfile: UserProfile?
+    @State private var participantProfiles: [UserProfile] = []
     @State private var isLoadingHostProfile: Bool = false
+    @State private var isLoadingParticipants: Bool = true
     
     var body: some View {
         NavigationStack {
             VStack {
-                // FIXME: 위치 확인 문제 해결 필요
                 if isLocationVisible {
                     mapView
                 } else {
@@ -36,6 +37,7 @@ struct TicketDetailView: View {
                 if activity.hostID != userProfile.id {
                     fetchHostProfile()
                 }
+                fetchParticipantProfiles()
             }
         }
     }
@@ -56,26 +58,22 @@ struct TicketDetailView: View {
     
     private var detailsView: some View {
         VStack {
-            if activity.hostID == userProfile.id {
-                if activity.participantID.count > 0 {
-                    participantListView
-                } else {
-                    Text("참가자가 아직 없습니다.")
-                }
+            if isLoadingParticipants {
+                Text("참가자 정보를 불러오는 중...")
+                    .foregroundColor(.gray)
+            } else if participantProfiles.isEmpty {
+                Text("참가자가 아직 없습니다.")
+                    .foregroundColor(.gray)
             } else {
-                if let hostProfile = hostProfile {
-                    Text("주최자 닉네임: \(nicknameOrPlaceholder(hostProfile.nickname))")
-                }
+                participantListView
             }
         }
     }
     
     private var participantListView: some View {
         Form {
-            ForEach(activity.participantID, id: \.self) { participant in
-                if participant == userProfile.id {
-                    Text(userProfile.nickname)
-                }
+            ForEach(participantProfiles, id: \.id) { participant in
+                Text(participant.nickname)
             }
         }
     }
@@ -101,6 +99,36 @@ struct TicketDetailView: View {
                 print("호스트 프로필 가져오기 실패: \(error)")
             }
             self.isLoadingHostProfile = false
+        }
+    }
+    
+    private func fetchParticipantProfiles() {
+        isLoadingParticipants = true
+        let participantIDs = activity.participantID
+        
+        let group = DispatchGroup()
+        var fetchedProfiles: [UserProfile] = []
+        
+        for participantID in participantIDs {
+            group.enter()
+            FirebaseDataManager.shared.observeData(
+                eventType: .value,
+                dataType: .user,
+                dataID: participantID
+            ) { (result: Result<UserProfile, Error>) in
+                switch result {
+                case .success(let profile):
+                    fetchedProfiles.append(profile)
+                case .failure(let error):
+                    print("참가자 프로필 가져오기 실패: \(error)")
+                }
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            self.participantProfiles = fetchedProfiles
+            self.isLoadingParticipants = false
         }
     }
 }
