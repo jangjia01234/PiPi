@@ -13,7 +13,7 @@ struct TicketsView: View {
     @State private var userProfile: UserProfile = UserProfile(
         id: "6F0457BD-1AC9-4368-926A-634853569179",
         nickname: "",
-        affiliation: "",
+        affiliation: .postech,
         email: "",
         level: 1
     )
