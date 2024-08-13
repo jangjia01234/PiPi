@@ -10,6 +10,8 @@ import Firebase
 import FirebaseDatabase
 
 struct TicketView: View {
+    @AppStorage("userID") var userID: String?
+    @State private var nickname: String = ""
     @State private var showTicketDetailView: Bool = false
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
@@ -20,6 +22,8 @@ struct TicketView: View {
     @Binding var isShowingSheet: Bool
     
     @Binding var authSuccess: Bool
+    
+    private let databaseManager = FirebaseDataManager.shared
     
     var activity: Activity
     var userProfile: UserProfile
@@ -59,6 +63,13 @@ struct TicketView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            if let userID = userID {
+                loadProfile(userID: userID)
+            } else {
+                print("User ID is not set")
+            }
+        }
     }
 }
 
@@ -85,7 +96,11 @@ fileprivate extension TicketView {
         VStack(alignment: .leading) {
             HStack {
                 VStack(alignment: .leading) {
-                    ticketInfoItem(align: .leading, title: selectedItem == .participant ? "주최자" : "참가자", content: selectedItem == .organizer ? "리스트" : "닉네임", isText: false)
+                    if selectedItem == .participant {
+                        ticketInfoItem(align: .leading, title: "참가자", content:  "리스트", isText: false)
+                    } else {
+                        ticketInfoItem(align: .leading, title: "주최자", content:  "\(nickname)")
+                    }
                 }
                 
                 Spacer()
@@ -166,6 +181,21 @@ fileprivate extension TicketView {
         default:
             showTicketDetailView = true
             break
+        }
+    }
+    
+    private func loadProfile(userID: String) {
+        databaseManager.fetchData(type: .user, dataID: userID) { (result: Result<UserProfile, Error>) in
+            switch result {
+            case .success(let profile):
+                DispatchQueue.main.async {
+                    self.nickname = profile.nickname
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    print("Error fetching profile: \(error.localizedDescription)")
+                }
+            }
         }
     }
 }
