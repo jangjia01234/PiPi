@@ -5,41 +5,39 @@
 //  Created by 정상윤 on 8/1/24.
 //
 
-import Foundation
 import Firebase
 import FirebaseDatabase
 
-final class FirebaseDataManager {
+final class FirebaseDataManager<T: FirebaseData> {
     
-    static let shared = FirebaseDataManager()
+    private let ref = Database.database(url: "https://koatmilk-9a443-default-rtdb.firebaseio.com").reference()
+    private let key: String
     
-    private let databaseURL = "https://koatmilk-9a443-default-rtdb.firebaseio.com"
-    
-    private var ref: DatabaseReference {
-        Database.database(url: databaseURL).reference()
+    init() {
+        key = (T.self == Activity.self) ? "activities" : "users"
     }
     
-    private init() {}
+    deinit {
+        ref.removeAllObservers()
+    }
     
-    func addData<T: Encodable>(
+    func addData(
         _ data: T,
-        type: DataType,
         id: String
     ) throws {
         let data = try JSONEncoder().encode(data)
         let jsonString = try JSONSerialization.jsonObject(with: data)
         
-        ref.child(type.key)
+        ref.child(key)
             .child(id)
             .setValue(jsonString)
     }
     
-    func fetchData<T: Decodable>(
-        type: DataType,
+    func fetchData(
         dataID: String? = nil,
         completion: @escaping (Result<T, Error>) -> Void
     ) {
-        var databaseRef = ref.child(type.key)
+        var databaseRef = ref.child(key)
         if let dataID {
             databaseRef = databaseRef.child(dataID)
         }
@@ -51,13 +49,12 @@ final class FirebaseDataManager {
         }
     }
     
-    func observeData<T: Decodable>(
+    func observeData(
         eventType: DataEventType,
-        dataType: DataType,
         dataID: String? = nil,
         completion: @escaping (Result<T, Error>) -> Void
     ) {
-        var databaseRef = ref.child(dataType.key)
+        var databaseRef = ref.child(key)
         if let dataID {
             databaseRef = databaseRef.child(dataID)
         }
@@ -69,16 +66,15 @@ final class FirebaseDataManager {
         }
     }
     
-    func updateData<T: Encodable>(
+    func updateData(
         _ data: T,
-        type: DataType,
         id: String
     ) throws {
         let data = try JSONEncoder().encode(data)
         let jsonObject = try JSONSerialization.jsonObject(with: data)
         
         if let json = jsonObject as? [String: Any] {
-            ref.child(type.key)
+            ref.child(key)
                 .child(id)
                 .updateChildValues(json)
         } else {
@@ -86,8 +82,8 @@ final class FirebaseDataManager {
         }
     }
     
-    func removeObserver(dataType: DataType, dataID: String? = nil) {
-        var databaseRef = ref.child(dataType.key)
+    func removeObserver(dataID: String? = nil) {
+        var databaseRef = ref.child(key)
         if let dataID {
             databaseRef = databaseRef.child(dataID)
         }
@@ -95,7 +91,7 @@ final class FirebaseDataManager {
         databaseRef.removeAllObservers()
     }
     
-    private func handleSnapshot<T: Decodable>(
+    private func handleSnapshot(
         snapshot: DataSnapshot,
         dataID: String?
     ) -> Result<T, Error> {
@@ -111,7 +107,7 @@ final class FirebaseDataManager {
         }
     }
     
-    private func decode<T: Decodable>(id: String?, value: Any?) throws -> T {
+    private func decode(id: String?, value: Any?) throws -> T {
         guard let object = value as? [String: Any] else {
             throw FirebaseError.dataNotFound
         }
@@ -124,20 +120,6 @@ final class FirebaseDataManager {
 }
 
 extension FirebaseDataManager {
-    
-    enum DataType {
-        case activity
-        case user
-        
-        var key: String {
-            switch self {
-            case .activity:
-                "activities"
-            case .user:
-                "users"
-            }
-        }
-    }
     
     enum FirebaseError: Error {
         case dataNotFound

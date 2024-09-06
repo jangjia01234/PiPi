@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct User: Identifiable, Equatable, Codable {
+struct User: Identifiable, Equatable, FirebaseData {
     
     let id: String
     let nickname: String

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Activity: Identifiable {
+struct Activity: Identifiable, FirebaseData {
     
     let id: String
     let hostEmail: String
@@ -20,6 +20,10 @@ struct Activity: Identifiable {
     let estimatedTime: Int?
     let coordinates: Coordinates
     let authentication: [String: Bool]
+    
+    var status: State {
+        (participantEmail.count + 1 < maxPeopleNumber) ? .open : .closed
+    }
     
     init(
         id: String = UUID().uuidString,
@@ -79,10 +83,6 @@ struct Activity: Identifiable {
         )
     }
     
-    var status: State {
-        (participantEmail.count + 1 < maxPeopleNumber) ? .open : .closed
-    }
-    
 }
 
 extension Activity: Equatable, Hashable {
@@ -106,7 +106,7 @@ extension Activity: Equatable, Hashable {
     
 }
 
-extension Activity: Codable {
+extension Activity {
     
     enum CodingKeys: String, CodingKey {
         case id
