@@ -88,27 +88,27 @@ struct TicketDetailView: View {
         Form {
             ForEach(participantProfiles, id: \.id) { participant in
                 HStack {
-                             Text(participant.nickname)
-                             
-                             Spacer()
-                             
-
-                             Button(action: {
-                                 if MFMessageComposeViewController.canSendText() {
-                                     participantEmail = participant.email
-                                     showMessageView = true
-                                 } else {
-                                     print("iMessage를 사용할 수 없습니다.")
-                                 }
-                             }) {
-                                 Image(systemName: "ellipsis.message")
-                                     .foregroundColor(.blue)
-                             }
-                         }
-                     }
-                 }
-             }
-             
+                    Text(participant.nickname)
+                    
+                    Spacer()
+                    
+                    //🔔아이메세지 버튼 추가
+                    Button(action: {
+                        if MFMessageComposeViewController.canSendText() {
+                            participantEmail = participant.email
+                            showMessageView = true
+                        } else {
+                            print("iMessage를 사용할 수 없습니다.")
+                        }
+                    }) {
+                        Image(systemName: "ellipsis.message")
+                            .foregroundColor(.accentColor)
+                    }
+                }
+            }
+        }
+    }
+    
     
     private var doneButton: some View {
         Button("완료") {
