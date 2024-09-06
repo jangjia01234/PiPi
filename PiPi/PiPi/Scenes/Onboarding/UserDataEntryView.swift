@@ -37,10 +37,10 @@ struct UserDataEntryView: View {
                 .onChange(of: password) { newValue in
                     passwordValid = validatePassword(newValue)
                 }
-            Text(passwordValid ? "* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다." : "비밀번호가 조건에 맞지 않습니다.")
+            Text(password.isEmpty ? "* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다." : (passwordValid ? "* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다." : "비밀번호가 조건에 맞지 않습니다."))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.system(size: 12))
-                .foregroundColor(passwordValid ? .gray : .red)
+                .foregroundColor(password.isEmpty || passwordValid ? .gray : .red)
                 .padding(.leading, 10)
         }
     }
@@ -96,8 +96,8 @@ struct UserDataEntryView: View {
     
     private func validatePassword(_ password: String) -> Bool {
         if password.isEmpty {
-                return true
-            }
+               return false
+           }
         
         let passwordRegEx = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$"
         let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)

@@ -67,10 +67,6 @@ struct OnboardingProfileView: View {
     }
     
     private func validatePassword(_ password: String) -> Bool {
-        if password.isEmpty {
-                return true
-            }
-        
         let passwordRegEx = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$"
         let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return predicate.evaluate(with: password)
