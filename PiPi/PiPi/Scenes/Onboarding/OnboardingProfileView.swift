@@ -47,7 +47,7 @@ struct OnboardingProfileView: View {
             }
             .frame(maxHeight: .infinity)
             .padding()
-            .onChange(of: [nickname, email]) {
+            .onChange(of: [nickname, password, email]) {
                 validateForm()
             }
             .toolbar {
@@ -63,7 +63,17 @@ struct OnboardingProfileView: View {
     }
     
     private func validateForm() {
-        isButtonEnabled = !nickname.isEmpty && !email.isEmpty
+        isButtonEnabled = !nickname.isEmpty && !email.isEmpty && validatePassword(password)
+    }
+    
+    private func validatePassword(_ password: String) -> Bool {
+        if password.isEmpty {
+                return true
+            }
+        
+        let passwordRegEx = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$"
+        let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
+        return predicate.evaluate(with: password)
     }
     
     private func saveProfile() {

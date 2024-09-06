@@ -10,6 +10,7 @@ import SwiftUI
 struct UserDataEntryView: View {
     
     @State private var showEmailTip = false
+    @State private var passwordValid = true
     
     @Binding var nickname: String
     @Binding var password: String
@@ -33,10 +34,14 @@ struct UserDataEntryView: View {
             TextField("비밀번호를 입력해주세요.", text: $password)
                 .setAppearance()
                 .keyboardType(.default)
-            Text("* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다.")
+                .onChange(of: password) { newValue in
+                    passwordValid = validatePassword(newValue)
+                }
+            Text(passwordValid ? "* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다." : "비밀번호가 조건에 맞지 않습니다.")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.system(size: 12))
-                .foregroundColor(.gray)
+                .foregroundColor(passwordValid ? .gray : .red)
+                .padding(.leading, 10)
         }
     }
     
@@ -89,6 +94,15 @@ struct UserDataEntryView: View {
         }
     }
     
+    private func validatePassword(_ password: String) -> Bool {
+        if password.isEmpty {
+                return true
+            }
+        
+        let passwordRegEx = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$"
+        let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
+        return predicate.evaluate(with: password)
+    }
 }
 
 fileprivate extension TextField {
