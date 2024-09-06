@@ -8,13 +8,16 @@
 import SwiftUI
 import Firebase
 import FirebaseDatabase
+import MessageUI
 
 struct TicketView: View {
     @AppStorage("userID") var userID: String?
     @State private var hostNickname: String = ""
+    @State private var hostEmail: String? = ""
     @State private var showTicketDetailView: Bool = false
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
+    @State private var showMessageView = false
     @Binding var selectedItem: TicketType
     @Binding var isShowingSheet: Bool
     @Binding var authSuccess: Bool
@@ -56,6 +59,13 @@ struct TicketView: View {
                     activity: activity
                 )
             }
+            
+            //🔔아이메세지 전송 Sheet 추가
+            .sheet(isPresented: $showMessageView) {
+                if let email = hostEmail {
+                    iMessageConnect(email: email)
+                }
+            }
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
@@ -87,7 +97,28 @@ fileprivate extension TicketView {
             HStack {
                 VStack(alignment: .leading) {
                     if selectedItem == .participant {
-                        ticketInfoItem(align: .leading, title: "주최자", content:  "\(hostNickname)")
+                        HStack {
+                            ticketInfoItem(align: .leading, title: "주최자", content: "\(hostNickname)")
+                            
+                            // 🔔 주최자 옆에 메시지 전송 버튼 추가
+                            Button(action: {
+                                if MFMessageComposeViewController.canSendText() {
+                                    if let email = hostEmail {
+                                        showMessageView = true
+                                    } else {
+                                        print("Host email is not available.")
+                                    }
+                                } else {
+                                    print("iMessage를 사용할 수 없습니다.")
+                                }
+                            })                            {
+                                Image(systemName: "ellipsis.message")
+                                    .foregroundColor(.white)
+                                    .frame(height: 30)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(selectedItem == .participant ? .accentColor : Color("SubColor"))
+                        }
                     } else {
                         ticketInfoItem(align: .leading, title: "참가자", content:  "리스트", isText: false)
                     }
@@ -177,6 +208,7 @@ fileprivate extension TicketView {
             case .success(let profile):
                 DispatchQueue.main.async {
                     self.hostNickname = profile.nickname
+                    self.hostEmail = profile.email
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
