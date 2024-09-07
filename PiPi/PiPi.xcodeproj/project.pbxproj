@@ -11,7 +11,7 @@
 		242DF4552C58C6C3006D8627 /* OnboardingTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242DF4542C58C6C3006D8627 /* OnboardingTabView.swift */; };
 		242DF4572C5902F2006D8627 /* OnboardingProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242DF4562C5902F2006D8627 /* OnboardingProfileView.swift */; };
 		24334D5E2C5E5AB300F1B66E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24334D5D2C5E5AB300F1B66E /* ProfileView.swift */; };
-		246339A62C5E60B900998095 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246339A52C5E60B900998095 /* UserProfile.swift */; };
+		246339A62C5E60B900998095 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246339A52C5E60B900998095 /* User.swift */; };
 		4411F9A62C6291A800FF4845 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411F9A52C6291A800FF4845 /* Constants.swift */; };
 		4411F9A82C634FDB00FF4845 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4411F9A72C634FDB00FF4845 /* LaunchScreen.storyboard */; };
 		4411F9AA2C63605A00FF4845 /* ActivityDetailFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411F9A92C63605A00FF4845 /* ActivityDetailFooterView.swift */; };
@@ -36,6 +36,7 @@
 		444D2EF72C5B5AA20019A966 /* PiPiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444D2EC82C5767970019A966 /* PiPiApp.swift */; };
 		44CB71332C5B793A00CA5410 /* ActivityInformationFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CB71322C5B793A00CA5410 /* ActivityInformationFormView.swift */; };
 		44CB71362C5BA11B00CA5410 /* FirebaseDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CB71352C5BA11B00CA5410 /* FirebaseDataManager.swift */; };
+		44DE23392C8B5E8500579310 /* FirebaseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DE23382C8B5E8500579310 /* FirebaseData.swift */; };
 		8D451A092C5A8E89005EA90A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D451A082C5A8E89005EA90A /* GoogleService-Info.plist */; };
 		8D451A0C2C5A8F38005EA90A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8D451A0B2C5A8F38005EA90A /* FirebaseAnalytics */; };
 		8D451A0E2C5A8F38005EA90A /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 8D451A0D2C5A8F38005EA90A /* FirebaseDatabase */; };
@@ -57,7 +58,7 @@
 		242DF4542C58C6C3006D8627 /* OnboardingTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTabView.swift; sourceTree = "<group>"; };
 		242DF4562C5902F2006D8627 /* OnboardingProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProfileView.swift; sourceTree = "<group>"; };
 		24334D5D2C5E5AB300F1B66E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		246339A52C5E60B900998095 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		246339A52C5E60B900998095 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		4411F9A52C6291A800FF4845 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		4411F9A72C634FDB00FF4845 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4411F9A92C63605A00FF4845 /* ActivityDetailFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailFooterView.swift; sourceTree = "<group>"; };
@@ -83,6 +84,7 @@
 		444D2EF52C5B2D5A0019A966 /* CLLocationCoordinate2D+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+.swift"; sourceTree = "<group>"; };
 		44CB71322C5B793A00CA5410 /* ActivityInformationFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityInformationFormView.swift; sourceTree = "<group>"; };
 		44CB71352C5BA11B00CA5410 /* FirebaseDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDataManager.swift; sourceTree = "<group>"; };
+		44DE23382C8B5E8500579310 /* FirebaseData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseData.swift; sourceTree = "<group>"; };
 		8D451A082C5A8E89005EA90A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8D451A112C5A9BEE005EA90A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D5B59D92C6095330096B5AF /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
@@ -184,7 +186,7 @@
 			children = (
 				444D2ED72C576CE60019A966 /* Activity.swift */,
 				444D2EF12C5B2BC60019A966 /* Coordinates.swift */,
-				246339A52C5E60B900998095 /* UserProfile.swift */,
+				246339A52C5E60B900998095 /* User.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -247,6 +249,7 @@
 		44CB71342C5BA10300CA5410 /* Service */ = {
 			isa = PBXGroup;
 			children = (
+				44DE23382C8B5E8500579310 /* FirebaseData.swift */,
 				44CB71352C5BA11B00CA5410 /* FirebaseDataManager.swift */,
 				8D5B59DF2C62791F0096B5AF /* UWBManager.swift */,
 			);
@@ -386,7 +389,7 @@
 			files = (
 				44CB71362C5BA11B00CA5410 /* FirebaseDataManager.swift in Sources */,
 				441FBFD52C6A9E5700EEEFD9 /* UserDataEntryView.swift in Sources */,
-				246339A62C5E60B900998095 /* UserProfile.swift in Sources */,
+				246339A62C5E60B900998095 /* User.swift in Sources */,
 				444D2EF72C5B5AA20019A966 /* PiPiApp.swift in Sources */,
 				444D2EF62C5B2D5A0019A966 /* CLLocationCoordinate2D+.swift in Sources */,
 				D3AE25262C5A5C28009BC64C /* iMessageConnect.swift in Sources */,
@@ -415,6 +418,7 @@
 				444D2EEE2C59DB510019A966 /* ActivityCreateView.swift in Sources */,
 				D3FFBBEF2C58BB6A0042EAAD /* ActivityDetailView.swift in Sources */,
 				8D8321592C5937CB00C9ABA1 /* TicketsView.swift in Sources */,
+				44DE23392C8B5E8500579310 /* FirebaseData.swift in Sources */,
 				8D83215D2C59655800C9ABA1 /* TicketDetailView.swift in Sources */,
 				44CB71332C5B793A00CA5410 /* ActivityInformationFormView.swift in Sources */,
 				8D5B59E02C62791F0096B5AF /* UWBManager.swift in Sources */,
@@ -553,7 +557,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = K3CQFPAA9A;
+				DEVELOPMENT_TEAM = VV2G7CU8KX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
@@ -593,7 +597,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = K3CQFPAA9A;
+				DEVELOPMENT_TEAM = VV2G7CU8KX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
