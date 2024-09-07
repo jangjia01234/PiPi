@@ -10,7 +10,9 @@ import Firebase
 import FirebaseDatabase
 
 struct TicketView: View {
+    
     @AppStorage("userID") var userID: String?
+    
     @State private var hostNickname: String = ""
     @State private var showTicketDetailView: Bool = false
     @State private var isLocationVisible: Bool = false
@@ -19,10 +21,10 @@ struct TicketView: View {
     @Binding var isShowingSheet: Bool
     @Binding var authSuccess: Bool
     
-    private let databaseManager = FirebaseDataManager.shared
+    private let userDataManager = FirebaseDataManager<User>()
     
     var activity: Activity
-    var userProfile: UserProfile
+    var userProfile: User
     
     var body: some View {
         NavigationStack {
@@ -172,7 +174,7 @@ fileprivate extension TicketView {
     }
     
     private func loadHostProfile(hostID: String) {
-        databaseManager.fetchData(type: .user, dataID: hostID) { (result: Result<UserProfile, Error>) in
+        userDataManager.observeSingleData(eventType: .value, id: hostID) { result in
             switch result {
             case .success(let profile):
                 DispatchQueue.main.async {
@@ -185,4 +187,5 @@ fileprivate extension TicketView {
             }
         }
     }
+    
 }

@@ -33,37 +33,29 @@ final class FirebaseDataManager<T: FirebaseData> {
             .setValue(jsonString)
     }
     
-    func fetchData(
-        dataID: String? = nil,
-        completion: @escaping (Result<T, Error>) -> Void
+    func observeAllData(
+        eventType: DataEventType,
+        completion: @escaping (Result<[String: T], Error>) -> Void
     ) {
-        var databaseRef = ref.child(key)
-        if let dataID {
-            databaseRef = databaseRef.child(dataID)
-        }
-        
-        databaseRef.observeSingleEvent(of: .value) { [weak self] snapshot in
+        ref.child(key)
+            .observe(eventType) { [weak self] snapshot in
             guard let self else { return }
             
-            completion(self.handleSnapshot(snapshot: snapshot, dataID: dataID))
+            completion(self.handleSnapshot(snapshot: snapshot))
         }
     }
     
-    func observeData(
+    func observeSingleData(
         eventType: DataEventType,
-        dataID: String? = nil,
+        id: String,
         completion: @escaping (Result<T, Error>) -> Void
     ) {
-        var databaseRef = ref.child(key)
-        if let dataID {
-            databaseRef = databaseRef.child(dataID)
-        }
-        
-        databaseRef.observe(eventType) { [weak self] snapshot in
-            guard let self else { return }
-            
-            completion(self.handleSnapshot(snapshot: snapshot, dataID: dataID))
-        }
+        ref.child(key).child(id)
+            .observe(eventType) { [weak self] snapshot in
+                guard let self else { return }
+                
+                completion(self.handleSnapshot(snapshot: snapshot))
+            }
     }
     
     func updateData(
@@ -82,22 +74,12 @@ final class FirebaseDataManager<T: FirebaseData> {
         }
     }
     
-    func removeObserver(dataID: String? = nil) {
-        var databaseRef = ref.child(key)
-        if let dataID {
-            databaseRef = databaseRef.child(dataID)
-        }
-        
-        databaseRef.removeAllObservers()
-    }
-    
-    private func handleSnapshot(
-        snapshot: DataSnapshot,
-        dataID: String?
-    ) -> Result<T, Error> {
+    private func handleSnapshot<SuccessType: Decodable>(
+        snapshot: DataSnapshot
+    ) -> Result<SuccessType, Error> {
         if snapshot.exists() {
             do {
-                let decodedData: T = try self.decode(id: dataID, value: snapshot.value)
+                let decodedData: SuccessType = try self.decode(value: snapshot.value)
                 return .success(decodedData)
             } catch {
                 return .failure(error)
@@ -107,14 +89,14 @@ final class FirebaseDataManager<T: FirebaseData> {
         }
     }
     
-    private func decode(id: String?, value: Any?) throws -> T {
+    private func decode<DataType: Decodable>(value: Any?) throws -> DataType {
         guard let object = value as? [String: Any] else {
             throw FirebaseError.dataNotFound
         }
         
         let data = try JSONSerialization.data(withJSONObject: object)
         
-        return try JSONDecoder().decode(T.self, from: data)
+        return try JSONDecoder().decode(DataType.self, from: data)
     }
     
 }

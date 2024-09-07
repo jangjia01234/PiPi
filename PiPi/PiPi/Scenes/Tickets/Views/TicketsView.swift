@@ -23,8 +23,9 @@ struct TicketsView: View {
     @Binding var isShowingSheet: Bool
     
     var activity: Activity
-    private typealias ActivityDatabaseResult = Result<[String: Activity], Error>
-    private typealias UserDatabaseResult = Result<UserProfile, Error>
+    
+    private let activityDataManager = FirebaseDataManager<Activity>()
+    private let userDataManager = FirebaseDataManager<User>()
     
     var body: some View {
         NavigationStack {
@@ -80,10 +81,9 @@ struct TicketsView: View {
     }
     
     private func fetchActivities() {
-        FirebaseDataManager.shared.observeData(
-            eventType: .value,
-            dataType: .activity
-        ) { (result: ActivityDatabaseResult) in
+        activityDataManager.observeAllData(
+            eventType: .value
+        ) { result in
             switch result {
             case .success(let result):
                 self.activities = Array(result.values)
@@ -94,14 +94,14 @@ struct TicketsView: View {
     }
     
     private func fetchUserProfile() {
-        FirebaseDataManager.shared.fetchData(
-            type: .user,
-            dataID: userProfile.id
-        ) { (result: UserDatabaseResult) in
+        userDataManager.observeSingleData(
+            eventType: .value,
+            id: userProfile.id
+        ) { result in
             switch result {
             case .success(let fetchedUser):
                 userProfile = fetchedUser
-            case .failure(let error):
+            case .failure(_):
                 break
             }
         }

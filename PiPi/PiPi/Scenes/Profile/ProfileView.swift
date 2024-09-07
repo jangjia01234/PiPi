@@ -17,8 +17,7 @@ struct ProfileView: View {
     @State private var email: String = ""
     @State private var isEditing: Bool = false
     
-    @AppStorage("userID") var userID: String?  // @AppStorage로 UserDefaults로부터 값 불러올떄
-    private let databaseManager = FirebaseDataManager.shared
+    private let userDataManager = FirebaseDataManager<User>()
     
     var body: some View {
         NavigationView {
@@ -104,41 +103,37 @@ struct ProfileView: View {
         .navigationBarBackButtonHidden(true)
     }
     private func loadProfile(userID: String) {
-        databaseManager.fetchData(type: .user, dataID: userID) { (result: Result<UserProfile, Error>) in
+        userDataManager.observeSingleData(eventType: .value, id: userID) { result in
             switch result {
             case .success(let profile):
                 DispatchQueue.main.async {
                     self.nickname = profile.nickname
                     self.affiliation = profile.affiliation
                     self.email = profile.email
-                    self.level = profile.level
                 }
             case .failure(let error):
-                DispatchQueue.main.async {
-                    print("Error fetching profile: \(error.localizedDescription)")
-                }
+                dump("Error fetching profile: \(error.localizedDescription)")
             }
         }
     }
     private func saveProfile() {
-            guard let userID = userID else { return }
-            
-            let profile = UserProfile(
-                id: userID,
-                nickname: nickname,
-                affiliation: affiliation,
-                email: email,
-                level: level
-            )
-            
-            do {
-                try databaseManager.updateData(profile, type: .user, id: profile.id)
-                print("UserProfile 수정 성공")
-                isEditing = false // 수정 완료 후 편집 모드 해제
-            } catch {
-                print("UserProfile 수정 실패: \(error.localizedDescription)")
-            }
+        guard let userID else { return }
+        
+        let profile = User(
+            id: userID,
+            nickname: nickname,
+            affiliation: affiliation,
+            email: email
+        )
+        
+        do {
+            try userDataManager.updateData(profile, id: profile.id)
+            print("UserProfile 수정 성공")
+            isEditing = false // 수정 완료 후 편집 모드 해제
+        } catch {
+            print("UserProfile 수정 실패: \(error.localizedDescription)")
         }
+    }
 }
 
 struct EditableField: View {
