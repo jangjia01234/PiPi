@@ -93,7 +93,8 @@ struct UserDataEntryView: View {
     }
 }
 
-fileprivate extension View {
+// Fix: fileprivate -> public으로 전환
+extension View {
     
     func setAppearance() -> some View {
         self.font(.body)
