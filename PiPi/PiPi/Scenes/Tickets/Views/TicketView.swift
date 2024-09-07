@@ -11,13 +11,16 @@ import FirebaseDatabase
 
 struct TicketView: View {
     @AppStorage("userID") var userID: String?
+    
+    @Binding var selectedItem: TicketType
+    @Binding var isShowingSheet: Bool
+    @Binding var authSuccess: Bool
+    
     @State private var hostNickname: String = ""
     @State private var showTicketDetailView: Bool = false
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
-    @Binding var selectedItem: TicketType
-    @Binding var isShowingSheet: Bool
-    @Binding var authSuccess: Bool
+    @State private var showMessageView = false
     
     private let userDataManager = FirebaseDataManager<User>()
     
@@ -41,8 +44,10 @@ struct TicketView: View {
             .sheet(isPresented: $showTicketDetailView) {
                 TicketDetailView(
                     isLocationVisible: $isLocationVisible,
+                    selectedItem: $selectedItem,
+                    showMessageView: $showMessageView,
                     activity: activity,
-                    userProfile: userProfile
+                    userProfile: userProfile                    
                 )
             }
             .sheet(isPresented: $isPresentingPeerAuthView) {
