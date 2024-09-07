@@ -14,26 +14,25 @@ struct OnboardingPageView: View {
     let subtitle: String
     
     var body: some View {
-        ZStack{
-            VStack {
-                Spacer()
-                Image(imageName)
-                    .resizable()
-                    .frame(width: 288, height: 290)
-                    .padding(.bottom, 36)
-                Text(title)
-                    .multilineTextAlignment(.center)
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .padding(.bottom, 26)
-                Text(subtitle)
-                    .multilineTextAlignment(.center)
-                    .font(.footnote)
-                    .foregroundColor(.gray)
-                Spacer()
-            }
-            .padding(.bottom, 20)
-        }
+          VStack {
+              Spacer()
+              Text(title)
+                  .multilineTextAlignment(.center)
+                  .font(.title)
+                  .fontWeight(.bold)
+                  .padding(.bottom, 26)
+              Text(subtitle)
+                  .multilineTextAlignment(.center)
+                  .font(.system(size: 14))
+                  .foregroundColor(.gray)
+                  .padding(.bottom, 50)
+              Image(imageName)
+                  .resizable()
+                  .frame(width: 396, height: 298)
+                  .padding(.bottom, 36)
+              Spacer()
+          }
+          .padding(.bottom, 20)
     }
     
 }

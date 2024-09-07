@@ -17,6 +17,11 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         manager.delegate = self
     }
     
+    func getLocationCoordinate() -> CLLocationCoordinate2D? {
+        manager.requestLocation()
+        return manager.location?.coordinate
+    }
+    
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .denied, .notDetermined, .restricted:
@@ -24,6 +29,12 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         default:
             break
         }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {}
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
+        dump(error)
     }
     
 }

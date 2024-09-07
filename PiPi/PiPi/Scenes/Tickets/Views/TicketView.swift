@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseDatabase
+import MessageUI
 
 struct TicketView: View {
     @AppStorage("userID") var userID: String?
@@ -17,6 +18,7 @@ struct TicketView: View {
     @Binding var authSuccess: Bool
     
     @State private var hostNickname: String = ""
+    @State private var hostEmail: String? = nil
     @State private var showTicketDetailView: Bool = false
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
@@ -55,6 +57,13 @@ struct TicketView: View {
                     authSuccess: $authSuccess,
                     activity: activity
                 )
+            }
+            
+            //🔔아이메세지 전송 Sheet 추가
+            .sheet(isPresented: $showMessageView) {
+                if let email = hostEmail {
+                    iMessageConnect(email: email)
+                }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -142,6 +151,7 @@ fileprivate extension TicketView {
             case .success(let profile):
                 DispatchQueue.main.async {
                     self.hostNickname = profile.nickname
+                    self.hostEmail = profile.email
                 }
             case .failure(let error):
                 DispatchQueue.main.async {

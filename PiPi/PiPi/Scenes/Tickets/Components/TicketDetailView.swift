@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import MessageUI
 
 struct TicketDetailView: View {
     @Environment(\.dismiss) var dismiss
@@ -23,6 +24,11 @@ struct TicketDetailView: View {
         center: .postech,
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
+    
+    // 🔔메시지 창을 표시할지 여부를 관리하는 상태 변수
+    @State private var showMessageView = false
+    // 🔔참가자 이메일 저장
+    @State private var participantEmail: String?
     
     private let userDataManager = FirebaseDataManager<User>()
     

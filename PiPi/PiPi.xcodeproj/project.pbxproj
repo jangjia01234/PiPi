@@ -37,6 +37,8 @@
 		44CB71332C5B793A00CA5410 /* ActivityInformationFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CB71322C5B793A00CA5410 /* ActivityInformationFormView.swift */; };
 		44CB71362C5BA11B00CA5410 /* FirebaseDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CB71352C5BA11B00CA5410 /* FirebaseDataManager.swift */; };
 		44DE23392C8B5E8500579310 /* FirebaseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DE23382C8B5E8500579310 /* FirebaseData.swift */; };
+		44DE233B2C8C2B6600579310 /* LocationAuthorizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DE233A2C8C2B6600579310 /* LocationAuthorizationView.swift */; };
+		44DE233D2C8C2D6700579310 /* LocationAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DE233C2C8C2D6700579310 /* LocationAuthorizer.swift */; };
 		8D451A092C5A8E89005EA90A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D451A082C5A8E89005EA90A /* GoogleService-Info.plist */; };
 		8D451A0C2C5A8F38005EA90A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8D451A0B2C5A8F38005EA90A /* FirebaseAnalytics */; };
 		8D451A0E2C5A8F38005EA90A /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 8D451A0D2C5A8F38005EA90A /* FirebaseDatabase */; };
@@ -86,6 +88,8 @@
 		44CB71322C5B793A00CA5410 /* ActivityInformationFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityInformationFormView.swift; sourceTree = "<group>"; };
 		44CB71352C5BA11B00CA5410 /* FirebaseDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDataManager.swift; sourceTree = "<group>"; };
 		44DE23382C8B5E8500579310 /* FirebaseData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseData.swift; sourceTree = "<group>"; };
+		44DE233A2C8C2B6600579310 /* LocationAuthorizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAuthorizationView.swift; sourceTree = "<group>"; };
+		44DE233C2C8C2D6700579310 /* LocationAuthorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAuthorizer.swift; sourceTree = "<group>"; };
 		8D451A082C5A8E89005EA90A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8D451A112C5A9BEE005EA90A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D5B59D92C6095330096B5AF /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
@@ -122,6 +126,7 @@
 				242DF4522C58C5CE006D8627 /* OnboardingPageView.swift */,
 				242DF4562C5902F2006D8627 /* OnboardingProfileView.swift */,
 				441FBFD42C6A9E5700EEEFD9 /* UserDataEntryView.swift */,
+				44DE233A2C8C2B6600579310 /* LocationAuthorizationView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -221,7 +226,6 @@
 				444D2EDE2C58B5A20019A966 /* HomeView.swift */,
 				444D2EE12C58BF790019A966 /* CategoryFilterView.swift */,
 				444D2EE72C59B04A0019A966 /* ActivityCreateButton.swift */,
-				441FBFD22C6A5C8B00EEEFD9 /* LocationManager.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -254,6 +258,8 @@
 				44DE23382C8B5E8500579310 /* FirebaseData.swift */,
 				44CB71352C5BA11B00CA5410 /* FirebaseDataManager.swift */,
 				8D5B59DF2C62791F0096B5AF /* UWBManager.swift */,
+				441FBFD22C6A5C8B00EEEFD9 /* LocationManager.swift */,
+				44DE233C2C8C2D6700579310 /* LocationAuthorizer.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -391,8 +397,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				44CB71362C5BA11B00CA5410 /* FirebaseDataManager.swift in Sources */,
+				44DE233B2C8C2B6600579310 /* LocationAuthorizationView.swift in Sources */,
 				441FBFD52C6A9E5700EEEFD9 /* UserDataEntryView.swift in Sources */,
 				246339A62C5E60B900998095 /* User.swift in Sources */,
+				44DE233D2C8C2D6700579310 /* LocationAuthorizer.swift in Sources */,
 				444D2EF72C5B5AA20019A966 /* PiPiApp.swift in Sources */,
 				444D2EF62C5B2D5A0019A966 /* CLLocationCoordinate2D+.swift in Sources */,
 				D3AE25262C5A5C28009BC64C /* iMessageConnect.swift in Sources */,
@@ -561,7 +569,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = 888VRTGCXU;
+				DEVELOPMENT_TEAM = F293KMT2AW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
@@ -601,7 +609,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = 888VRTGCXU;
+				DEVELOPMENT_TEAM = F293KMT2AW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
