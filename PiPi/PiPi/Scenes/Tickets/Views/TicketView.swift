@@ -38,7 +38,6 @@ struct TicketView: View {
             }
             .frame(height: 180)
             .padding(.horizontal, 20)
-            .padding(.bottom, 10)
             .sheet(isPresented: $showTicketDetailView) {
                 TicketDetailView(
                     isLocationVisible: $isLocationVisible,
@@ -64,8 +63,7 @@ fileprivate extension TicketView {
     func backgroundRectangle() -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)
-            // FIXME: 배경 색상 white로 변경 필요
-                .fill(.quaternary)
+                .fill(.white)
                 .onTapGesture {
                     showTicketDetailView = true
                 }

@@ -29,7 +29,9 @@ struct TicketsView: View {
     
     var body: some View {
         NavigationStack {
+            VStack {
                 TicketSegmentedControl(selectedItem: $selectedItem)
+                    .background(.white)
                 
                 ticketsList
                     .scrollBounceBehavior(.basedOnSize)
@@ -43,6 +45,8 @@ struct TicketsView: View {
                     }
                 
                 Spacer()
+            }
+            .background(.quaternary.opacity(0.4))
         }
         .onAppear(perform: loadData)
     }
@@ -58,6 +62,7 @@ struct TicketsView: View {
                         activity: activity,
                         userProfile: userProfile
                     )
+                    .padding(.top, 10)
                 }
             }
         }
