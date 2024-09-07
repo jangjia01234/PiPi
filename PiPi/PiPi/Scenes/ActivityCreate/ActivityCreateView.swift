@@ -16,7 +16,7 @@ struct ActivityCreateView: View {
     
     @State private var title = ""
     @State private var description = ""
-    @State private var maxPeopleNumber = 1
+    @State private var maxPeopleNumber = 2
     @State private var category: Activity.Category = .meal
     @State private var startDateTime = Date()
     @State private var estimatedTime: Int? = nil
