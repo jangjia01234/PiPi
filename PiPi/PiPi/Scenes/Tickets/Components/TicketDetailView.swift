@@ -15,6 +15,7 @@ struct TicketDetailView: View {
     @Binding var isLocationVisible: Bool
     @Binding var selectedItem: TicketType
     @Binding var showMessageView: Bool
+    @Binding var isAuthenticationDone: Bool
     
     @State private var hostProfile: User?
     @State private var participantProfiles: [User] = []
@@ -29,7 +30,6 @@ struct TicketDetailView: View {
     
     var activity: Activity
     var userProfile: User
-    var isAuthenticationDone: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -42,12 +42,25 @@ struct TicketDetailView: View {
             .navigationBarTitle("\(activity.title)", displayMode: .inline)
             .navigationBarItems(trailing: doneButton)
         }
+        // TODO: 아이메세지 전송 Sheet 추가 예정
+        //        .sheet(isPresented: $showMessageView) {
+        //            if let email = hostEmail {
+        //                iMessageConnect(email: email)
+        //            }
+        //        }
         .onAppear {
             if activity.hostID != userProfile.id {
                 fetchHostProfile()
             }
+            
             fetchParticipantProfiles()
             updateMapRegion()
+            
+            if let isAuthenticated = activity.authentication[userProfile.id] {
+                isAuthenticationDone = isAuthenticated
+            } else {
+                isAuthenticationDone = false
+            }
         }
     }
     
@@ -226,8 +239,9 @@ struct TicketDetailView_Previews: PreviewProvider {
     static var previews: some View {
         TicketDetailView(
             isLocationVisible: .constant(false),
-            selectedItem: .constant(.participant),
+            selectedItem: .constant(.organizer),
             showMessageView: .constant(false),
+            isAuthenticationDone: .constant(false),
             activity: Activity(
                 hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
                 title: "배드민턴 번개",

@@ -16,7 +16,6 @@ struct TicketsView: View {
         email: ""
     )
     @State private var selectedItem: TicketType = .participant
-    @State private var authSuccess: Bool = false
     
     // MARK: - 🔥
     // 확인 및 네이밍 개선 필요
@@ -36,13 +35,6 @@ struct TicketsView: View {
                 ticketsList
                     .scrollBounceBehavior(.basedOnSize)
                     .navigationBarBackButtonHidden(true)
-                // MARK: - PeerAuthView 시트 상태관리
-                    .sheet(isPresented: $isShowingSheet) {
-                        PeerAuthView(
-                            authSuccess: $authSuccess,
-                            activity: activity
-                        )
-                    }
                 
                 Spacer()
             }
@@ -58,7 +50,6 @@ struct TicketsView: View {
                     TicketView(
                         selectedItem: $selectedItem,
                         isShowingSheet: $isShowingSheet,
-                        authSuccess: $authSuccess,
                         activity: activity,
                         userProfile: userProfile
                     )

@@ -15,7 +15,6 @@ struct TicketView: View {
     
     @Binding var selectedItem: TicketType
     @Binding var isShowingSheet: Bool
-    @Binding var authSuccess: Bool
     
     @State private var hostNickname: String = ""
     @State private var hostEmail: String? = nil
@@ -23,6 +22,7 @@ struct TicketView: View {
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
     @State private var showMessageView = false
+    @State var isAuthenticationDone: Bool = false
     
     private let userDataManager = FirebaseDataManager<User>()
     
@@ -48,22 +48,16 @@ struct TicketView: View {
                     isLocationVisible: $isLocationVisible,
                     selectedItem: $selectedItem,
                     showMessageView: $showMessageView,
+                    isAuthenticationDone: $isAuthenticationDone,
                     activity: activity,
-                    userProfile: userProfile                    
+                    userProfile: userProfile
                 )
             }
             .sheet(isPresented: $isPresentingPeerAuthView) {
                 PeerAuthView(
-                    authSuccess: $authSuccess,
+                    isAuthenticationDone: $isAuthenticationDone,
                     activity: activity
                 )
-            }
-            
-            //🔔아이메세지 전송 Sheet 추가
-            .sheet(isPresented: $showMessageView) {
-                if let email = hostEmail {
-                    iMessageConnect(email: email)
-                }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -167,7 +161,6 @@ struct TicketView_Previews: PreviewProvider {
         TicketView(
             selectedItem: .constant(.participant),
             isShowingSheet: .constant(false),
-            authSuccess: .constant(false),
             activity: Activity(
                 hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
                 title: "배드민턴 번개",

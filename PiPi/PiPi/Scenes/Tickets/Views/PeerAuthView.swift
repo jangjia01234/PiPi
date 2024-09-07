@@ -12,8 +12,10 @@ struct PeerAuthView: View {
     @AppStorage("userID") var userID: String?
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var uwb = CBUWB()
+    
+    @Binding var isAuthenticationDone: Bool
     @State var lastValidDirections = [NIDiscoveryToken: SIMD3<Float>]()
-    @Binding var authSuccess: Bool
+    
     var activity: Activity
     
     var body: some View {
@@ -32,8 +34,10 @@ struct PeerAuthView: View {
                     lastValidDirections[peer.token] = direction
                 }
             }
+            
             if uwb.discoveredPeers.count > 0 && uwb.discoveredPeers.last!.distance <= 0.2 {
-                authSuccess = true
+                isAuthenticationDone = true
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     dismiss()
                 }
@@ -66,18 +70,19 @@ struct PeerAuthView: View {
     
     private var nowInConnect: some View {
         VStack {
-            Text(authSuccess ? "인증에 성공했어요!" : "핸드폰을 가까이 대서\n인증해주세요!")
+            Text(isAuthenticationDone ? "인증에 성공했어요!" : "핸드폰을 가까이 대서\n인증해주세요!")
                 .multilineTextAlignment(.center)
                 .font(.system(size: 28))
                 .fontWeight(.heavy)
             
-            Image(authSuccess ? "auth_done" : "auth_ing")
+            Image(isAuthenticationDone ? "auth_done" : "auth_ing")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 350)
                 .onAppear {
                     if uwb.discoveredPeers.last!.distance <= 0.2 {
-                        authSuccess = true
+                        isAuthenticationDone = true
+                        
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             dismiss()
                         }
