@@ -79,15 +79,6 @@ struct PeerAuthView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 350)
-                .onAppear {
-                    if uwb.discoveredPeers.last!.distance <= 0.2 {
-                        isAuthenticationDone = true
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            dismiss()
-                        }
-                    }
-                }
         }
     }
 }
