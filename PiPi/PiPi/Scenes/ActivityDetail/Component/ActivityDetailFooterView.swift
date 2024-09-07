@@ -21,9 +21,9 @@ struct ActivityDetailFooterView: View {
                 Text("참가 신청")
                     .font(.callout)
                     .fontWeight(.bold)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 50)
             .background(!enableJoinButton ? Color(.lightGray) : Color.accent)
             .tint(.white)
             .clipShape(RoundedRectangle(cornerRadius: 10))
