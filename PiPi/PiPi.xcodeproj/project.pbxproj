@@ -52,6 +52,7 @@
 		8D83215D2C59655800C9ABA1 /* TicketDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D83215C2C59655800C9ABA1 /* TicketDetailView.swift */; };
 		8D83215F2C5967B900C9ABA1 /* TicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D83215E2C5967B900C9ABA1 /* TicketView.swift */; };
 		8D8321612C5968E400C9ABA1 /* TicketSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8321602C5968E400C9ABA1 /* TicketSegmentedControl.swift */; };
+		8DABB10C2C8C32E60058A408 /* RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DABB10B2C8C32E60058A408 /* RoundedCorner.swift */; };
 		D3AE25262C5A5C28009BC64C /* iMessageConnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AE25252C5A5C28009BC64C /* iMessageConnect.swift */; };
 		D3FFBBEF2C58BB6A0042EAAD /* ActivityDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FFBBEE2C58BB6A0042EAAD /* ActivityDetailView.swift */; };
 /* End PBXBuildFile section */
@@ -101,6 +102,7 @@
 		8D83215C2C59655800C9ABA1 /* TicketDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketDetailView.swift; sourceTree = "<group>"; };
 		8D83215E2C5967B900C9ABA1 /* TicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketView.swift; sourceTree = "<group>"; };
 		8D8321602C5968E400C9ABA1 /* TicketSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketSegmentedControl.swift; sourceTree = "<group>"; };
+		8DABB10B2C8C32E60058A408 /* RoundedCorner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorner.swift; sourceTree = "<group>"; };
 		D3AE25252C5A5C28009BC64C /* iMessageConnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageConnect.swift; sourceTree = "<group>"; };
 		D3FFBBEE2C58BB6A0042EAAD /* ActivityDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -289,6 +291,7 @@
 			children = (
 				8D83215C2C59655800C9ABA1 /* TicketDetailView.swift */,
 				8D8321602C5968E400C9ABA1 /* TicketSegmentedControl.swift */,
+				8DABB10B2C8C32E60058A408 /* RoundedCorner.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -435,6 +438,7 @@
 				8D5B59E02C62791F0096B5AF /* UWBManager.swift in Sources */,
 				4411F9AD2C64728F00FF4845 /* ActivityDetailHeaderView.swift in Sources */,
 				24D3130F2C8C76BF001C6A29 /* LoginView.swift in Sources */,
+				8DABB10C2C8C32E60058A408 /* RoundedCorner.swift in Sources */,
 				8D8321612C5968E400C9ABA1 /* TicketSegmentedControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -569,7 +573,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = F293KMT2AW;
+				DEVELOPMENT_TEAM = 888VRTGCXU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
@@ -609,7 +613,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PiPi/Preview Content\"";
-				DEVELOPMENT_TEAM = F293KMT2AW;
+				DEVELOPMENT_TEAM = 888VRTGCXU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PiPi/Info.plist;
