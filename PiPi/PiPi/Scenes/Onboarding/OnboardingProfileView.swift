@@ -10,21 +10,26 @@ import SwiftUI
 struct OnboardingProfileView: View {
     
     @State private var nickname: String = ""
+    @State private var password: String = ""
     @State private var affiliation: Affiliation = .postech
     @State private var email: String = ""
     @State private var isButtonEnabled: Bool = false
     
+    private let userDataManager = FirebaseDataManager<User>()
+    
     var body: some View {
         NavigationStack {
-            VStack(spacing: 80) {
-                Text("프로필을\n설정해주세요!")
-                    .font(.title)
+            VStack(spacing: 78) {
+                Text("회원가입")
+                    .font(.system(size: 28))
                     .bold()
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 
                 UserDataEntryView(
                     nickname: $nickname,
+                    password: $password,
                     affiliation: $affiliation,
                     email: $email
                 )
@@ -64,18 +69,17 @@ struct OnboardingProfileView: View {
     }
     
     private func saveProfile() {
-        let profile = UserProfile(
+        let profile = User(
             nickname: nickname,
             affiliation: affiliation,
             email: email
         )
         
         do {
-            try FirebaseDataManager.shared.addData(profile, type: .user, id: profile.id)
-            print("UserProfile 저장 성공")
+            try userDataManager.addData(profile, id: profile.id)
             UserDefaults.standard.setValue(profile.id, forKey: "userID")
         } catch {
-            print("UserProfile 저장 실패: \(error)")
+            dump(error)
         }
     }
     
