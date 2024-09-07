@@ -30,6 +30,10 @@ struct TicketView: View {
     var userProfile: User
     
     var body: some View {
+        
+        // 🔔 viewModel 생성
+        let viewModel = ActivityDetailViewModel(activityID: activity.id, hostID: activity.hostID)
+        
         NavigationStack {
             ZStack {
                 backgroundRectangle()
@@ -48,8 +52,9 @@ struct TicketView: View {
                     isLocationVisible: $isLocationVisible,
                     selectedItem: $selectedItem,
                     showMessageView: $showMessageView,
+                    viewModel: viewModel,
                     activity: activity,
-                    userProfile: userProfile                    
+                    userProfile: userProfile
                 )
             }
             .sheet(isPresented: $isPresentingPeerAuthView) {
@@ -102,9 +107,9 @@ fileprivate extension TicketView {
                     .padding(.bottom, 5)
                 
                 // FIXME: Symbol은 디자인이 확정되지 않아 임시로 코드만 작성해둠
-//                Image("\(activity.category.self).accent")
-//                    .resizable()
-//                    .frame(width: 20, height: 20)
+                //                Image("\(activity.category.self).accent")
+                //                    .resizable()
+                //                    .frame(width: 20, height: 20)
             }
             
             VStack(alignment: .leading) {
