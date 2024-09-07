@@ -14,30 +14,39 @@ struct OnboardingTabView: View {
         UIPageControl.appearance().pageIndicatorTintColor = UIColor.accent.withAlphaComponent(0.2)
     }
     
-    @State private var moveToProfile = false
+    @State private var tabSelection = 0
+    @State private var moveToSignUpView = false
     
     var body: some View {
         VStack {
             HStack {
                 Spacer()
                 Button {
-                    moveToProfile = true
+                    tabSelection = 4
                 } label: {
                     Text("건너뛰기")
                         .foregroundColor(.accent)
                         .font(.callout)
                 }
+                .opacity((0..<4).contains(tabSelection) ? 1.0 : 0)
             }
             .padding(.trailing, 36)
             .padding(.top, 10)
             
-            TabView {
-                ForEach(onboardingInfo, id: \.title) { info in
-                    OnboardingPageView(imageName: info.imageName, title: info.title, subtitle: info.subtitle)
+            TabView(selection: $tabSelection) {
+                ForEach(0..<onboardingInfo.endIndex, id: \.self) { index in
+                    let info = onboardingInfo[index]
+                    OnboardingPageView(
+                        imageName: info.imageName,
+                        title: info.title,
+                        subtitle: info.subtitle
+                    )
                 }
+                LocationAuthorizationView(moveToSignUpView: $moveToSignUpView)
+                    .tag(4)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-            .fullScreenCover(isPresented: $moveToProfile) {
+            .fullScreenCover(isPresented: $moveToSignUpView) {
                 OnboardingProfileView()
             }
         }
