@@ -10,12 +10,13 @@ import SwiftUI
 struct UserDataEntryView: View {
     
     @State private var showEmailTip = false
-    @State private var passwordValid = true
+    //@State private var passwordValid = true
     
     @Binding var nickname: String
     @Binding var password: String
     @Binding var affiliation: Affiliation
     @Binding var email: String
+    @Binding var passwordValid: Bool
     
     var body: some View {
         VStack(spacing: 16) {
@@ -31,13 +32,10 @@ struct UserDataEntryView: View {
             Text("비밀번호")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.headline)
-            TextField("비밀번호를 입력해주세요.", text: $password)
+            SecureField("비밀번호를 입력해주세요.", text: $password)
                 .setAppearance()
                 .keyboardType(.default)
-                .onChange(of: password) { newValue in
-                    passwordValid = validatePassword(newValue)
-                }
-            Text(password.isEmpty ? "* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다." : (passwordValid ? "* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다." : "비밀번호가 조건에 맞지 않습니다."))
+            Text("* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다.")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.system(size: 12))
                 .foregroundColor(password.isEmpty || passwordValid ? .gray : .red)
@@ -93,19 +91,9 @@ struct UserDataEntryView: View {
                 .keyboardType(.emailAddress)
         }
     }
-    
-    private func validatePassword(_ password: String) -> Bool {
-        if password.isEmpty {
-               return false
-           }
-        
-        let passwordRegEx = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$"
-        let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
-        return predicate.evaluate(with: password)
-    }
 }
 
-fileprivate extension TextField {
+fileprivate extension View {
     
     func setAppearance() -> some View {
         self.font(.body)
@@ -120,6 +108,6 @@ fileprivate extension TextField {
 
 #Preview {
     UserDataEntryView(
-        nickname: .constant(""), password: .constant(""), affiliation: .constant(.postech), email: .constant("")
+        nickname: .constant(""), password: .constant(""), affiliation: .constant(.postech), email: .constant(""), passwordValid: .constant(true)
     )
 }
