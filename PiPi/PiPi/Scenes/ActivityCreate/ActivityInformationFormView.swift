@@ -18,13 +18,16 @@ struct ActivityInformationFormView: View {
     @Binding var location: Coordinates?
     
     var body: some View {
-        Form {
-            titleSection
-            descriptionSection
-            maxPeopleNumberSection
-            categoryPicker
-            dateTimeLocationSection
+        VStack {
+            Form {
+                titleSection
+                descriptionSection
+                maxPeopleNumberSection
+                categoryPicker
+                dateTimeLocationSection
+            }
         }
+        .onAppear (perform : UIApplication.shared.hideKeyboard)
     }
 }
 
@@ -130,6 +133,22 @@ fileprivate extension View {
         self.listRowInsets(.init(top: 15, leading: 8, bottom: 8, trailing: 15))
     }
     
+}
+
+extension UIApplication {
+    func hideKeyboard() {
+        guard let window = windows.first else { return }
+        let tapRecognizer = UITapGestureRecognizer(target: window, action: #selector(UIView.endEditing))
+        tapRecognizer.cancelsTouchesInView = false
+        tapRecognizer.delegate = self
+        window.addGestureRecognizer(tapRecognizer)
+    }
+ }
+ 
+extension UIApplication: UIGestureRecognizerDelegate {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
+    }
 }
 
 
