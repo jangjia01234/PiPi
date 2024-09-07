@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import MessageUI
 
 struct TicketDetailView: View {
     
@@ -21,6 +22,11 @@ struct TicketDetailView: View {
     @State private var participantProfiles: [User] = []
     @State private var isLoadingHostProfile: Bool = false
     @State private var isLoadingParticipants: Bool = true
+    
+    // 🔔메시지 창을 표시할지 여부를 관리하는 상태 변수
+    @State private var showMessageView = false
+    // 🔔참가자 이메일 저장
+    @State private var participantEmail: String?
     
     private let userDataManager = FirebaseDataManager<User>()
     
@@ -41,6 +47,13 @@ struct TicketDetailView: View {
                     fetchHostProfile()
                 }
                 fetchParticipantProfiles()
+            }
+            
+            // 🔔메시지 전송 sheet 추가
+            .sheet(isPresented: $showMessageView) {
+                if let email = participantEmail {
+                    iMessageConnect(email: email)
+                }
             }
         }
     }
@@ -76,10 +89,28 @@ struct TicketDetailView: View {
     private var participantListView: some View {
         Form {
             ForEach(participantProfiles, id: \.id) { participant in
-                Text(participant.nickname)
+                HStack {
+                    Text(participant.nickname)
+                    
+                    Spacer()
+                    
+                    //🔔아이메세지 버튼 추가
+                    Button(action: {
+                        if MFMessageComposeViewController.canSendText() {
+                            participantEmail = participant.email
+                            showMessageView = true
+                        } else {
+                            print("iMessage를 사용할 수 없습니다.")
+                        }
+                    }) {
+                        Image(systemName: "ellipsis.message")
+                            .foregroundColor(.accentColor)
+                    }
+                }
             }
         }
     }
+    
     
     private var doneButton: some View {
         Button("완료") {
