@@ -10,10 +10,11 @@ import FirebaseDatabase
 
 struct ProfileView: View {
     
+    @AppStorage("userID") var userID: String?
+    
     @State private var nickname: String = ""
     @State private var affiliation: Affiliation = .postech
     @State private var email: String = ""
-    @State private var level: Int = 1
     @State private var isEditing: Bool = false
     
     @AppStorage("userID") var userID: String?  // @AppStorage로 UserDefaults로부터 값 불러올떄
@@ -86,14 +87,6 @@ struct ProfileView: View {
                                     .padding(.leading, 10)
                                 Spacer()
                             }
-                            
-                            HStack {
-                                Text("레벨")
-                                    .frame(width: 60, alignment: .leading)
-                                Text("Lv.\(level)")
-                                    .padding(.leading, 10)
-                                Spacer()
-                            }
                         }
                         .listRowBackground(Color(.secondarySystemBackground))
                     }
@@ -101,10 +94,10 @@ struct ProfileView: View {
                 }
             }
             .onAppear {
-                if let userID = userID {
+                if let userID {
                     loadProfile(userID: userID)
                 } else {
-                    print("User ID is not set")
+                    print("userID is not set")
                 }
             }
         }

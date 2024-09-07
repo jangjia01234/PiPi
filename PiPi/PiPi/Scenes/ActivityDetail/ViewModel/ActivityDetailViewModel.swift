@@ -10,7 +10,7 @@ import Foundation
 final class ActivityDetailViewModel: ObservableObject {
     
     @Published var activity: Activity? = nil
-    @Published var host: UserProfile? = nil
+    @Published var host: User? = nil
     @Published var canJoin = false
     
     private let userID: String

@@ -64,7 +64,7 @@ struct OnboardingProfileView: View {
     }
     
     private func saveProfile() {
-        let profile = UserProfile(
+        let profile = User(
             nickname: nickname,
             affiliation: affiliation,
             email: email

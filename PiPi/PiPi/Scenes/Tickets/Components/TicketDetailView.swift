@@ -9,15 +9,16 @@ import SwiftUI
 import MapKit
 
 struct TicketDetailView: View {
+    
     @Environment(\.dismiss) var dismiss
     @Binding var isLocationVisible: Bool
     @State private var cameraPosition: MapCameraPosition = .defaultPosition
     
     var activity: Activity
-    var userProfile: UserProfile
+    var userProfile: User
     
-    @State private var hostProfile: UserProfile?
-    @State private var participantProfiles: [UserProfile] = []
+    @State private var hostProfile: User?
+    @State private var participantProfiles: [User] = []
     @State private var isLoadingHostProfile: Bool = false
     @State private var isLoadingParticipants: Bool = true
     

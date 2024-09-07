@@ -10,11 +10,11 @@ import Foundation
 struct Activity: Identifiable, FirebaseData {
     
     let id: String
-    let hostEmail: String
+    let hostID: String
     let title: String
     let description: String
     let maxPeopleNumber: Int
-    let participantEmail: [String]
+    let participantID: [String]
     let category: Category
     let startDateTime: Date
     let estimatedTime: Int?
@@ -22,16 +22,16 @@ struct Activity: Identifiable, FirebaseData {
     let authentication: [String: Bool]
     
     var status: State {
-        (participantEmail.count + 1 < maxPeopleNumber) ? .open : .closed
+        (participantID.count + 1 < maxPeopleNumber) ? .open : .closed
     }
     
     init(
         id: String = UUID().uuidString,
-        hostEmail: String,
+        hostID: String,
         title: String,
         description: String,
         maxPeopleNumber: Int,
-        participantEmail: [String] = [],
+        participantID: [String] = [],
         category: Category,
         startDateTime: Date,
         estimatedTime: Int?,
@@ -39,11 +39,11 @@ struct Activity: Identifiable, FirebaseData {
         authentication: [String: Bool] = [:]
     ) {
         self.id = id
-        self.hostEmail = hostEmail
+        self.hostID = hostID
         self.title = title
         self.description = description
         self.maxPeopleNumber = maxPeopleNumber
-        self.participantEmail = participantEmail
+        self.participantID = participantID
         self.category = category
         self.startDateTime = startDateTime
         self.estimatedTime = estimatedTime
@@ -55,11 +55,11 @@ struct Activity: Identifiable, FirebaseData {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.id = try container.decode(String.self, forKey: .id)
-        self.hostEmail = try container.decode(String.self, forKey: .hostEmail)
+        self.hostID = try container.decode(String.self, forKey: .hostID)
         self.title = try container.decode(String.self, forKey: .title)
         self.description = try container.decode(String.self, forKey: .description)
         self.maxPeopleNumber = try container.decode(Int.self, forKey: .maxPeopleNumber)
-        self.participantEmail = try container.decodeIfPresent([String].self, forKey: .participantEmail) ?? []
+        self.participantID = try container.decodeIfPresent([String].self, forKey: .participantID) ?? []
         self.category = try container.decode(Category.self, forKey: .category)
         self.startDateTime = try container.decode(Date.self, forKey: .startDateTime)
         self.estimatedTime = try container.decodeIfPresent(Int.self, forKey: .estimatedTime) ?? nil
@@ -70,11 +70,11 @@ struct Activity: Identifiable, FirebaseData {
     func addingParticipant(_ participant: String) -> Activity {
         Activity(
             id: id,
-            hostEmail: hostEmail,
+            hostID: hostID,
             title: title,
             description: description,
             maxPeopleNumber: maxPeopleNumber,
-            participantEmail: participantEmail + [participant],
+            participantID: participantID + [participant],
             category: category,
             startDateTime: startDateTime,
             estimatedTime: estimatedTime,
@@ -96,7 +96,7 @@ extension Activity: Equatable, Hashable {
         && lhs.title == rhs.title
         && lhs.description == rhs.description
         && lhs.maxPeopleNumber == rhs.maxPeopleNumber
-        && lhs.participantEmail == rhs.participantEmail
+        && lhs.participantID == rhs.participantID
         && lhs.authentication == rhs.authentication
         && lhs.category == rhs.category
         && lhs.startDateTime == rhs.startDateTime
@@ -110,11 +110,11 @@ extension Activity {
     
     enum CodingKeys: String, CodingKey {
         case id
-        case hostEmail = "host_email"
+        case hostID = "host_id"
         case title
         case description
         case maxPeopleNumber = "max_people_number"
-        case participantEmail = "participant_email"
+        case participantID = "participant_id"
         case category
         case startDateTime = "start_date_time"
         case estimatedTime = "estimated_time"
@@ -141,7 +141,7 @@ extension Activity {
     }
     
     static let sampleData: Self = .init(
-        hostEmail: UUID().uuidString,
+        hostID: UUID().uuidString,
         title: "",
         description: "",
         maxPeopleNumber: 0,

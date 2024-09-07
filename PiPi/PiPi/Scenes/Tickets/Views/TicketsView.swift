@@ -10,12 +10,10 @@ import SwiftUI
 struct TicketsView: View {
     @AppStorage("userID") var userID: String?
     @State private var activities: [Activity] = []
-    @State private var userProfile: UserProfile = UserProfile(
-        id: "6F0457BD-1AC9-4368-926A-634853569179",
+    @State private var userProfile: User = User(
         nickname: "",
         affiliation: .postech,
-        email: "",
-        level: 1
+        email: ""
     )
     @State private var selectedItem: TicketType = .participant
     @State private var authSuccess: Bool = false
@@ -66,7 +64,7 @@ struct TicketsView: View {
     }
     
     private func shouldDisplayTicket(for activity: Activity, userID: String?) -> Bool {
-        guard let userID = userID else { return false }
+        guard let userID else { return false }
         
         switch selectedItem {
         case .participant:
