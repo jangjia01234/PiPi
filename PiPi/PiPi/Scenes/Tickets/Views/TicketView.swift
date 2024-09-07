@@ -11,8 +11,11 @@ import FirebaseDatabase
 import MessageUI
 
 struct TicketView: View {
-    
     @AppStorage("userID") var userID: String?
+    
+    @Binding var selectedItem: TicketType
+    @Binding var isShowingSheet: Bool
+    @Binding var authSuccess: Bool
     
     @State private var hostNickname: String = ""
     @State private var hostEmail: String? = nil
@@ -20,9 +23,6 @@ struct TicketView: View {
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
     @State private var showMessageView = false
-    @Binding var selectedItem: TicketType
-    @Binding var isShowingSheet: Bool
-    @Binding var authSuccess: Bool
     
     private let userDataManager = FirebaseDataManager<User>()
     
@@ -30,33 +30,35 @@ struct TicketView: View {
     var userProfile: User
     
     var body: some View {
+        
+        // 🔔 viewModel 생성
+        let viewModel = ActivityDetailViewModel(activityID: activity.id, hostID: activity.hostID)
+        
         NavigationStack {
             ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(selectedItem == .participant ? Color.lightPurple : Color.lightOrange)
+                backgroundRectangle()
                 
-                VStack(alignment: .leading) {
-                    header()
-                    ticketDetailSection(selectedItem: selectedItem)
+                HStack(alignment: .top) {
+                    infoText()
                     Spacer()
-                    authenticationSection()
+                    authButton()
                 }
-                .foregroundColor(.white)
-                .padding()
+                .padding(20)
             }
-            .frame(height: 350)
-            .padding(.horizontal, 15)
-            .padding(.bottom, 10)
+            .frame(height: 180)
+            .padding(.horizontal, 20)
             .sheet(isPresented: $showTicketDetailView) {
                 TicketDetailView(
                     isLocationVisible: $isLocationVisible,
+                    selectedItem: $selectedItem,
+                    showMessageView: $showMessageView,
+                    viewModel: viewModel,
                     activity: activity,
                     userProfile: userProfile
                 )
             }
             .sheet(isPresented: $isPresentingPeerAuthView) {
                 PeerAuthView(
-                    selectedItem: $selectedItem,
                     authSuccess: $authSuccess,
                     activity: activity
                 )
@@ -77,116 +79,60 @@ struct TicketView: View {
 }
 
 fileprivate extension TicketView {
-    func header() -> some View {
-        VStack {
-            HStack(alignment: .top) {
-                // 🔥 TODO: 조건에 따라 심볼 바꿔줘야됨
-                symbolItem(name: "figure.run.circle.fill", font: .title2, color: .white)
-                textItem(content: activity.title, font: .title2, weight: .bold)
+    func backgroundRectangle() -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.white)
+                .onTapGesture {
+                    showTicketDetailView = true
+                }
+            
+            HStack {
+                Rectangle()
+                    .fill(selectedItem == .participant ? Color.lightPurple : Color.lightOrange)
+                    .frame(width: 30)
+                    .roundingCorner(20, corners : [.topLeft, .bottomLeft])
                 
                 Spacer()
-                
-                VStack(alignment: .trailing) {
-                    ticketInfoItem(align: .trailing, title: "날짜", content: "\(activity.startDateTime.toString().split(separator: "\n").first ?? "")")
-                }
             }
         }
-        .padding(.top, 10)
     }
     
-    func ticketDetailSection(selectedItem: TicketType) -> some View {
+    func infoText() -> some View {
         VStack(alignment: .leading) {
             HStack {
-                VStack(alignment: .leading) {
-                    if selectedItem == .participant {
-                        HStack {
-                            ticketInfoItem(align: .leading, title: "주최자", content: "\(hostNickname)")
-                            
-                            // 🔔 주최자 옆에 메시지 전송 버튼 추가
-                            Button(action: {
-                                if MFMessageComposeViewController.canSendText() {
-                                    if let email = hostEmail {
-                                        showMessageView = true
-                                    } else {
-                                        print("Host email is not available.")
-                                    }
-                                } else {
-                                    print("iMessage를 사용할 수 없습니다.")
-                                }
-                            })                            {
-                                Image(systemName: "ellipsis.message")
-                                    .foregroundColor(.white)
-                                    .frame(height: 30)
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(selectedItem == .participant ? .accentColor : Color("SubColor"))
-                        }
-                    } else {
-                        ticketInfoItem(align: .leading, title: "참가자", content:  "리스트", isText: false)
-                    }
-                }
+                Text(activity.title)
+                    .font(.system(size: 28))
+                    .fontWeight(.black)
+                    .padding(.bottom, 5)
                 
-                Spacer()
+                // FIXME: Symbol은 디자인이 확정되지 않아 임시로 코드만 작성해둠
+                //                Image("\(activity.category.self).accent")
+                //                    .resizable()
+                //                    .frame(width: 20, height: 20)
             }
-            .padding(.bottom, 10)
             
-            ticketInfoItem(title: "장소", content: "위치 확인", isText: false)
+            VStack(alignment: .leading) {
+                Text("\(activity.startDateTime.toString().split(separator: "\n").first ?? "")")
+                Text("\(activity.estimatedTime ?? 0)시간")
+            }
+            .foregroundColor(.gray)
         }
+        .frame(width: 180)
     }
     
-    func authenticationSection() -> some View {
-        HStack(alignment: .bottom) {
-            VStack(alignment: .leading) {
-                ticketInfoItem(title: "시작시간", content: "\(activity.startDateTime.toString().split(separator: "\n").last ?? "")")
-                    .padding(.bottom, 10)
-                
-                ticketInfoItem(title: "소요시간", content: "\(activity.estimatedTime ?? 0)시간")
-            }
+    func authButton() -> some View {
+        VStack {
+            Button(action: {
+                isPresentingPeerAuthView = true
+            }, label: {
+                Text("인증")
+            })
+            .buttonStyle(.borderedProminent)
+            .tint(selectedItem == .participant ? Color.lightPurple : Color.lightOrange)
             
             Spacer()
-            
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .frame(width: 60, height: 60)
-                
-                Button(action: {
-                    isPresentingPeerAuthView = true
-                }, label: {
-                    symbolItem(name: "link", font: .title, color: .gray)
-                })
-            }
         }
-    }
-    
-    func ticketInfoItem(align: HorizontalAlignment = .leading, title: String, content: String, isText: Bool = true) -> some View {
-        VStack(alignment: align) {
-            textItem(content: title, font: .caption, weight: .bold, color: Color.lightGray)
-            
-            Group {
-                if isText {
-                    textItem(content: content, font: .callout)
-                } else {
-                    Button(action: { handleModalStatus(content: content) }) {
-                        textItem(content: content, font: .callout)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(selectedItem == .participant ? .accentColor : Color("SubColor"))
-                }
-            }
-        }
-    }
-    
-    func textItem(content: String, font: Font = .body, weight: Font.Weight = .regular, color: Color = .white) -> some View {
-        Text(content)
-            .font(font)
-            .fontWeight(weight)
-            .foregroundColor(color)
-    }
-    
-    func symbolItem(name: String, font: Font = .body, color: Color = .gray) -> some View {
-        Image(systemName: name)
-            .font(font)
-            .foregroundColor(color)
     }
     
     func handleModalStatus(content: String) {
@@ -219,5 +165,29 @@ fileprivate extension TicketView {
             }
         }
     }
-    
+}
+
+struct TicketView_Previews: PreviewProvider {
+    static var previews: some View {
+        TicketView(
+            selectedItem: .constant(.participant),
+            isShowingSheet: .constant(false),
+            authSuccess: .constant(false),
+            activity: Activity(
+                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
+                title: "배드민턴 번개",
+                description: "A description of the event.",
+                maxPeopleNumber: 10,
+                category: .alcohol,
+                startDateTime: Date(),
+                estimatedTime: 2,
+                coordinates: Coordinates(latitude: 37.7749, longitude: -122.4194)
+            ),
+            userProfile: User(
+                nickname: "Sample User",
+                affiliation: .postech,
+                email: "sample@example.com"
+            )
+        )
+    }
 }

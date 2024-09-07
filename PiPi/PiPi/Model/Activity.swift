@@ -85,6 +85,27 @@ struct Activity: Identifiable, FirebaseData {
     
 }
 
+// 🔔참가자를 제거하는 메서드
+extension Activity {
+    func removeParticipant(_ participant: String) -> Activity {
+        let updatedParticipantIDs = participantID.filter { $0 != participant }
+        return Activity(
+            id: id,
+            hostID: hostID,
+            title: title,
+            description: description,
+            maxPeopleNumber: maxPeopleNumber,
+            participantID: updatedParticipantIDs,
+            category: category,
+            startDateTime: startDateTime,
+            estimatedTime: estimatedTime,
+            coordinates: coordinates,
+            authentication: authentication.filter { $0.key != participant }
+        )
+    }
+}
+
+
 extension Activity: Equatable, Hashable {
     
     func hash(into hasher: inout Hasher) {
