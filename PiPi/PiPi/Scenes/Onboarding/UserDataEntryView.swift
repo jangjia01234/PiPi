@@ -12,14 +12,31 @@ struct UserDataEntryView: View {
     @State private var showEmailTip = false
     
     @Binding var nickname: String
+    @Binding var password: String
     @Binding var affiliation: Affiliation
     @Binding var email: String
     
     var body: some View {
-        VStack(spacing: 15) {
+        VStack(spacing: 16) {
+            emailDataEntry
+            passwordDataEntry
             nicknameDataEntry
             affiliationDataEntry
-            emailDataEntry
+        }
+    }
+    
+    private var passwordDataEntry: some View {
+        VStack {
+            Text("비밀번호")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.headline)
+            TextField("비밀번호를 입력해주세요.", text: $password)
+                .setAppearance()
+                .keyboardType(.default)
+            Text("* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다.")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.system(size: 12))
+                .foregroundColor(.gray)
         }
     }
     
@@ -66,7 +83,7 @@ struct UserDataEntryView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            TextField("애플 계정 이메일을 입력해주세요!", text: $email)
+            TextField("애플 계정 이메일을 입력해주세요.", text: $email)
                 .setAppearance()
                 .keyboardType(.emailAddress)
         }
@@ -89,6 +106,6 @@ fileprivate extension TextField {
 
 #Preview {
     UserDataEntryView(
-        nickname: .constant(""), affiliation: .constant(.postech), email: .constant("")
+        nickname: .constant(""), password: .constant(""), affiliation: .constant(.postech), email: .constant("")
     )
 }
