@@ -9,10 +9,12 @@ import SwiftUI
 import MapKit
 
 struct TicketDetailView: View {
-    
     @Environment(\.dismiss) var dismiss
     @Binding var isLocationVisible: Bool
-    @State private var cameraPosition: MapCameraPosition = .defaultPosition
+    @State private var cameraPosition: MKCoordinateRegion = MKCoordinateRegion(
+        center: .postech,
+        span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+    )
     
     var activity: Activity
     var userProfile: User
@@ -41,21 +43,23 @@ struct TicketDetailView: View {
                     fetchHostProfile()
                 }
                 fetchParticipantProfiles()
+                updateMapRegion()
             }
         }
     }
     
     private var mapView: some View {
         Map(
-            position: $cameraPosition,
-            bounds: .init(
-                centerCoordinateBounds: .cameraBoundary,
-                minimumDistance: 500,
-                maximumDistance: 3000
+            coordinateRegion: $cameraPosition,
+            annotationItems: [activity]
+        ) { activity in
+            MapMarker(
+                coordinate: CLLocationCoordinate2D(
+                    latitude: activity.coordinates.latitude,
+                    longitude: activity.coordinates.longitude
+                ),
+                tint: .accent
             )
-        ) {
-            Marker("\(activity.title)", coordinate: CLLocationCoordinate2D(latitude: activity.coordinates.latitude, longitude: activity.coordinates.longitude))
-                .tint(.accent)
         }
     }
     
@@ -86,6 +90,18 @@ struct TicketDetailView: View {
             isLocationVisible = false
             dismiss()
         }
+    }
+    
+    private func updateMapRegion() {
+        let coordinate = CLLocationCoordinate2D(
+            latitude: activity.coordinates.latitude,
+            longitude: activity.coordinates.longitude
+        )
+        
+        cameraPosition = MKCoordinateRegion(
+            center: coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+        )
     }
     
     private func nicknameOrPlaceholder(_ nickname: String) -> String {
@@ -132,5 +148,28 @@ struct TicketDetailView: View {
             self.participantProfiles = fetchedProfiles
             self.isLoadingParticipants = false
         }
+    }
+}
+
+struct TicketDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        TicketDetailView(
+            isLocationVisible: .constant(true),
+            activity: Activity(
+                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
+                title: "배드민턴 번개",
+                description: "오늘 저녁에 배드민턴 치실 분!",
+                maxPeopleNumber: 10,
+                category: .alcohol,
+                startDateTime: Date(),
+                estimatedTime: 2,
+                coordinates: Coordinates(latitude: 37.7749, longitude: -122.4194)
+            ),
+            userProfile: User(
+                nickname: "Sample User",
+                affiliation: .postech,
+                email: "sample@example.com"
+            )
+        )
     }
 }
