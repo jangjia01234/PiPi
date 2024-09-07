@@ -48,7 +48,7 @@ private extension ActivityInformationFormView {
     
     var maxPeopleNumberSection: some View {
         Section {
-            Stepper("\(maxPeopleNumber)", value: $maxPeopleNumber, in: 1...20)
+            Stepper("\(maxPeopleNumber)", value: $maxPeopleNumber, in: 2...20)
         } header: {
             header(title: "최대인원", subtitle: "20명까지 가능합니다.")
         }

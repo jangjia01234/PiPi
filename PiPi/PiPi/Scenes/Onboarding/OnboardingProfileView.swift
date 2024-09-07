@@ -15,6 +15,8 @@ struct OnboardingProfileView: View {
     @State private var email: String = ""
     @State private var isButtonEnabled: Bool = false
     
+    private let userDataManager = FirebaseDataManager<User>()
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 78) {
@@ -73,18 +75,17 @@ struct OnboardingProfileView: View {
     }
     
     private func saveProfile() {
-        let profile = UserProfile(
+        let profile = User(
             nickname: nickname,
             affiliation: affiliation,
             email: email
         )
         
         do {
-            try FirebaseDataManager.shared.addData(profile, type: .user, id: profile.id)
-            print("UserProfile 저장 성공")
+            try userDataManager.addData(profile, id: profile.id)
             UserDefaults.standard.setValue(profile.id, forKey: "userID")
         } catch {
-            print("UserProfile 저장 실패: \(error)")
+            dump(error)
         }
     }
     

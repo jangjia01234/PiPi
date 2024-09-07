@@ -19,11 +19,10 @@ struct HomeView: View {
     @State private var activities: [Activity] = []
     @State private var activitiesToShow: [Activity] = []
     
-    private typealias DatabaseResult = Result<[String: Activity], Error>
-    
     private let minPresentationDetents = PresentationDetent.height(150)
     private let maxPresentationDetents = PresentationDetent.height(600)
     private let locationManager = LocationManager()
+    private let activityDataManager = FirebaseDataManager<Activity>()
     
     var body: some View {
         ZStack {
@@ -86,7 +85,7 @@ struct HomeView: View {
             }
         }
         .onAppear {
-            FirebaseDataManager.shared.observeData(eventType: .value, dataType: .activity) { (result: DatabaseResult) in
+            activityDataManager.observeAllData(eventType: .value) { result in
                 switch result {
                 case .success(let result):
                     activities = Array(result.values)

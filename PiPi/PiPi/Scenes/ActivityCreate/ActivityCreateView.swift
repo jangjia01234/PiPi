@@ -9,14 +9,14 @@ import SwiftUI
 
 struct ActivityCreateView: View {
     
-    @AppStorage("userID") private var userID: String = ""
+    @AppStorage("userID") private var userID: String?
     
     @Environment(\.dismiss) private var dismiss
     @FocusState private var isFocused
     
     @State private var title = ""
     @State private var description = ""
-    @State private var maxPeopleNumber = 1
+    @State private var maxPeopleNumber = 2
     @State private var category: Activity.Category = .meal
     @State private var startDateTime = Date()
     @State private var estimatedTime: Int? = nil
@@ -24,6 +24,8 @@ struct ActivityCreateView: View {
     
     @State private var needValueFilledAlertIsPresented = false
     @State private var registerAlertIsPresented = false
+    
+    private let activityDataManager = FirebaseDataManager<Activity>()
     
     private var allRequestedValuesFilled: Bool {
         !title.isEmpty && !description.isEmpty && location != nil
@@ -76,15 +78,11 @@ struct ActivityCreateView: View {
                 Text("이벤트를 직접 개설한 후에는 수정할 수 없습니다.")
             }
         }
-        .onAppear {
-            if userID.isEmpty {
-                fatalError("userID is empty!!")
-            }
-        }
     }
     
     private func registerActivity() {
         guard let location else { return }
+        guard let userID else { fatalError("userID doesn't exist!!") }
         
         let activity = Activity(
             hostID: userID,
@@ -99,9 +97,8 @@ struct ActivityCreateView: View {
         )
         
         do {
-            try FirebaseDataManager.shared.addData(
+            try activityDataManager.addData(
                 activity,
-                type: .activity,
                 id: activity.id
             )
         } catch {

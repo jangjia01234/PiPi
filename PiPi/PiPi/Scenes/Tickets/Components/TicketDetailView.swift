@@ -9,17 +9,20 @@ import SwiftUI
 import MapKit
 
 struct TicketDetailView: View {
+    
     @Environment(\.dismiss) var dismiss
     @Binding var isLocationVisible: Bool
     @State private var cameraPosition: MapCameraPosition = .defaultPosition
     
     var activity: Activity
-    var userProfile: UserProfile
+    var userProfile: User
     
-    @State private var hostProfile: UserProfile?
-    @State private var participantProfiles: [UserProfile] = []
+    @State private var hostProfile: User?
+    @State private var participantProfiles: [User] = []
     @State private var isLoadingHostProfile: Bool = false
     @State private var isLoadingParticipants: Bool = true
+    
+    private let userDataManager = FirebaseDataManager<User>()
     
     var body: some View {
         NavigationStack {
@@ -91,7 +94,7 @@ struct TicketDetailView: View {
     
     private func fetchHostProfile() {
         isLoadingHostProfile = true
-        FirebaseDataManager.shared.fetchData(type: .user, dataID: activity.hostID) { (result: Result<UserProfile, Error>) in
+        userDataManager.observeSingleData(eventType: .value, id: activity.hostID) { result in
             switch result {
             case .success(let profile):
                 self.hostProfile = profile
@@ -104,18 +107,17 @@ struct TicketDetailView: View {
     
     private func fetchParticipantProfiles() {
         isLoadingParticipants = true
-        let participantIDs = activity.participantID
+        let participantEmail = activity.participantID
         
         let group = DispatchGroup()
-        var fetchedProfiles: [UserProfile] = []
+        var fetchedProfiles: [User] = []
         
-        for participantID in participantIDs {
+        for email in participantEmail {
             group.enter()
-            FirebaseDataManager.shared.observeData(
+            userDataManager.observeSingleData(
                 eventType: .value,
-                dataType: .user,
-                dataID: participantID
-            ) { (result: Result<UserProfile, Error>) in
+                id: email
+            ) { result in
                 switch result {
                 case .success(let profile):
                     fetchedProfiles.append(profile)

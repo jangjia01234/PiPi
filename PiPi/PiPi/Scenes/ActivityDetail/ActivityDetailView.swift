@@ -13,8 +13,6 @@ import FirebaseDatabase
 
 struct ActivityDetailView: View {
     
-    @AppStorage("userID") private var userID: String?
-    
     @StateObject private var viewModel: ActivityDetailViewModel
     
     @State private var showJoinAlertView = false
