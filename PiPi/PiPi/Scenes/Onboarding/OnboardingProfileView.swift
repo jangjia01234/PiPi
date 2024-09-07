@@ -14,26 +14,22 @@ struct OnboardingProfileView: View {
     @State private var affiliation: Affiliation = .postech
     @State private var email: String = ""
     @State private var isButtonEnabled: Bool = false
+    @State private var passwordValid: Bool = true
     
     private let userDataManager = FirebaseDataManager<User>()
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 78) {
-                Text("회원가입")
-                    .font(.system(size: 28))
-                    .bold()
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
+            VStack {
                 UserDataEntryView(
                     nickname: $nickname,
                     password: $password,
                     affiliation: $affiliation,
-                    email: $email
+                    email: $email,
+                    passwordValid: $passwordValid
                 )
-                .padding(.bottom, 30)
+
+                Spacer()
                 
                 Button {
                     saveProfile()
@@ -42,30 +38,44 @@ struct OnboardingProfileView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .frame(width: 332, height: 48)
-                        .background(isButtonEnabled ? .sub : Color.secondary)
+                        .background(isButtonEnabled ? .accentColor : Color.secondary)
                         .cornerRadius(10)
                 }
                 .disabled(!isButtonEnabled)
             }
             .frame(maxHeight: .infinity)
             .padding()
-            .onChange(of: [nickname, email]) {
+            .onChange(of: [nickname, password, email]) {
                 validateForm()
             }
+            .onChange(of: password) { newPassword in
+                passwordValid = validatePassword(newPassword)
+            }
+            .navigationTitle("회원가입")
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button("완료") {
                         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                     }
-                    .foregroundColor(.sub)
+                    .foregroundColor(.accentColor)
                 }
             }
         }
     }
     
     private func validateForm() {
-        isButtonEnabled = !nickname.isEmpty && !email.isEmpty
+        isButtonEnabled = !nickname.isEmpty && !email.isEmpty && validatePassword(password)
+    }
+    
+    private func validatePassword(_ password: String) -> Bool {
+        if password.isEmpty {
+               return false
+           }
+        
+        let passwordRegEx = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$"
+        let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
+        return predicate.evaluate(with: password)
     }
     
     private func saveProfile() {
