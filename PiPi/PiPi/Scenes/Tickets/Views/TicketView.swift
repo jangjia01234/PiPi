@@ -15,7 +15,7 @@ struct TicketView: View {
     @AppStorage("userID") var userID: String?
     
     @State private var hostNickname: String = ""
-    @State private var hostEmail: String? = ""
+    @State private var hostEmail: String? = nil
     @State private var showTicketDetailView: Bool = false
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
