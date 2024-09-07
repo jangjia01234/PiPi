@@ -1,6 +1,5 @@
 <div align=center> 
-  <img src="https://github.com/user-attachments/assets/a82fd5f0-6507-4430-83c9-2b2e32ec5bbf" width="100"/>  <img src="https://github.com/user-attachments/assets/e2d423db-0742-406e-8051-4632a328a202" width="100"/><br/>
-
+  <img src="https://github.com/user-attachments/assets/2ed54ed7-2f38-4630-a6ff-f1c78ee2b11c" width="350"/><br/>
 
   # PiPi
 
@@ -24,11 +23,9 @@
 ## 팀원 소개
 |정상윤|장지아|신혜연| 김 별 |
 |:---:|:---:|:---:|:---:|
-|<img src="https://github.com/user-attachments/assets/d0f9f78e-4c50-4c15-a924-300e0f7927d9" width="300"/>|<img src="https://github.com/user-attachments/assets/184fe7ae-8fc4-4fc5-992d-677734ec687e" width="300"/>|<img src="https://github.com/user-attachments/assets/e696a0a9-05db-4bbc-9051-aa2a0697ee91" width="300"/>|<img src="https://github.com/user-attachments/assets/9c06e82d-e219-4850-89b9-28cac2912191" width="300"/>|
+|<img src="https://github.com/user-attachments/assets/d0f9f78e-4c50-4c15-a924-300e0f7927d9" width="300"/>|<img src="https://github.com/user-attachments/assets/184fe7ae-8fc4-4fc5-992d-677734ec687e" width="300"/>|<img src="https://github.com/user-attachments/assets/e696a0a9-05db-4bbc-9051-aa2a0697ee91" width="300"/>|<img src="https://github.com/user-attachments/assets/28b3a5c3-9f88-4cad-8e71-d33d5234c9a4" width="300"/>|
 |[@Winnie](https://github.com/jsangyun)|[@SNOOQ](https://github.com/jangjia01234)|[@Happy](https://github.com/hyeyeonie)|[@Bell](https://github.com/Bell-isHere)|
 |<p align="left">- Firebase기반 DB 구현<br>- MapKit기반의 지도 구현<br>- Git 프로젝트 총괄|<p align="left">- 예약 내역 기능 총괄<br>- UX/UI기반의 디자인 총괄<br>- NearbyInteration기반 근거리 인증 구현|<p align="left">- 온보딩/로그인 화면 구현<br>- 비밀번호 정규식 기능 구현<br>- user 프로필 DB 연동 및 수정 구현|<p align="left">- iMessage 기능 구현<br>- 활동 세부내역 뷰 구현<br>- 참가인원 DB 추가/삭제 기능 구현|
-
-
 <br>
 
 ## 화면 구성
@@ -65,23 +62,20 @@
 
 #### Framework
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
+![corebluetooth](https://img.shields.io/badge/corebluetooth-0082FC?style=for-the-badge&logo=bluetooth&logoColor=white)
 ![corelocatoion](https://img.shields.io/badge/corelocatoion-000000?style=for-the-badge&logo=apple&logoColor=white)
 ![mapkit](https://img.shields.io/badge/mapkit-000000?style=for-the-badge&logo=apple&logoColor=white)
 ![NearbyInteraction](https://img.shields.io/badge/NearbyInteraction-000000?style=for-the-badge&logo=apple&logoColor=white)
 ![firebase](https://img.shields.io/badge/firebase-DD2C00?style=for-the-badge&logo=firebase&logoColor=white)
+![MessageUI](https://img.shields.io/badge/MessageUI-34DA50?style=for-the-badge&logo=imessage&logoColor=white)
 
-#### Skill
-![iMessage](https://img.shields.io/badge/imessage-34DA50?style=for-the-badge&logo=imessage&logoColor=white)
-![bluetooth](https://img.shields.io/badge/bluetooth-0082FC?style=for-the-badge&logo=bluetooth&logoColor=white)
 
-#### Enviroment
-![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=apple&logoColor=white)
+#### Environment
 ![Xcode](https://img.shields.io/badge/Xcode-1575F9?style=for-the-badge&logo=xcode&logoColor=white)
-![App Store](https://img.shields.io/badge/App%20Store-0D96F6?style=for-the-badge&logo=app-store&logoColor=white)
 ![git](https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 
-#### Communication
+#### Collaboration
 ![notion](https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white)
 ![miro](https://img.shields.io/badge/miro-050038?style=for-the-badge&logo=miro&logoColor=white)
 
