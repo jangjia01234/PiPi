@@ -12,11 +12,13 @@ struct PeerAuthView: View {
     @AppStorage("userID") var userID: String?
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var uwb = CBUWB()
-    
     @Binding var isAuthenticationDone: Bool
     @State var lastValidDirections = [NIDiscoveryToken: SIMD3<Float>]()
     
+    @State var isAuthenticated: Bool = false
+    
     var activity: Activity
+    private let activityDataManager = FirebaseDataManager<Activity>()
     
     var body: some View {
         ZStack {
@@ -28,6 +30,9 @@ struct PeerAuthView: View {
                 }
             }
         }
+        .onAppear {
+                    fetchAuthenticationStatus()
+                }
         .onReceive(uwb.$discoveredPeers) { peers in
             for peer in peers {
                 if let direction = peer.direction {
@@ -38,12 +43,44 @@ struct PeerAuthView: View {
             if uwb.discoveredPeers.count > 0 && uwb.discoveredPeers.last!.distance <= 0.2 {
                 isAuthenticationDone = true
                 
+//                do {
+//                    try activityDataManager.updateData(activity, id: activity.id)
+//                    print("activityDataManager 수정 성공")
+//                } catch {
+//                    print("activityDataManager 수정 실패: \(error.localizedDescription)")
+//                }
+                
+                if let userID = userID {
+                    do {
+                        try activityDataManager.updateData(activity, id: activity.id)
+                        isAuthenticated = true
+                        print("Firebase에 인증 상태 업데이트 성공")
+                    } catch {
+                        print("Firebase 업데이트 실패: \(error.localizedDescription)")
+                    }
+                }
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     dismiss()
                 }
             }
         }
     }
+    
+    private func fetchAuthenticationStatus() {
+            guard let userID = userID else { return }
+            
+            // Firebase에서 현재 활동의 인증 상태를 가져옴
+            activityDataManager.observeSingleData(eventType: .value, id: activity.id) { result in
+                switch result {
+                case .success(let activity):
+                    // 해당 유저의 인증 상태를 가져와서 업데이트
+                    self.isAuthenticated = activity.authentication[userID] ?? false
+                case .failure(let error):
+                    print("Firebase에서 인증 상태 가져오기 실패: \(error)")
+                }
+            }
+        }
     
     private func offset(for peer: DiscoveredPeer) -> CGSize {
         guard let direction = peer.direction ?? lastValidDirections[peer.token] else {

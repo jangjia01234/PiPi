@@ -42,12 +42,6 @@ struct TicketDetailView: View {
             .navigationBarTitle("\(activity.title)", displayMode: .inline)
             .navigationBarItems(trailing: doneButton)
         }
-        // TODO: 아이메세지 전송 Sheet 추가 예정
-        //        .sheet(isPresented: $showMessageView) {
-        //            if let email = hostEmail {
-        //                iMessageConnect(email: email)
-        //            }
-        //        }
         .onAppear {
             if activity.hostID != userProfile.id {
                 fetchHostProfile()
@@ -55,12 +49,6 @@ struct TicketDetailView: View {
             
             fetchParticipantProfiles()
             updateMapRegion()
-            
-            if let isAuthenticated = activity.authentication[userProfile.id] {
-                isAuthenticationDone = isAuthenticated
-            } else {
-                isAuthenticationDone = false
-            }
         }
     }
     
@@ -244,7 +232,7 @@ struct TicketDetailView_Previews: PreviewProvider {
             isAuthenticationDone: .constant(false),
             activity: Activity(
                 hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                title: "배드민턴 번개",
+                title: "벨과 함께하는 배드민턴 번개",
                 description: "오늘 저녁에 배드민턴 치실 분!",
                 maxPeopleNumber: 10,
                 category: .alcohol,

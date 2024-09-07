@@ -114,7 +114,7 @@ struct TicketsView_Previews: PreviewProvider {
             isShowingSheet: .constant(false),
             activity: Activity(
                 hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                title: "",
+                title: "벨과 함께하는 배드민턴",
                 description: "",
                 maxPeopleNumber: 2,
                 category: .alcohol,

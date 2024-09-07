@@ -163,8 +163,8 @@ struct TicketView_Previews: PreviewProvider {
             isShowingSheet: .constant(false),
             activity: Activity(
                 hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                title: "배드민턴 번개",
-                description: "A description of the event.",
+                title: "벨과 함께하는 배드민턴 번개",
+                description: "",
                 maxPeopleNumber: 10,
                 category: .alcohol,
                 startDateTime: Date(),
@@ -172,9 +172,9 @@ struct TicketView_Previews: PreviewProvider {
                 coordinates: Coordinates(latitude: 37.7749, longitude: -122.4194)
             ),
             userProfile: User(
-                nickname: "Sample User",
+                nickname: "",
                 affiliation: .postech,
-                email: "sample@example.com"
+                email: ""
             )
         )
     }
