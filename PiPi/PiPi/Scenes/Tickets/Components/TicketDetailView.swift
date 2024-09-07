@@ -25,11 +25,6 @@ struct TicketDetailView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
     
-    // 🔔메시지 창을 표시할지 여부를 관리하는 상태 변수
-    @State private var showMessageView = false
-    // 🔔참가자 이메일 저장
-    @State private var participantEmail: String?
-    
     private let userDataManager = FirebaseDataManager<User>()
     
     var activity: Activity
@@ -89,30 +84,42 @@ struct TicketDetailView: View {
     }
     
     private var userInfo: some View {
-        Section {
-            HStack {
-                Text("닉네임")
-                
-                Spacer()
-                
-                // FIXME: 실제 주최자의 닉네임으로 변경 필요
-                Text(userProfile.nickname)
-                
-                // FIXME: 문의하기 버튼 탭할 경우 시트가 올라오지 않는 에러 발생
-                if !userProfile.nickname.isEmpty {
-                    Button(action: {
-                        showMessageView = true
-                    }) {
-                        Image(systemName: "ellipsis.message")
+            Section {
+                if selectedItem == .participant {
+                    if !userProfile.nickname.isEmpty {
+                        HStack {
+                            Text("닉네임")
+                            
+                            Spacer()
+                            
+                            // FIXME: 실제 주최자의 닉네임으로 변경 필요
+                            Text(userProfile.nickname)
+                            
+                            // FIXME: 문의하기 버튼 탭할 경우 시트가 올라오지 않는 에러 발생
+                            Button(action: {
+                                showMessageView = true
+                            }) {
+                                Image(systemName: "ellipsis.message")
+                                    .foregroundColor(.gray)
+                                    .frame(width: 30, height: 30)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            }
+                        }
+                    } else {
+                        Text("주최자 정보 없음")
                             .foregroundColor(.gray)
-                            .frame(width: 30, height: 30)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                } else {
+                    if !activity.participantID.isEmpty {
+                        participantsInfo
+                    } else {
+                        Text("참가자가 아직 없습니다.")
+                            .foregroundColor(.gray)
                     }
                 }
+            } header: {
+                Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
             }
-        } header: {
-            Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
-        }
     }
     
     private func listCell(title: String, content: String) -> some View {
@@ -232,7 +239,7 @@ struct TicketDetailView_Previews: PreviewProvider {
                 coordinates: Coordinates(latitude: 37.7749, longitude: -122.4194)
             ),
             userProfile: User(
-                nickname: "닉넴",
+                nickname: "",
                 affiliation: .postech,
                 email: "sample@example.com"
             )
