@@ -53,7 +53,6 @@ struct TicketView: View {
             }
             .sheet(isPresented: $isPresentingPeerAuthView) {
                 PeerAuthView(
-                    selectedItem: $selectedItem,
                     authSuccess: $authSuccess,
                     activity: activity
                 )

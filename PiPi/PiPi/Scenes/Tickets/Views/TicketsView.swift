@@ -37,7 +37,6 @@ struct TicketsView: View {
             // MARK: - PeerAuthView 시트 상태관리
                 .sheet(isPresented: $isShowingSheet) {
                     PeerAuthView(
-                        selectedItem: $selectedItem,
                         authSuccess: $authSuccess,
                         activity: activity
                     )

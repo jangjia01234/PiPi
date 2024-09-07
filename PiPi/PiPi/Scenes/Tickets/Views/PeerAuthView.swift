@@ -13,7 +13,6 @@ struct PeerAuthView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var uwb = CBUWB()
     @State var lastValidDirections = [NIDiscoveryToken: SIMD3<Float>]()
-    @Binding var selectedItem: TicketType
     @Binding var authSuccess: Bool
     var activity: Activity
     
@@ -42,10 +41,6 @@ struct PeerAuthView: View {
         }
     }
     
-    private var selectedItemColor: String {
-        return selectedItem == .participant ? "purple" : "orange"
-    }
-    
     private func offset(for peer: DiscoveredPeer) -> CGSize {
         guard let direction = peer.direction ?? lastValidDirections[peer.token] else {
             return CGSize.zero
@@ -57,29 +52,29 @@ struct PeerAuthView: View {
     
     private var readyToConnect: some View {
         VStack {
-            Text("더 가까이 가보세요!")
+            Text("핸드폰을 가까이 대서\n인증해주세요!")
                 .multilineTextAlignment(.center)
-                .font(.title3)
-                .bold()
+                .font(.system(size: 28))
+                .fontWeight(.heavy)
             
-            Image("link_\(selectedItemColor)")
+            Image("auth_ing")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 200)
+                .frame(width: 350)
         }
     }
     
     private var nowInConnect: some View {
         VStack {
-            Text(authSuccess ? "인증에 성공했어요!" : "더 가까이 가보세요!")
+            Text(authSuccess ? "인증에 성공했어요!" : "핸드폰을 가까이 대서\n인증해주세요!")
                 .multilineTextAlignment(.center)
-                .font(.title3)
-                .bold()
+                .font(.system(size: 28))
+                .fontWeight(.heavy)
             
-            Image(authSuccess ? "success_\(selectedItemColor)" : "link_\(selectedItemColor)")
+            Image(authSuccess ? "auth_done" : "auth_ing")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 200)
+                .frame(width: 350)
                 .onAppear {
                     if uwb.discoveredPeers.last!.distance <= 0.2 {
                         authSuccess = true
