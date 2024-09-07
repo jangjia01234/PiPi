@@ -47,7 +47,7 @@ struct OnboardingTabView: View {
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
             .fullScreenCover(isPresented: $moveToSignUpView) {
-                OnboardingProfileView()
+                SignUpView()
             }
         }
     }
