@@ -26,7 +26,7 @@ struct TicketSegmentedControl: View {
             Divider()
                 .padding(.bottom, 10)
         }
-        .navigationTitle("내 티켓")
+        .navigationTitle("내 예약")
         .navigationBarTitleDisplayMode(.large)
     }
 }

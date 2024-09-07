@@ -29,20 +29,20 @@ struct TicketsView: View {
     
     var body: some View {
         NavigationStack {
-            TicketSegmentedControl(selectedItem: $selectedItem)
-            
-            ticketsList
-                .scrollBounceBehavior(.basedOnSize)
-                .navigationBarBackButtonHidden(true)
-            // MARK: - PeerAuthView 시트 상태관리
-                .sheet(isPresented: $isShowingSheet) {
-                    PeerAuthView(
-                        authSuccess: $authSuccess,
-                        activity: activity
-                    )
-                }
-            
-            Spacer()
+                TicketSegmentedControl(selectedItem: $selectedItem)
+                
+                ticketsList
+                    .scrollBounceBehavior(.basedOnSize)
+                    .navigationBarBackButtonHidden(true)
+                // MARK: - PeerAuthView 시트 상태관리
+                    .sheet(isPresented: $isShowingSheet) {
+                        PeerAuthView(
+                            authSuccess: $authSuccess,
+                            activity: activity
+                        )
+                    }
+                
+                Spacer()
         }
         .onAppear(perform: loadData)
     }
@@ -110,4 +110,22 @@ struct TicketsView: View {
 enum TicketType : String, CaseIterable {
     case participant = "참가자"
     case organizer = "주최자"
+}
+
+struct TicketsView_Previews: PreviewProvider {
+    static var previews: some View {
+        TicketsView(
+            isShowingSheet: .constant(false),
+            activity: Activity(
+                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
+                title: "",
+                description: "",
+                maxPeopleNumber: 2,
+                category: .alcohol,
+                startDateTime: Date(),
+                estimatedTime: 1,
+                coordinates: Coordinates(latitude: 0.0, longitude: 0.0)
+            )
+        )
+    }
 }
