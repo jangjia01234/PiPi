@@ -8,8 +8,6 @@
 </div>
 <br>
 
-
-
 ## PiPi Logo
 
 <br>
@@ -23,7 +21,7 @@
 ## 팀원 소개
 |정상윤|장지아|신혜연| 김 별 |
 |:---:|:---:|:---:|:---:|
-|<img src="https://github.com/user-attachments/assets/d0f9f78e-4c50-4c15-a924-300e0f7927d9" width="300"/>|<img src="https://github.com/user-attachments/assets/184fe7ae-8fc4-4fc5-992d-677734ec687e" width="300"/>|<img src="https://github.com/user-attachments/assets/e696a0a9-05db-4bbc-9051-aa2a0697ee91" width="300"/>|<img src="https://github.com/user-attachments/assets/28b3a5c3-9f88-4cad-8e71-d33d5234c9a4" width="300"/>|
+|<img src="https://github.com/user-attachments/assets/d0f9f78e-4c50-4c15-a924-300e0f7927d9" width="300"/>|<img src="https://github.com/user-attachments/assets/184fe7ae-8fc4-4fc5-992d-677734ec687e" width="300"/>|<img src="https://github.com/user-attachments/assets/e696a0a9-05db-4bbc-9051-aa2a0697ee91" width="300"/>|<img src="https://github.com/user-attachments/assets/264cbc7c-719c-4ae6-815c-ee9cc636f90a" width="300"/>|
 |[@Winnie](https://github.com/jsangyun)|[@SNOOQ](https://github.com/jangjia01234)|[@Happy](https://github.com/hyeyeonie)|[@Bell](https://github.com/Bell-isHere)|
 |<p align="left">- Firebase기반 DB 구현<br>- MapKit기반의 지도 구현<br>- Git 프로젝트 총괄|<p align="left">- 예약 내역 기능 총괄<br>- UX/UI기반의 디자인 총괄<br>- NearbyInteration기반 근거리 인증 구현|<p align="left">- 온보딩/로그인 화면 구현<br>- 비밀번호 정규식 기능 구현<br>- user 프로필 DB 연동 및 수정 구현|<p align="left">- iMessage 기능 구현<br>- 활동 세부내역 뷰 구현<br>- 참가인원 DB 추가/삭제 기능 구현|
 <br>
