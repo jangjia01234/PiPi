@@ -10,12 +10,10 @@ import SwiftUI
 struct TicketsView: View {
     @AppStorage("userID") var userID: String?
     @State private var activities: [Activity] = []
-    @State private var userProfile: UserProfile = UserProfile(
-        id: "6F0457BD-1AC9-4368-926A-634853569179",
+    @State private var userProfile: User = User(
         nickname: "",
         affiliation: .postech,
-        email: "",
-        level: 1
+        email: ""
     )
     @State private var selectedItem: TicketType = .participant
     @State private var authSuccess: Bool = false
@@ -25,8 +23,9 @@ struct TicketsView: View {
     @Binding var isShowingSheet: Bool
     
     var activity: Activity
-    private typealias ActivityDatabaseResult = Result<[String: Activity], Error>
-    private typealias UserDatabaseResult = Result<UserProfile, Error>
+    
+    private let activityDataManager = FirebaseDataManager<Activity>()
+    private let userDataManager = FirebaseDataManager<User>()
     
     var body: some View {
         NavigationStack {
@@ -66,7 +65,7 @@ struct TicketsView: View {
     }
     
     private func shouldDisplayTicket(for activity: Activity, userID: String?) -> Bool {
-        guard let userID = userID else { return false }
+        guard let userID else { return false }
         
         switch selectedItem {
         case .participant:
@@ -82,10 +81,9 @@ struct TicketsView: View {
     }
     
     private func fetchActivities() {
-        FirebaseDataManager.shared.observeData(
-            eventType: .value,
-            dataType: .activity
-        ) { (result: ActivityDatabaseResult) in
+        activityDataManager.observeAllData(
+            eventType: .value
+        ) { result in
             switch result {
             case .success(let result):
                 self.activities = Array(result.values)
@@ -96,14 +94,14 @@ struct TicketsView: View {
     }
     
     private func fetchUserProfile() {
-        FirebaseDataManager.shared.fetchData(
-            type: .user,
-            dataID: userProfile.id
-        ) { (result: UserDatabaseResult) in
+        userDataManager.observeSingleData(
+            eventType: .value,
+            id: userProfile.id
+        ) { result in
             switch result {
             case .success(let fetchedUser):
                 userProfile = fetchedUser
-            case .failure(let error):
+            case .failure(_):
                 break
             }
         }

@@ -9,15 +9,12 @@ import SwiftUI
 
 struct HostInformationSectionView: View {
     
-    let host: UserProfile
+    let host: User
     
     var body: some View {
         Section {
             row(title: "주최자") {
                 Text(host.nickname)
-            }
-            row(title: "참여도") {
-                Text("Lv. \(host.level)")
             }
         }
         .listRowBackground(Color(.secondarySystemBackground))

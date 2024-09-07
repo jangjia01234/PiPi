@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Activity: Identifiable {
+struct Activity: Identifiable, FirebaseData {
     
     let id: String
     let hostID: String
@@ -20,6 +20,10 @@ struct Activity: Identifiable {
     let estimatedTime: Int?
     let coordinates: Coordinates
     let authentication: [String: Bool]
+    
+    var status: State {
+        (participantID.count + 1 < maxPeopleNumber) ? .open : .closed
+    }
     
     init(
         id: String = UUID().uuidString,
@@ -79,10 +83,6 @@ struct Activity: Identifiable {
         )
     }
     
-    var status: State {
-        (participantID.count + 1 < maxPeopleNumber) ? .open : .closed
-    }
-    
 }
 
 extension Activity: Equatable, Hashable {
@@ -93,13 +93,20 @@ extension Activity: Equatable, Hashable {
     
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
+        && lhs.title == rhs.title
+        && lhs.description == rhs.description
+        && lhs.maxPeopleNumber == rhs.maxPeopleNumber
         && lhs.participantID == rhs.participantID
         && lhs.authentication == rhs.authentication
+        && lhs.category == rhs.category
+        && lhs.startDateTime == rhs.startDateTime
+        && lhs.estimatedTime == rhs.estimatedTime
+        && lhs.coordinates == rhs.coordinates
     }
     
 }
 
-extension Activity: Codable {
+extension Activity {
     
     enum CodingKeys: String, CodingKey {
         case id
