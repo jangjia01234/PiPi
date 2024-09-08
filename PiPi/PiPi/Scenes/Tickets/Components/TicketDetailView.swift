@@ -10,16 +10,14 @@ import MapKit
 import MessageUI
 
 struct TicketDetailView: View {
-    
     @Environment(\.dismiss) var dismiss
+    @ObservedObject var viewModel: ActivityDetailViewModel
     
     @Binding var isLocationVisible: Bool
     @Binding var selectedItem: TicketType
     @Binding var showMessageView: Bool
-    @Binding var isAuthenticationDone: Bool
     
-    @ObservedObject var viewModel: ActivityDetailViewModel
-    
+    @State private var showAlert = false
     @State private var hostProfile: User?
     @State private var participantProfiles: [User] = []
     @State private var isLoadingHostProfile: Bool = false
@@ -28,7 +26,6 @@ struct TicketDetailView: View {
         center: .postech,
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
-    @State private var showAlert = false
     
     private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let userDataManager = FirebaseDataManager<User>()
@@ -215,10 +212,9 @@ struct TicketDetailView: View {
                 Text("참가자가 아직 없습니다.")
                     .foregroundColor(.gray)
             } else {
-                Form {
-                    ForEach(participantProfiles, id: \.id) { participant in
-                        Text(participant.nickname)
-                    }
+                
+                ForEach(participantProfiles, id: \.id) { participant in
+                    Text(participant.nickname)
                 }
             }
         }
@@ -297,32 +293,20 @@ struct TicketDetailView: View {
     }
 }
 
-struct TicketDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        TicketDetailView(
-            isLocationVisible: .constant(false),
-            selectedItem: .constant(.organizer),
-            showMessageView: .constant(false),
-            isAuthenticationDone: .constant(false),
-            viewModel: .init(
-                activityID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029"
-            ),
-            activity: Activity(
-                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                title: "벨과 함께하는 배드민턴 번개",
-                description: "오늘 저녁에 배드민턴 치실 분!",
-                maxPeopleNumber: 10,
-                category: .alcohol,
-                startDateTime: Date(),
-                estimatedTime: 2,
-                coordinates: Coordinates(latitude: 37.7749, longitude: -122.4194)
-            ),
-            userProfile: User(
-                nickname: "",
-                affiliation: .postech,
-                email: "sample@example.com"
-            )
+#Preview {
+    TicketDetailView(
+        viewModel: .init(
+            activityID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
+            hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029"
+        ),
+        isLocationVisible: .constant(false),
+        selectedItem: .constant(.participant),
+        showMessageView: .constant(false),
+        activity: Activity.sampleData,
+        userProfile: User(
+            nickname: "",
+            affiliation: .postech,
+            email: ""
         )
-    }
+    )
 }

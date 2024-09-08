@@ -11,7 +11,6 @@ import FirebaseDatabase
 import MessageUI
 
 struct TicketView: View {
-    
     @Binding var selectedItem: TicketType
     @Binding var isShowingSheet: Bool
     
@@ -21,7 +20,6 @@ struct TicketView: View {
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
     @State private var showMessageView = false
-    @State var isAuthenticationDone: Bool = false
     
     private let userDataManager = FirebaseDataManager<User>()
     private let userID = FirebaseAuthManager.shared.currentUser?.uid
@@ -48,18 +46,16 @@ struct TicketView: View {
             .padding(.horizontal, 20)
             .sheet(isPresented: $showTicketDetailView) {
                 TicketDetailView(
+                    viewModel: viewModel,
                     isLocationVisible: $isLocationVisible,
                     selectedItem: $selectedItem,
                     showMessageView: $showMessageView,
-                    isAuthenticationDone: $isAuthenticationDone,
-                    viewModel: viewModel,
                     activity: activity,
                     userProfile: userProfile
                 )
             }
             .sheet(isPresented: $isPresentingPeerAuthView) {
                 PeerAuthView(
-                    isAuthenticationDone: $isAuthenticationDone,
                     activity: activity
                 )
             }
@@ -91,7 +87,22 @@ fileprivate extension TicketView {
         }
     }
     
+    func formatDate() -> String? {
+        let activityDate = activity.startDateTime.toString()
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        
+        formatter.dateFormat = "yyyy년 MM월 dd일\na HH시 mm분"
+        guard let date = formatter.date(from: activityDate) else { return nil }
+        
+        formatter.dateFormat = "MM/dd HH:mm분"
+        return formatter.string(from: date)
+    }
+    
     func infoText() -> some View {
+        
+        
         VStack(alignment: .leading) {
             HStack {
                 Text(activity.title)
@@ -100,13 +111,25 @@ fileprivate extension TicketView {
                     .padding(.bottom, 5)
             }
             
-            VStack(alignment: .leading) {
-                Text("\(activity.startDateTime.toString().split(separator: "\n").first ?? "")")
-                Text("\(activity.estimatedTime ?? 0)시간")
+            if let formattedDate = formatDate() {
+                VStack(alignment: .leading) {
+                    Text(formattedDate)
+                    
+                    if let estimatedTime = activity.estimatedTime {
+                        if estimatedTime > 0 {
+                            Text("약 \(activity.estimatedTime ?? 0)시간 소요")
+                                .font(.footnote)
+                        } else {
+                            Text("소요 시간 미정")
+                                .font(.footnote)
+                        }
+                    }
+                }
+                .foregroundColor(.gray)
             }
-            .foregroundColor(.gray)
         }
-        .frame(width: 180)
+        .frame(width: 160)
+        .padding(.leading, 20)
     }
     
     func authButton() -> some View {
@@ -180,26 +203,15 @@ fileprivate extension TicketView {
     }
 }
 
-struct TicketView_Previews: PreviewProvider {
-    static var previews: some View {
-        TicketView(
-            selectedItem: .constant(.participant),
-            isShowingSheet: .constant(false),
-            activity: Activity(
-                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                title: "벨과 함께하는 배드민턴 번개",
-                description: "",
-                maxPeopleNumber: 10,
-                category: .alcohol,
-                startDateTime: Date(),
-                estimatedTime: 2,
-                coordinates: Coordinates(latitude: 37.7749, longitude: -122.4194)
-            ),
-            userProfile: User(
-                nickname: "",
-                affiliation: .postech,
-                email: ""
-            )
+#Preview {
+    TicketView(
+        selectedItem: .constant(.participant),
+        isShowingSheet: .constant(false),
+        activity: Activity.sampleData,
+        userProfile: User(
+            nickname: "",
+            affiliation: .postech,
+            email: ""
         )
-    }
+    )
 }
