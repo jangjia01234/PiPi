@@ -94,11 +94,6 @@ fileprivate extension TicketView {
                     .font(.system(size: 28))
                     .fontWeight(.black)
                     .padding(.bottom, 5)
-                
-                // FIXME: Symbol은 디자인이 확정되지 않아 임시로 코드만 작성해둠
-//                Image("\(activity.category.self).accent")
-//                    .resizable()
-//                    .frame(width: 20, height: 20)
             }
             
             VStack(alignment: .leading) {
@@ -112,13 +107,36 @@ fileprivate extension TicketView {
     
     func authButton() -> some View {
         VStack {
-            Button(action: {
-                isPresentingPeerAuthView = true
-            }, label: {
-                Text("인증")
-            })
-            .buttonStyle(.borderedProminent)
-            .tint(selectedItem == .participant ? Color.lightPurple : Color.lightOrange)
+            if let userID = userID {
+                if selectedItem == .participant {
+                    if activity.participantID.contains(userID) {
+                        Button(action: {
+                            isPresentingPeerAuthView = true
+                        }, label: {
+                            Text(activity.authentication[userID] == true ? "인증완료": "인증하기")
+                        })
+                        .buttonStyle(.borderedProminent)
+                        
+                        // FIXME: 색상 최신 버전으로 변경 필요
+                        .tint(activity.authentication[userID] == true ? .gray : Color.lightPurple)
+                    }
+                } else {
+                    if userID == activity.hostID {
+                        let totalParticipants = activity.authentication.count
+                        let completedAuthentications = activity.authentication.values.filter { $0 == true }.count
+                        
+                        Button(action: {
+                            isPresentingPeerAuthView = true
+                        }, label: {
+                            Text(totalParticipants > 0 && totalParticipants == completedAuthentications ? "인증완료" : "인증하기")
+                        })
+                        .buttonStyle(.borderedProminent)
+                        
+                        // FIXME: 색상 최신 버전으로 변경 필요
+                        .tint(totalParticipants > 0 && totalParticipants == completedAuthentications ? .gray : Color.lightOrange)
+                    }
+                }
+            }
             
             Spacer()
         }

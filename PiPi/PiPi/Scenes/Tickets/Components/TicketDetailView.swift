@@ -10,6 +10,7 @@ import MapKit
 import MessageUI
 
 struct TicketDetailView: View {
+    @AppStorage("userID") var userID: String?
     @Environment(\.dismiss) var dismiss
     
     @Binding var isLocationVisible: Bool
@@ -76,9 +77,33 @@ struct TicketDetailView: View {
     
     private var activityStatus: some View {
         Section {
+            // MARK: 모집중인지 여부 표시
             listCell(title: "모집 상태", content: activity.status == .closed ? "모집완료" : "모집중")
             
-            listCell(title: "인증 여부", content: isAuthenticationDone ? "완료" : "미완료")
+            // MARK: 인증 완료된 인원 표시
+            if let userID = userID {
+                if selectedItem == .participant {
+                    if activity.participantID.contains(userID) {
+                        listCell(title: "인증 여부", content: activity.authentication[userID] == true ? "완료" : "미완료")
+                    }
+                } else {
+                    if userID == activity.hostID {
+                        let totalParticipants = activity.authentication.count
+                        let completedAuthentications = activity.authentication.values.filter { $0 == true }.count
+                        
+                        if totalParticipants > 0 {
+                            HStack {
+                                Text("인증 완료")
+                                Spacer()
+                                Text("\(completedAuthentications)명 / \(totalParticipants)명 완료")
+                                    .foregroundColor(completedAuthentications == totalParticipants ? .accentColor : .black)
+                            }
+                        }
+                    }
+                }
+            } else {
+                listCell(title: "인증 여부", content: "사용자 미확인")
+            }
         } header: {
             Text("상태")
         }
