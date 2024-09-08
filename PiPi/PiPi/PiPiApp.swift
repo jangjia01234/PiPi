@@ -35,7 +35,7 @@ struct PiPiApp: App {
             Group {
                 switch appRootManager.currentRoot {
                 case .onboarding:
-                    OnboardingTabView()
+                    OnboardingView()
                 case .content:
                     ContentView(isShowingSheet: $isShowingSheet, activity: activity)
                 case .signUp:
