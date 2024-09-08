@@ -16,41 +16,49 @@ struct SignUpView: View {
     @State private var email: String = ""
     @State private var isButtonEnabled: Bool = false
     @State private var passwordValid: Bool = true
+    @State private var showProgressView = false
     
     private let userDataManager = FirebaseDataManager<User>()
     
     var body: some View {
         NavigationStack {
-            VStack {
-                UserDataEntryView(
-                    nickname: $nickname,
-                    password: $password,
-                    affiliation: $affiliation,
-                    email: $email,
-                    passwordValid: $passwordValid
-                )
-
-                Spacer()
-                
-                Button {
-                    saveProfile()
-                } label: {
-                    Text("완료")
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .frame(width: 332, height: 48)
-                        .background(isButtonEnabled ? .accentColor : Color.secondary)
-                        .cornerRadius(10)
+            ZStack {
+                VStack {
+                    UserDataEntryView(
+                        nickname: $nickname,
+                        password: $password,
+                        affiliation: $affiliation,
+                        email: $email,
+                        passwordValid: $passwordValid
+                    )
+                    
+                    Spacer()
+                    
+                    Button {
+                        signUp()
+                    } label: {
+                        Text("완료")
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .frame(width: 332, height: 48)
+                            .background(isButtonEnabled ? .accentColor : Color.secondary)
+                            .cornerRadius(10)
+                    }
+                    .disabled(!isButtonEnabled || showProgressView)
                 }
-                .disabled(!isButtonEnabled)
+                .frame(maxHeight: .infinity)
+                .padding()
+                
+                if showProgressView {
+                    ProgressView()
+                        .setAppearance()
+                }
             }
-            .frame(maxHeight: .infinity)
-            .padding()
             .onChange(of: [nickname, password, email]) {
                 validateForm()
             }
-            .onChange(of: password) { newPassword in
-                passwordValid = validatePassword(newPassword)
+            .onChange(of: password) {
+                passwordValid = validatePassword(password)
             }
             .navigationTitle("회원가입")
             .toolbar {
@@ -79,16 +87,33 @@ struct SignUpView: View {
         return predicate.evaluate(with: password)
     }
     
-    private func saveProfile() {
-        let profile = User(
+    private func signUp() {
+        showProgressView = true
+        Task {
+            let result = await FirebaseAuthManager.shared.signUp(
+                email: email,
+                password: password
+            )
+            switch result {
+            case .success(let user):
+                saveUser(id: user.uid)
+            case .failure(let error):
+                dump(error)
+            }
+            showProgressView = false
+        }
+    }
+    
+    private func saveUser(id: String) {
+        let user = User(
+            id: id,
             nickname: nickname,
             affiliation: affiliation,
             email: email
         )
-        
         do {
-            try userDataManager.addData(profile, id: profile.id)
-            UserDefaults.standard.setValue(profile.id, forKey: "userID")
+            try userDataManager.addData(user, id: id)
+            UserDefaults.standard.setValue(id, forKey: "userID")
         } catch {
             dump(error)
         }
