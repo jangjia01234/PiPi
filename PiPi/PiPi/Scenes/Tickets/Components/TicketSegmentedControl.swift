@@ -48,6 +48,11 @@ private struct SegmentedControlItem: View {
                     .frame(width: 84, height: 3)
             }
         }
+        .padding(.bottom, -10)
         .onTapGesture { action() }
     }
+}
+
+#Preview {
+    TicketSegmentedControl(selectedItem: .constant(.participant))
 }

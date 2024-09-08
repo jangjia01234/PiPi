@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TicketsView: View {
+    @Binding var isShowingSheet: Bool
     
     @State private var activities: [Activity] = []
     @State private var userProfile: User = User(
@@ -16,10 +17,6 @@ struct TicketsView: View {
         email: ""
     )
     @State private var selectedItem: TicketType = .participant
-    
-    // MARK: - 🔥
-    // 확인 및 네이밍 개선 필요
-    @Binding var isShowingSheet: Bool
     
     var activity: Activity
     
@@ -46,15 +43,29 @@ struct TicketsView: View {
     
     private var ticketsList: some View {
         ScrollView {
-            ForEach(activities, id: \.id) { activity in
-                if shouldDisplayTicket(for: activity, userID: userID) {
-                    TicketView(
-                        selectedItem: $selectedItem,
-                        isShowingSheet: $isShowingSheet,
-                        activity: activity,
-                        userProfile: userProfile
-                    )
-                    .padding(.top, 10)
+            if let userID = userID {
+                let filteredActivities = activities.filter { activity in
+                    if selectedItem == .participant {
+                        return activity.participantID.contains(userID)
+                    } else {
+                        return activity.hostID == userID
+                    }
+                }
+                
+                if filteredActivities.isEmpty {
+                    Text(selectedItem == .participant ? "예약 내역이 없습니다" : "주최한 모임이 없습니다.")
+                        .foregroundColor(.gray)
+                        .padding(.top, 50)
+                } else {
+                    ForEach(filteredActivities, id: \.id) { activity in
+                        TicketView(
+                            selectedItem: $selectedItem,
+                            isShowingSheet: $isShowingSheet,
+                            activity: activity,
+                            userProfile: userProfile
+                        )
+                        .padding(.top, 10)
+                    }
                 }
             }
         }
@@ -109,20 +120,6 @@ enum TicketType : String, CaseIterable {
     case organizer = "주최자"
 }
 
-struct TicketsView_Previews: PreviewProvider {
-    static var previews: some View {
-        TicketsView(
-            isShowingSheet: .constant(false),
-            activity: Activity(
-                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                title: "벨과 함께하는 배드민턴",
-                description: "",
-                maxPeopleNumber: 2,
-                category: .alcohol,
-                startDateTime: Date(),
-                estimatedTime: 1,
-                coordinates: Coordinates(latitude: 0.0, longitude: 0.0)
-            )
-        )
-    }
+#Preview {
+    TicketsView(isShowingSheet: .constant(false), activity: Activity.sampleData)
 }
