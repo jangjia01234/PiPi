@@ -33,23 +33,25 @@ class MCUWB: NSObject, UWB {
     private var _mcBrowser: MCNearbyServiceBrowser!
 
     @Published var discoveredPeers = [DiscoveredPeer]()
+    
+    private let activityID: String
 
-    override init() {
+    init(activityID: String) {
+        self.activityID = activityID
+        self._niSession = NISession()
+        self._mcPeerID = MCPeerID(displayName: UIDevice.current.name)
+        self._mcSession = MCSession(peer: _mcPeerID, securityIdentity: nil, encryptionPreference: .required)
+        self._mcAdvertiser = MCNearbyServiceAdvertiser(peer: _mcPeerID, discoveryInfo: nil, serviceType: "radar")
+        self._mcBrowser = MCNearbyServiceBrowser(peer: _mcPeerID, serviceType: "radar")
+        
         super.init()
 
-        _niSession = NISession()
         _niSession.delegate = self
-
-        _mcPeerID = MCPeerID(displayName: UIDevice.current.name)
-        _mcSession = MCSession(peer: _mcPeerID, securityIdentity: nil, encryptionPreference: .required)
         _mcSession.delegate = self
-
-        _mcAdvertiser = MCNearbyServiceAdvertiser(peer: _mcPeerID, discoveryInfo: nil, serviceType: "radar")
         _mcAdvertiser.delegate = self
-        _mcAdvertiser.startAdvertisingPeer()
-
-        _mcBrowser = MCNearbyServiceBrowser(peer: _mcPeerID, serviceType: "radar")
         _mcBrowser.delegate = self
+        
+        _mcAdvertiser.startAdvertisingPeer()
         _mcBrowser.startBrowsingForPeers()
     }
 
@@ -104,13 +106,18 @@ extension MCUWB: MCSessionDelegate {
 
 extension MCUWB: MCNearbyServiceAdvertiserDelegate {
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        invitationHandler(true, _mcSession)
+        guard let context,
+              let opponentActivityID = String(data: context, encoding: .utf8) else { return }
+        
+        invitationHandler((opponentActivityID == activityID), _mcSession)
     }
 }
 
 extension MCUWB: MCNearbyServiceBrowserDelegate {
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
-        _mcBrowser.invitePeer(peerID, to: _mcSession, withContext: nil, timeout: 10)
+        guard let contextData = activityID.data(using: .utf8) else { return }
+        
+        _mcBrowser.invitePeer(peerID, to: _mcSession, withContext: contextData, timeout: 10)
     }
 
     func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {}
