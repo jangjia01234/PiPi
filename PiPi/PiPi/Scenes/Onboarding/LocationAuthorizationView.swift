@@ -18,22 +18,22 @@ struct LocationAuthorizationView: View {
     
     var body: some View {
         ZStack {
-            VStack(spacing: 120) {
-                VStack(spacing: 70) {
+            VStack {
+                VStack {
                     VStack(spacing: 30) {
-                        Text("회원가입을 위해\n위치를 인증해주세요")
+                        Text("회원가입을 위해\n포스텍 캠퍼스 내에서\n위치를 인증해주세요")
                             .multilineTextAlignment(.center)
                             .font(.title)
                             .bold()
                         
-                        VStack(spacing: 15) {
-                            Text("포스텍 캠퍼스에서의 안전한 모임을 위해\n현재 위치를 인증해주세요")
-                                .multilineTextAlignment(.center)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
+                        Text("포스텍 캠퍼스에서의 안전한 모임을 위해\n현재 위치를 인증해주세요")
+                            .multilineTextAlignment(.center)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
                     Image("locationAuthorize")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                 }
                 VStack(spacing: 20) {
                     Button(action: {
@@ -65,7 +65,7 @@ struct LocationAuthorizationView: View {
                     .setAppearance()
             }
         }
-        .padding()
+        .padding(.horizontal)
         .alert(isPresented: $showLocationAuthorizeFailedAlert) {
             Alert(
                 title: Text("인증에 실패했습니다"),
