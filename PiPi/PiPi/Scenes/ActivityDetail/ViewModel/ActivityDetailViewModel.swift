@@ -13,19 +13,15 @@ final class ActivityDetailViewModel: ObservableObject {
     @Published var host: User? = nil
     @Published var canJoin = false
     
-    private let userID: String
     private var activityID: String
     private var hostID: String
     
+    private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private var activityDataManager = FirebaseDataManager<Activity>()
     private var userDataManager = FirebaseDataManager<User>()
     
     init(activityID: String, hostID: String) {
-        guard let userID = UserDefaults.standard.string(forKey: "userID") else {
-            fatalError("User ID not found!!!")
-        }
         self.activityID = activityID
-        self.userID = userID
         self.hostID = hostID
         
         observeActivityData()
@@ -33,7 +29,8 @@ final class ActivityDetailViewModel: ObservableObject {
     }
     
     func addParticipant() {
-        guard let activity else { return }
+        guard let activity,
+              let userID else { return }
         
         if !activity.participantID.contains(userID) {
             let newActivity = activity.addingParticipant(userID)
@@ -48,8 +45,8 @@ final class ActivityDetailViewModel: ObservableObject {
     
     
     func deleteParticipant() {
-        guard let activity else {
-            print("Activity 없음")
+        guard let activity,
+              let userID else {
             return
         }
         
@@ -90,6 +87,8 @@ final class ActivityDetailViewModel: ObservableObject {
     }
     
     private func observeActivityData() {
+        guard let userID else { return }
+        
         activityDataManager.observeSingleData(
             eventType: .value,
             id: activityID
@@ -100,9 +99,9 @@ final class ActivityDetailViewModel: ObservableObject {
                 switch result {
                 case .success(let fetchedActivity):
                     self.activity = fetchedActivity
-                    self.canJoin = (fetchedActivity.hostID != self.userID)
+                    self.canJoin = (fetchedActivity.hostID != userID)
                     && (fetchedActivity.status == .open)
-                    && (!fetchedActivity.participantID.contains(self.userID))
+                    && (!fetchedActivity.participantID.contains(userID))
                 case .failure(let error):
                     dump("Activity data not found: \(error)")
                 }

@@ -11,13 +11,12 @@ import FirebaseDatabase
 import MessageUI
 
 struct TicketView: View {
-    @AppStorage("userID") var userID: String?
     
     @Binding var selectedItem: TicketType
     @Binding var isShowingSheet: Bool
     
     @State private var hostNickname: String = ""
-    @State private var hostEmail: String? = nil
+    @State private var hostID: String? = nil
     @State private var showTicketDetailView: Bool = false
     @State private var isLocationVisible: Bool = false
     @State private var isPresentingPeerAuthView = false
@@ -25,6 +24,7 @@ struct TicketView: View {
     @State var isAuthenticationDone: Bool = false
     
     private let userDataManager = FirebaseDataManager<User>()
+    private let userID = FirebaseAuthManager.shared.currentUser?.uid
     
     var activity: Activity
     var userProfile: User
@@ -169,7 +169,7 @@ fileprivate extension TicketView {
             case .success(let profile):
                 DispatchQueue.main.async {
                     self.hostNickname = profile.nickname
-                    self.hostEmail = profile.email
+                    self.hostID = profile.id
                 }
             case .failure(let error):
                 DispatchQueue.main.async {

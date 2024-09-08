@@ -113,7 +113,6 @@ struct SignUpView: View {
         )
         do {
             try userDataManager.addData(user, id: id)
-            UserDefaults.standard.setValue(id, forKey: "userID")
         } catch {
             dump(error)
         }
