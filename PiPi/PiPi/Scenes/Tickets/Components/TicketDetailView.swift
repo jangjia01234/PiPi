@@ -29,8 +29,6 @@ struct TicketDetailView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
     @State private var showAlert = false
-    
-    // 🔔 이메일 저장
     @State private var imessageReceiverEmail: String?
     
     
@@ -202,7 +200,6 @@ struct TicketDetailView: View {
         }
     }
     
-    //🔔아이메세지 버튼 통합
     private func iMessageButton(email: String) -> some View {
         Button(action: {
             if MFMessageComposeViewController.canSendText() {
