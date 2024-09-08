@@ -10,13 +10,18 @@ import NearbyInteraction
 
 struct PeerAuthView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var uwb = CBUWB()
+    @ObservedObject var uwb: CBUWB
     @State var lastValidDirections = [NIDiscoveryToken: SIMD3<Float>]()
     @State var isNearbyAuthDone: Bool = false
     
-    var activity: Activity
+    private let activity: Activity
     private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let activityDataManager = FirebaseDataManager<Activity>()
+    
+    init(activity: Activity) {
+        self.activity = activity
+        self.uwb = CBUWB(activityID: activity.id)
+    }
     
     var body: some View {
         ZStack {
@@ -34,6 +39,8 @@ struct PeerAuthView: View {
                     lastValidDirections[peer.token] = direction
                 }
             }
+            
+            dump(uwb.discoveredPeers)
             
             // MARK: 인증이 완료되면 참가자가 자신의 id와 완료 여부를 activity에 업데이트
             if uwb.discoveredPeers.count > 0 && uwb.discoveredPeers.last!.distance <= 0.2 {
