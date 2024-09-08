@@ -99,30 +99,14 @@ private extension ActivityInformationFormView {
                         .foregroundStyle(.secondary)
                 }
             }
-            
-            if let selectedLocation = location {
-                let identifiableLocation = IdentifiableCoordinates(coordinates: selectedLocation)
-                
-                Map(coordinateRegion: .constant(MKCoordinateRegion(
-                    center: CLLocationCoordinate2D(
-                        latitude: selectedLocation.latitude,
-                        longitude: selectedLocation.longitude
-                    ),
-                    span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
-                )), annotationItems: [identifiableLocation]) { location in
-                    MapAnnotation(coordinate: CLLocationCoordinate2D(
-                        latitude: location.coordinates.latitude,
-                        longitude: location.coordinates.longitude
-                    )) {
-                        Image(systemName: "mappin.and.ellipse")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 40, height: 40)
-                            .foregroundStyle(.accent)
-                            .offset(y: -11.5)
-                            .zIndex(2)
-                    }
+            if let location {
+                Map(
+                    position: .constant(.camera(.init(centerCoordinate: .init(location), distance: 1000)))
+                ) {
+                    Marker("", coordinate: .init(location))
+                        .tint(.accent)
                 }
+                .disabled(true)
                 .frame(height: 150)
                 .cornerRadius(10)
             }

@@ -13,8 +13,3 @@ struct Coordinates: Codable, Equatable {
     let longitude: Double
     
 }
-
-struct IdentifiableCoordinates: Identifiable {
-    let id = UUID()
-    let coordinates: Coordinates
-}
