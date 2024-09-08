@@ -93,6 +93,7 @@ struct ProfileView: View {
                                 signOut()
                             }) {
                                 Text("로그아웃")
+                                    .foregroundStyle(.red)
                             }
                         }
                         .listRowBackground(Color(.secondarySystemBackground))
