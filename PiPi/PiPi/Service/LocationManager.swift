@@ -11,15 +11,17 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     
     private let manager = CLLocationManager()
     
+    private(set) var currentLocation: CLLocationCoordinate2D? = nil
+    
     override init() {
         super.init()
         
         manager.delegate = self
+        manager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
-    func getLocationCoordinate() -> CLLocationCoordinate2D? {
+    func requestLocation() {
         manager.requestLocation()
-        return manager.location?.coordinate
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -31,7 +33,9 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {}
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        currentLocation = locations.first?.coordinate
+    }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         dump(error)

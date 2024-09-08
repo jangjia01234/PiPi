@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TicketsView: View {
-    @AppStorage("userID") var userID: String?
+    
     @State private var activities: [Activity] = []
     @State private var userProfile: User = User(
         nickname: "",
@@ -23,6 +23,7 @@ struct TicketsView: View {
     
     var activity: Activity
     
+    private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let activityDataManager = FirebaseDataManager<Activity>()
     private let userDataManager = FirebaseDataManager<User>()
     

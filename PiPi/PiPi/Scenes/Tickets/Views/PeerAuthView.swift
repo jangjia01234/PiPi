@@ -9,7 +9,7 @@ import SwiftUI
 import NearbyInteraction
 
 struct PeerAuthView: View {
-    @AppStorage("userID") var userID: String?
+    
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var uwb = CBUWB()
     @Binding var isAuthenticationDone: Bool
@@ -18,6 +18,7 @@ struct PeerAuthView: View {
     @State var isAuthenticated: Bool = false
     
     var activity: Activity
+    private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let activityDataManager = FirebaseDataManager<Activity>()
     
     var body: some View {

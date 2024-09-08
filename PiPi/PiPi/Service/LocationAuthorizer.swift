@@ -14,7 +14,11 @@ struct LocationAuthorizer {
     private let locationManager = LocationManager()
     
     func authorize() async -> Result<Bool, Error> {
-        guard let coordinate = locationManager.getLocationCoordinate() else {
+        locationManager.requestLocation()
+        
+        while locationManager.currentLocation == nil {}
+        
+        guard let coordinate = locationManager.currentLocation else {
             return .failure(LocationAuthorizeError.locationFailed)
         }
         
@@ -24,14 +28,14 @@ struct LocationAuthorizer {
                 return .failure(LocationAuthorizeError.invalidData)
             }
             
-            return .success(roadValidation(document.roadAddress))
+            return .success(addressValidation(document.address))
         case .failure(let error):
             return .failure(error)
         }
     }
     
-    private func roadValidation(_ roadAddress: RoadAddress) -> Bool {
-        roadAddress.roadName == "청암로" && roadAddress.mainBuildingNo == "77"
+    private func addressValidation(_ address: Address) -> Bool {
+        address.region3depthName == "지곡동" || address.region3depthName == "효자동"
     }
     
     private func fetchResopnse(coordinate: CLLocationCoordinate2D) async -> Result<Response, Error> {
@@ -127,16 +131,16 @@ private struct RoadAddress: Decodable {
     let zoneNo: String
     
     enum CodingKeys: String, CodingKey {
-       case addressName = "address_name"
-       case region1depthName = "region_1depth_name"
-       case region2depthName = "region_2depth_name"
-       case region3depthName = "region_3depth_name"
-       case roadName = "road_name"
-       case undergroundYn = "underground_yn"
-       case mainBuildingNo = "main_building_no"
-       case subBuildingNo = "sub_building_no"
-       case buildingName = "building_name"
-       case zoneNo = "zone_no"
+        case addressName = "address_name"
+        case region1depthName = "region_1depth_name"
+        case region2depthName = "region_2depth_name"
+        case region3depthName = "region_3depth_name"
+        case roadName = "road_name"
+        case undergroundYn = "underground_yn"
+        case mainBuildingNo = "main_building_no"
+        case subBuildingNo = "sub_building_no"
+        case buildingName = "building_name"
+        case zoneNo = "zone_no"
     }
     
 }

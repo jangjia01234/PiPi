@@ -9,8 +9,6 @@ import SwiftUI
 
 struct ActivityCreateView: View {
     
-    @AppStorage("userID") private var userID: String?
-    
     @Environment(\.dismiss) private var dismiss
     @FocusState private var isFocused
     
@@ -25,6 +23,7 @@ struct ActivityCreateView: View {
     @State private var needValueFilledAlertIsPresented = false
     @State private var registerAlertIsPresented = false
     
+    private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let activityDataManager = FirebaseDataManager<Activity>()
     
     private var allRequestedValuesFilled: Bool {

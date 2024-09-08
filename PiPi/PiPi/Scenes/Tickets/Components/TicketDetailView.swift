@@ -10,7 +10,7 @@ import MapKit
 import MessageUI
 
 struct TicketDetailView: View {
-    @AppStorage("userID") var userID: String?
+    
     @Environment(\.dismiss) var dismiss
     
     @Binding var isLocationVisible: Bool
@@ -34,6 +34,7 @@ struct TicketDetailView: View {
     @State private var imessageReceiverEmail: String?
     
     
+    private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let userDataManager = FirebaseDataManager<User>()
     
     var activity: Activity
@@ -288,16 +289,15 @@ struct TicketDetailView: View {
     
     private func fetchParticipantProfiles() {
         isLoadingParticipants = true
-        let participantEmail = activity.participantID
         
         let group = DispatchGroup()
         var fetchedProfiles: [User] = []
         
-        for email in participantEmail {
+        for id in activity.participantID {
             group.enter()
             userDataManager.observeSingleData(
                 eventType: .value,
-                id: email
+                id: id
             ) { result in
                 switch result {
                 case .success(let profile):

@@ -10,14 +10,13 @@ import FirebaseDatabase
 
 struct ProfileView: View {
     
-    @AppStorage("userID") var userID: String?
-    
     @State private var nickname: String = ""
     @State private var affiliation: Affiliation = .postech
     @State private var email: String = ""
     @State private var isEditing: Bool = false
     
     private let userDataManager = FirebaseDataManager<User>()
+    private let userID = FirebaseAuthManager.shared.currentUser?.uid
     
     var body: some View {
         NavigationView {
@@ -94,6 +93,7 @@ struct ProfileView: View {
                                 signOut()
                             }) {
                                 Text("로그아웃")
+                                    .foregroundStyle(.red)
                             }
                         }
                         .listRowBackground(Color(.secondarySystemBackground))
