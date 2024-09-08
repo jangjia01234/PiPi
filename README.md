@@ -3,14 +3,10 @@
 
   # PiPi
 
-[Postech People X Apple People]<br/>
+### [ Postech People X Apple People ]<br/>
 같은 캠퍼스 공간에서 생활하는 포스텍 학생들과 애플 디벨로퍼 아카데미 러너들을 연결해주는 소셜 네트워킹 앱      
 </div>
-<br>
-
-## PiPi Logo
-
-<br>
+<br><br>
 
 ## 프로젝트 개요
 - 목적 : 가까운 곳에 있지만 서로 다가가기 어려운 포스텍 학생들과 애플 디벨로퍼 아카데미 러너들이 같이 놀 수 있는 기회를 제공해주자
@@ -53,7 +49,7 @@
 
 <br>
 
-## 🛠Stacks
+## 🛠 Stacks
 
 #### Language
 ![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
