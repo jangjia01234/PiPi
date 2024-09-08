@@ -85,7 +85,6 @@ struct Activity: Identifiable, FirebaseData {
     
 }
 
-// 🔔참가자를 제거하는 메서드
 extension Activity {
     func removeParticipant(_ participant: String) -> Activity {
         let updatedParticipantIDs = participantID.filter { $0 != participant }

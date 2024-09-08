@@ -58,8 +58,6 @@ struct TicketDetailView: View {
         }
     }
     
-    
-    // 🔔participant와 organizer의 버튼을 통합하여 생성하는 함수
     private func actionButton() -> some View {
         let (buttonText, alertTitle, alertMessage, primaryAction) = getButtonContent()
         
@@ -84,7 +82,6 @@ struct TicketDetailView: View {
         }
     }
     
-    // 🔔버튼에 필요한 텍스트와 액션을 반환하는 함수
     private func getButtonContent() -> (String, String, String, () -> Void) {
         if selectedItem == .participant {
             return (

@@ -47,7 +47,6 @@ final class ActivityDetailViewModel: ObservableObject {
     }
     
     
-    //🔔참가자 지우기 기능 추가
     func deleteParticipant() {
         guard let activity else {
             print("Activity 없음")
@@ -59,16 +58,15 @@ final class ActivityDetailViewModel: ObservableObject {
             
             do {
                 try activityDataManager.updateData(updatedActivity, id: activityID)
-                print("참가 취소 성공")  // 🔔 성공 로그 추가
+                print("참가 취소 성공")
             } catch {
-                print("참가 취소 실패: \(error.localizedDescription)")  // 🔔 실패 로그 추가
+                print("참가 취소 실패: \(error.localizedDescription)")
             }
         } else {
-            print("참가자 목록에 사용자가 포함되지 않음")  // 🔔 로그 추가
+            print("참가자 목록에 사용자가 포함되지 않음")
         }
     }
     
-    // 🔔 모임 삭제 기능 추가
     func deleteActivity() {
         activityDataManager.deleteData(id: activityID) { result in
             switch result {

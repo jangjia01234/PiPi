@@ -74,7 +74,6 @@ final class FirebaseDataManager<T: FirebaseData> {
         }
     }
     
-    // 🔔 데이터 삭제 메서드 추가
     func deleteData(id: String, completion: @escaping (Result<Void, Error>) -> Void) {
         ref.child(key).child(id).removeValue { error, _ in
             if let error = error {

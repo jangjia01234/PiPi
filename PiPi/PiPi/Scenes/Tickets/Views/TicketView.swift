@@ -31,7 +31,6 @@ struct TicketView: View {
     
     var body: some View {
         
-        // 🔔 viewModel 생성
         let viewModel = ActivityDetailViewModel(activityID: activity.id, hostID: activity.hostID)
         
         NavigationStack {
@@ -64,7 +63,6 @@ struct TicketView: View {
                 )
             }
             
-            //🔔아이메세지 전송 Sheet 추가
             .sheet(isPresented: $showMessageView) {
                 if let email = hostEmail {
                     iMessageConnect(email: email)
