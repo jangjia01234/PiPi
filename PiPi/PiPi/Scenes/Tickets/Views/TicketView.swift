@@ -113,6 +113,7 @@ fileprivate extension TicketView {
                         Button(action: {
                             isPresentingPeerAuthView = true
                         }, label: {
+                            // TODO: UX Writing 변경 예정
                             Text(activity.authentication[userID] == true ? "인증완료": "인증하기")
                         })
                         .buttonStyle(.borderedProminent)
@@ -128,6 +129,7 @@ fileprivate extension TicketView {
                         Button(action: {
                             isPresentingPeerAuthView = true
                         }, label: {
+                            // TODO: UX Writing 변경 예정
                             Text(totalParticipants > 0 && totalParticipants == completedAuthentications ? "인증완료" : "인증하기")
                         })
                         .buttonStyle(.borderedProminent)
