@@ -16,6 +16,8 @@ struct TicketDetailView: View {
     @Binding var selectedItem: TicketType
     @Binding var showMessageView: Bool
     
+    @ObservedObject var viewModel: ActivityDetailViewModel
+    
     @State private var hostProfile: User?
     @State private var participantProfiles: [User] = []
     @State private var isLoadingHostProfile: Bool = false
@@ -24,6 +26,7 @@ struct TicketDetailView: View {
         center: .postech,
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
+    @State private var showCancelAlert = false
     
     private let userDataManager = FirebaseDataManager<User>()
     
@@ -33,14 +36,39 @@ struct TicketDetailView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                activityInfo
-                activityStatus
-                userInfo
+            VStack{
+                List {
+                    activityInfo
+                    activityStatus
+                    userInfo
+                    
+                    if selectedItem == .participant {
+                        Button(action: {
+                            showCancelAlert = true // 알림창 표시
+                        }) {
+                            Text("참가 취소")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .foregroundColor(.red)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .alert(isPresented: $showCancelAlert) {
+                            Alert(
+                                title: Text("참가 취소"),
+                                message: Text("정말 취소하시겠습니까?"),
+                                primaryButton: .destructive(Text("참가 취소")) {
+                                    viewModel.deleteParticipant()
+                                },
+                                secondaryButton: .cancel(Text("닫기"))
+                            )
+                        }
+                    }
+                }
+                .foregroundColor(.black)
+                .navigationBarTitle("\(activity.title)", displayMode: .inline)
+                .navigationBarItems(trailing: doneButton)
+                
             }
-            .foregroundColor(.black)
-            .navigationBarTitle("\(activity.title)", displayMode: .inline)
-            .navigationBarItems(trailing: doneButton)
         }
         .onAppear {
             if activity.hostID != userProfile.id {
@@ -84,42 +112,42 @@ struct TicketDetailView: View {
     }
     
     private var userInfo: some View {
-            Section {
-                if selectedItem == .participant {
-                    if !userProfile.nickname.isEmpty {
-                        HStack {
-                            Text("닉네임")
-                            
-                            Spacer()
-                            
-                            // FIXME: 실제 주최자의 닉네임으로 변경 필요
-                            Text(userProfile.nickname)
-                            
-                            // FIXME: 문의하기 버튼 탭할 경우 시트가 올라오지 않는 에러 발생
-                            Button(action: {
-                                showMessageView = true
-                            }) {
-                                Image(systemName: "ellipsis.message")
-                                    .foregroundColor(.gray)
-                                    .frame(width: 30, height: 30)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                            }
+        Section {
+            if selectedItem == .participant {
+                if !userProfile.nickname.isEmpty {
+                    HStack {
+                        Text("닉네임")
+                        
+                        Spacer()
+                        
+                        // FIXME: 실제 주최자의 닉네임으로 변경 필요
+                        Text(userProfile.nickname)
+                        
+                        // FIXME: 문의하기 버튼 탭할 경우 시트가 올라오지 않는 에러 발생
+                        Button(action: {
+                            showMessageView = true
+                        }) {
+                            Image(systemName: "ellipsis.message")
+                                .foregroundColor(.gray)
+                                .frame(width: 30, height: 30)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
-                    } else {
-                        Text("주최자 정보 없음")
-                            .foregroundColor(.gray)
                     }
                 } else {
-                    if !activity.participantID.isEmpty {
-                        participantsInfo
-                    } else {
-                        Text("참가자가 아직 없습니다.")
-                            .foregroundColor(.gray)
-                    }
+                    Text("주최자 정보 없음")
+                        .foregroundColor(.gray)
                 }
-            } header: {
-                Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
+            } else {
+                if !activity.participantID.isEmpty {
+                    participantsInfo
+                } else {
+                    Text("참가자가 아직 없습니다.")
+                        .foregroundColor(.gray)
+                }
             }
+        } header: {
+            Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
+        }
     }
     
     private func listCell(title: String, content: String) -> some View {
@@ -228,7 +256,7 @@ struct TicketDetailView_Previews: PreviewProvider {
             isLocationVisible: .constant(false),
             selectedItem: .constant(.participant),
             showMessageView: .constant(false),
-            activity: Activity(
+            viewModel: ActivityDetailViewModel(activityID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029", hostID: "hostID"), activity: Activity(
                 hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
                 title: "배드민턴 번개",
                 description: "오늘 저녁에 배드민턴 치실 분!",
