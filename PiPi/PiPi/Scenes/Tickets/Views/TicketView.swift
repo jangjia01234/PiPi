@@ -127,12 +127,11 @@ fileprivate extension TicketView {
                         Button(action: {
                             isPresentingPeerAuthView = true
                         }, label: {
-                            
-                            // TODO: UX Writing 변경 예정
                             Text(activity.authentication[userID] == true ? "인증완료": "인증하기")
                         })
                         .buttonStyle(.borderedProminent)
                         .tint(activity.authentication[userID] == true ? .gray : .accent)
+                        .disabled(activity.authentication[userID] == true)
                     }
                 } else {
                     if userID == activity.hostID {
@@ -142,14 +141,11 @@ fileprivate extension TicketView {
                         Button(action: {
                             isPresentingPeerAuthView = true
                         }, label: {
-                            
-                            // TODO: UX Writing 변경 예정
                             Text(totalParticipants > 0 && totalParticipants == completedAuthentications ? "인증완료" : "인증하기")
                         })
                         .buttonStyle(.borderedProminent)
-                        
-                        // FIXME: 색상 최신 버전으로 변경 필요
-                        .tint(totalParticipants > 0 && totalParticipants == completedAuthentications ? .gray : .sub)
+                        .tint(.sub)
+                        .disabled(totalParticipants > 0 && totalParticipants == completedAuthentications)
                     }
                 }
             }

@@ -111,7 +111,7 @@ struct TicketDetailView: View {
         Section {
             listCell(title: "날짜", content: "\(activity.startDateTime.toString().split(separator: "\n").first ?? "")")
             
-            listCell(title: "시간", content: "\(activity.startDateTime.toString().split(separator: "\n")[1])")
+            listCell(title: "시간", content: formatTime() ?? "")
             
             NavigationLink(destination: mapView) {
                 Text("위치")
@@ -188,7 +188,9 @@ struct TicketDetailView: View {
                 }
             }
         } header: {
-            Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
+            VStack(alignment: .leading) {
+                Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
+            }
         }
     }
     
@@ -287,6 +289,19 @@ struct TicketDetailView: View {
             self.participantProfiles = fetchedProfiles
             self.isLoadingParticipants = false
         }
+    }
+    
+    private func formatTime() -> String? {
+        let activityDate = activity.startDateTime.toString()
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        
+        formatter.dateFormat = "yyyy년 MM월 dd일\na HH시 mm분"
+        guard let date = formatter.date(from: activityDate) else { return nil }
+        
+        formatter.dateFormat = "HH시 mm분"
+        return formatter.string(from: date)
     }
 }
 
