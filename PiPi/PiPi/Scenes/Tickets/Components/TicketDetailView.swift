@@ -29,6 +29,8 @@ struct TicketDetailView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
     @State private var showAlert = false
+    @State private var imessageReceiverEmail: String?
+    
     
     private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let userDataManager = FirebaseDataManager<User>()
@@ -58,6 +60,11 @@ struct TicketDetailView: View {
             
             fetchParticipantProfiles()
             updateMapRegion()
+        }
+        .sheet(isPresented: $showMessageView) {
+            if let email = imessageReceiverEmail {
+                iMessageConnect(email: email)
+            }
         }
     }
     
@@ -162,39 +169,48 @@ struct TicketDetailView: View {
     private var userInfo: some View {
         Section {
             if selectedItem == .participant {
-                if !userProfile.nickname.isEmpty {
+                if let host = hostProfile {
                     HStack {
-                        Text("닉네임")
-                        
+                        Text("호스트")
                         Spacer()
-                        
-                        // FIXME: 실제 주최자의 닉네임으로 변경 필요
-                        Text(userProfile.nickname)
-                        
-                        // FIXME: 문의하기 버튼 탭할 경우 시트가 올라오지 않는 에러 발생
-                        Button(action: {
-                            showMessageView = true
-                        }) {
-                            Image(systemName: "ellipsis.message")
-                                .foregroundColor(.gray)
-                                .frame(width: 30, height: 30)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
+                        Text(host.nickname)
+                        iMessageButton(email: host.email)
                     }
                 } else {
-                    Text("주최자 정보 없음")
+                    Text("호스트 정보 없음")
                         .foregroundColor(.gray)
                 }
             } else {
-                if !activity.participantID.isEmpty {
-                    participantsInfo
+                if !participantProfiles.isEmpty {
+                    ForEach(participantProfiles, id: \.id) { participant in
+                        HStack {
+                            Text(participant.nickname)
+                            Spacer()
+                            // 참가자에게 메시지 보내기 버튼
+                            iMessageButton(email: participant.email)
+                        }
+                    }
                 } else {
                     Text("참가자가 아직 없습니다.")
                         .foregroundColor(.gray)
                 }
             }
         } header: {
-            Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
+            Text(selectedItem == .participant ? "호스트 정보" : "참가자 정보")
+        }
+    }
+    
+    private func iMessageButton(email: String) -> some View {
+        Button(action: {
+            if MFMessageComposeViewController.canSendText() {
+                imessageReceiverEmail = email
+                showMessageView = true
+            } else {
+                print("iMessage를 사용할 수 없습니다.")
+            }
+        }) {
+            Image(systemName: "ellipsis.message")
+                .foregroundColor(.blue)
         }
     }
     
@@ -294,35 +310,5 @@ struct TicketDetailView: View {
             self.participantProfiles = fetchedProfiles
             self.isLoadingParticipants = false
         }
-    }
-}
-
-struct TicketDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        TicketDetailView(
-            isLocationVisible: .constant(false),
-            selectedItem: .constant(.organizer),
-            showMessageView: .constant(false),
-            isAuthenticationDone: .constant(false),
-            viewModel: .init(
-                activityID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029"
-            ),
-            activity: Activity(
-                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                title: "벨과 함께하는 배드민턴 번개",
-                description: "오늘 저녁에 배드민턴 치실 분!",
-                maxPeopleNumber: 10,
-                category: .alcohol,
-                startDateTime: Date(),
-                estimatedTime: 2,
-                coordinates: Coordinates(latitude: 37.7749, longitude: -122.4194)
-            ),
-            userProfile: User(
-                nickname: "",
-                affiliation: .postech,
-                email: "sample@example.com"
-            )
-        )
     }
 }
