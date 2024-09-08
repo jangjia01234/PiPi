@@ -23,136 +23,46 @@ struct DiscoveredPeer {
     let direction: SIMD3<Float>?
 }
 
-
-// MARK: - MCUWB
-class MCUWB: NSObject, UWB {
-    private var _niSession: NISession!
-    private var _mcSession: MCSession!
-    private var _mcPeerID: MCPeerID!
-    private var _mcAdvertiser: MCNearbyServiceAdvertiser!
-    private var _mcBrowser: MCNearbyServiceBrowser!
-
-    @Published var discoveredPeers = [DiscoveredPeer]()
-
-    override init() {
-        super.init()
-
-        _niSession = NISession()
-        _niSession.delegate = self
-
-        _mcPeerID = MCPeerID(displayName: UIDevice.current.name)
-        _mcSession = MCSession(peer: _mcPeerID, securityIdentity: nil, encryptionPreference: .required)
-        _mcSession.delegate = self
-
-        _mcAdvertiser = MCNearbyServiceAdvertiser(peer: _mcPeerID, discoveryInfo: nil, serviceType: "radar")
-        _mcAdvertiser.delegate = self
-        _mcAdvertiser.startAdvertisingPeer()
-
-        _mcBrowser = MCNearbyServiceBrowser(peer: _mcPeerID, serviceType: "radar")
-        _mcBrowser.delegate = self
-        _mcBrowser.startBrowsingForPeers()
-    }
-
-    private func sendDiscoveryToken() {
-        guard let discoveryToken = _niSession.discoveryToken else {
-            return
-        }
-
-        let data = try! NSKeyedArchiver.archivedData(withRootObject: discoveryToken, requiringSecureCoding: true)
-
-        try! _mcSession.send(data, toPeers: _mcSession.connectedPeers, with: .reliable)
-    }
-}
-
-extension MCUWB: NISessionDelegate {
-    func session(_ session: NISession, didUpdate nearbyObjects: [NINearbyObject]) {
-        for object in nearbyObjects {
-            let discoveredPeer = DiscoveredPeer(token: object.discoveryToken, distance: object.distance ?? 0.0, direction: object.direction)
-
-            if let index = discoveredPeers.firstIndex(where: { $0.token == object.discoveryToken }) {
-                discoveredPeers[index] = discoveredPeer
-            } else {
-                discoveredPeers.append(discoveredPeer)
-            }
-        }
-    }
-}
-
-extension MCUWB: MCSessionDelegate {
-    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        guard state == .connected else { return }
-        sendDiscoveryToken()
-    }
-    
-    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        do {
-            guard let discoveryToken = try NSKeyedUnarchiver.unarchivedObject(ofClass: NIDiscoveryToken.self, from: data) else {
-                return
-            }
-
-            let config = NINearbyPeerConfiguration(peerToken: discoveryToken)
-            _niSession.run(config)
-        } catch {}
-    }
-
-    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {}
-
-    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {}
-
-    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {}
-}
-
-extension MCUWB: MCNearbyServiceAdvertiserDelegate {
-    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        invitationHandler(true, _mcSession)
-    }
-}
-
-extension MCUWB: MCNearbyServiceBrowserDelegate {
-    func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
-        _mcBrowser.invitePeer(peerID, to: _mcSession, withContext: nil, timeout: 10)
-    }
-
-    func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {}
-
-    func browser(_ browser: MCNearbyServiceBrowser, didNotStartBrowsingForPeers error: Error) {}
-}
-
-
 // MARK: - CBUWB
-let SERVICE_UUID = CBUUID(string: "0000180D-0000-1000-8000-00805F9B34FB")
-let CHARACTERISTIC_UUID = CBUUID(string: "00002A37-0000-1000-8000-00805F9B34FB")
 
-class CBUWB: NSObject, UWB {
-    private var _niSession: NISession!
-    private var _peripheral: CBPeripheralManager!
-    private var _central: CBCentralManager!
-    private var _transferCharacteristic: CBMutableCharacteristic!
-    private var _peripherals = [CBPeripheral]()
+final class CBUWB: NSObject, UWB {
+    private var niSession: NISession!
+    private var peripheral: CBPeripheralManager!
+    private var central: CBCentralManager!
+    private var transferCharacteristic: CBMutableCharacteristic!
+    private var peripherals = [CBPeripheral]()
+    
+    private let SERVICE_UUID: CBUUID
+    private let CHARACTERISTIC_UUID: CBUUID
 
     @Published var discoveredPeers = [DiscoveredPeer]()
-
-    override init() {
+    
+    init(activityID: String) {
+        self.SERVICE_UUID = CBUUID(string: activityID)
+        self.CHARACTERISTIC_UUID = CBUUID(string: activityID)
+        self.niSession = NISession()
+        self.peripheral = CBPeripheralManager(
+            delegate: nil,
+            queue: nil,
+            options:[CBPeripheralManagerOptionShowPowerAlertKey: true]
+        )
+        self.central = CBCentralManager()
+                                              
         super.init()
-
-        _niSession = NISession()
-        _niSession.delegate = self
         
-        _peripheral = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey: true])
-
-        _central = CBCentralManager(delegate: self, queue: nil)
-        _central.delegate = self
+        niSession.delegate = self
+        peripheral.delegate = self
+        central.delegate = self
     }
 
     private func sendDiscoveryToken() {
-        guard let discoveryToken = _niSession.discoveryToken else {
+        guard let discoveryToken = niSession.discoveryToken else {
             return
         }
-
-        let data = try! NSKeyedArchiver.archivedData(withRootObject: discoveryToken, requiringSecureCoding: true)
-
-        _transferCharacteristic.value = data
-        _peripheral.updateValue(_transferCharacteristic.value!, for: _transferCharacteristic, onSubscribedCentrals: nil)
+        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: discoveryToken, requiringSecureCoding: true) else { return }
+        
+        transferCharacteristic.value = data
+        peripheral.updateValue(transferCharacteristic.value!, for: transferCharacteristic, onSubscribedCentrals: nil)
     }
 }
 
@@ -180,7 +90,7 @@ extension CBUWB: CBPeripheralManagerDelegate {
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         guard peripheral.state == .poweredOn else { return }
 
-        _transferCharacteristic = CBMutableCharacteristic(
+        transferCharacteristic = CBMutableCharacteristic(
             type: CHARACTERISTIC_UUID,
             properties: [.read, .notify],
             value: nil,
@@ -191,12 +101,11 @@ extension CBUWB: CBPeripheralManagerDelegate {
             type: SERVICE_UUID,
             primary: true
         )
-        transferService.characteristics = [_transferCharacteristic]
+        transferService.characteristics = [transferCharacteristic]
 
         peripheral.add(transferService)
         peripheral.startAdvertising([
-            CBAdvertisementDataServiceUUIDsKey: [transferService.uuid],
-            CBAdvertisementDataLocalNameKey: UIDevice.current.name
+            CBAdvertisementDataServiceUUIDsKey: [transferService.uuid]
         ])
     }
 }
@@ -209,13 +118,17 @@ extension CBUWB: CBCentralManagerDelegate {
 
         central.scanForPeripherals(withServices: [SERVICE_UUID], options: nil)
 
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            central.scanForPeripherals(withServices: [SERVICE_UUID], options: nil)
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            
+            central.scanForPeripherals(withServices: [self.SERVICE_UUID], options: nil)
         }
     }
 
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        _peripherals.append(peripheral)
+        if !peripherals.contains(peripheral) {
+            peripherals.append(peripheral)
+        }
         central.connect(peripheral, options: nil)
     }
 
@@ -226,14 +139,14 @@ extension CBUWB: CBCentralManagerDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        if let index = _peripherals.firstIndex(of: peripheral) {
-            _peripherals.remove(at: index)
+        if let index = peripherals.firstIndex(of: peripheral) {
+            peripherals.remove(at: index)
         }
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        if let index = _peripherals.firstIndex(of: peripheral) {
-            _peripherals.remove(at: index)
+        if let index = peripherals.firstIndex(of: peripheral) {
+            peripherals.remove(at: index)
         }
     }
 }
@@ -253,14 +166,14 @@ extension CBUWB: CBPeripheralDelegate {
         guard let data = characteristic.value else {
             return
         }
-
+        
         do {
             guard let discoveryToken = try NSKeyedUnarchiver.unarchivedObject(ofClass: NIDiscoveryToken.self, from: data) else {
                 return
             }
 
             let config = NINearbyPeerConfiguration(peerToken: discoveryToken)
-            _niSession.run(config)
+            niSession.run(config)
         } catch {}
     }
 }
