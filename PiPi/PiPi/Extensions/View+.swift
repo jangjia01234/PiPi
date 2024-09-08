@@ -20,3 +20,16 @@ extension View {
     }
     
 }
+
+extension ProgressView {
+    
+    func setAppearance() -> some View {
+        self
+            .frame(width: 70, height: 70)
+            .controlSize(.large)
+            .tint(.white)
+            .background(.secondary)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+    
+}
