@@ -83,6 +83,25 @@ struct Activity: Identifiable, FirebaseData {
         )
     }
     
+    func updatingAuthentication(userID: String, isDone: Bool) -> Activity {
+            var updatedAuthentication = authentication
+            updatedAuthentication[userID] = isDone  // 인증 상태 업데이트
+            
+            return Activity(
+                id: id,
+                hostID: hostID,
+                title: title,
+                description: description,
+                maxPeopleNumber: maxPeopleNumber,
+                participantID: participantID,
+                category: category,
+                startDateTime: startDateTime,
+                estimatedTime: estimatedTime,
+                coordinates: coordinates,
+                authentication: updatedAuthentication  // 업데이트된 인증 정보
+            )
+        }
+    
 }
 
 extension Activity {

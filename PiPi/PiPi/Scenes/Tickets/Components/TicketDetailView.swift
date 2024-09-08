@@ -10,11 +10,13 @@ import MapKit
 import MessageUI
 
 struct TicketDetailView: View {
+    @AppStorage("userID") var userID: String?
     @Environment(\.dismiss) var dismiss
     
     @Binding var isLocationVisible: Bool
     @Binding var selectedItem: TicketType
     @Binding var showMessageView: Bool
+    @Binding var isAuthenticationDone: Bool
     
     @ObservedObject var viewModel: ActivityDetailViewModel
     
@@ -32,7 +34,6 @@ struct TicketDetailView: View {
     
     var activity: Activity
     var userProfile: User
-    var isAuthenticationDone: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -53,6 +54,7 @@ struct TicketDetailView: View {
             if activity.hostID != userProfile.id {
                 fetchHostProfile()
             }
+            
             fetchParticipantProfiles()
             updateMapRegion()
         }
@@ -124,9 +126,33 @@ struct TicketDetailView: View {
     
     private var activityStatus: some View {
         Section {
+            // MARK: 모집중인지 여부 표시
             listCell(title: "모집 상태", content: activity.status == .closed ? "모집완료" : "모집중")
             
-            listCell(title: "인증 여부", content: isAuthenticationDone ? "완료" : "미완료")
+            // MARK: 인증 완료된 인원 표시
+            if let userID = userID {
+                if selectedItem == .participant {
+                    if activity.participantID.contains(userID) {
+                        listCell(title: "인증 여부", content: activity.authentication[userID] == true ? "완료" : "미완료")
+                    }
+                } else {
+                    if userID == activity.hostID {
+                        let totalParticipants = activity.authentication.count
+                        let completedAuthentications = activity.authentication.values.filter { $0 == true }.count
+                        
+                        if totalParticipants > 0 {
+                            HStack {
+                                Text("인증 완료")
+                                Spacer()
+                                Text("\(completedAuthentications)명 / \(totalParticipants)명 완료")
+                                    .foregroundColor(completedAuthentications == totalParticipants ? .accentColor : .black)
+                            }
+                        }
+                    }
+                }
+            } else {
+                listCell(title: "인증 여부", content: "사용자 미확인")
+            }
         } header: {
             Text("상태")
         }
@@ -275,11 +301,12 @@ struct TicketDetailView_Previews: PreviewProvider {
     static var previews: some View {
         TicketDetailView(
             isLocationVisible: .constant(false),
-            selectedItem: .constant(.participant),
+            selectedItem: .constant(.organizer),
             showMessageView: .constant(false),
-            viewModel: ActivityDetailViewModel(activityID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029", hostID: "hostID"), activity: Activity(
+            isAuthenticationDone: .constant(false),
+            activity: Activity(
                 hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
-                title: "배드민턴 번개",
+                title: "벨과 함께하는 배드민턴 번개",
                 description: "오늘 저녁에 배드민턴 치실 분!",
                 maxPeopleNumber: 10,
                 category: .alcohol,
