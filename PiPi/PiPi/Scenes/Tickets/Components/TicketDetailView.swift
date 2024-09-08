@@ -17,6 +17,7 @@ struct TicketDetailView: View {
     @Binding var selectedItem: TicketType
     @Binding var showMessageView: Bool
     
+    @State private var imessageReceiverEmail: String?
     @State private var showAlert = false
     @State private var hostProfile: User?
     @State private var participantProfiles: [User] = []
@@ -55,6 +56,11 @@ struct TicketDetailView: View {
             
             fetchParticipantProfiles()
             updateMapRegion()
+        }
+        .sheet(isPresented: $showMessageView) {
+            if let email = imessageReceiverEmail {
+                iMessageConnect(email: email)
+            }
         }
     }
     
@@ -156,32 +162,27 @@ struct TicketDetailView: View {
     private var userInfo: some View {
         Section {
             if selectedItem == .participant {
-                if !userProfile.nickname.isEmpty {
+                if let host = hostProfile {
                     HStack {
-                        Text("닉네임")
-                        
+                        Text("호스트")
                         Spacer()
-                        
-                        // FIXME: 실제 주최자의 닉네임으로 변경 필요
-                        Text(userProfile.nickname)
-                        
-                        // FIXME: 문의하기 버튼 탭할 경우 시트가 올라오지 않는 에러 발생
-                        Button(action: {
-                            showMessageView = true
-                        }) {
-                            Image(systemName: "ellipsis.message")
-                                .foregroundColor(.gray)
-                                .frame(width: 30, height: 30)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
+                        Text(host.nickname)
+                        iMessageButton(email: host.email)
                     }
                 } else {
-                    Text("주최자 정보 없음")
+                    Text("호스트 정보 없음")
                         .foregroundColor(.gray)
                 }
             } else {
-                if !activity.participantID.isEmpty {
-                    participantsInfo
+                if !participantProfiles.isEmpty {
+                    ForEach(participantProfiles, id: \.id) { participant in
+                        HStack {
+                            Text(participant.nickname)
+                            Spacer()
+                            // 참가자에게 메시지 보내기 버튼
+                            iMessageButton(email: participant.email)
+                        }
+                    }
                 } else {
                     Text("참가자가 아직 없습니다.")
                         .foregroundColor(.gray)
@@ -191,6 +192,21 @@ struct TicketDetailView: View {
             VStack(alignment: .leading) {
                 Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
             }
+            Text(selectedItem == .participant ? "호스트 정보" : "참가자 정보")
+        }
+    }
+    
+    private func iMessageButton(email: String) -> some View {
+        Button(action: {
+            if MFMessageComposeViewController.canSendText() {
+                imessageReceiverEmail = email
+                showMessageView = true
+            } else {
+                print("iMessage를 사용할 수 없습니다.")
+            }
+        }) {
+            Image(systemName: "ellipsis.message")
+                .foregroundColor(.blue)
         }
     }
     

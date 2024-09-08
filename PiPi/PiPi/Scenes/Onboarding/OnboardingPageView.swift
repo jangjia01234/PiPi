@@ -28,7 +28,7 @@ struct OnboardingPageView: View {
                   .padding(.bottom, 50)
               Image(imageName)
                   .resizable()
-                  .frame(width: 396, height: 298)
+                  .aspectRatio(contentMode: .fit)
                   .padding(.bottom, 36)
               Spacer()
           }
