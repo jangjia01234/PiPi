@@ -10,16 +10,15 @@ import MapKit
 import MessageUI
 
 struct TicketDetailView: View {
-    
     @Environment(\.dismiss) var dismiss
+    @ObservedObject var viewModel: ActivityDetailViewModel
     
     @Binding var isLocationVisible: Bool
     @Binding var selectedItem: TicketType
     @Binding var showMessageView: Bool
-    @Binding var isAuthenticationDone: Bool
     
-    @ObservedObject var viewModel: ActivityDetailViewModel
-    
+    @State private var imessageReceiverEmail: String?
+    @State private var showAlert = false
     @State private var hostProfile: User?
     @State private var participantProfiles: [User] = []
     @State private var isLoadingHostProfile: Bool = false
@@ -28,9 +27,6 @@ struct TicketDetailView: View {
         center: .postech,
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
-    @State private var showAlert = false
-    @State private var imessageReceiverEmail: String?
-    
     
     private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let userDataManager = FirebaseDataManager<User>()
@@ -85,7 +81,7 @@ struct TicketDetailView: View {
                 title: Text(alertTitle),
                 message: Text(alertMessage),
                 primaryButton: .destructive(Text(buttonText)) {
-                    primaryAction() // 각각의 액션 호출
+                    primaryAction()
                 },
                 secondaryButton: .cancel(Text("닫기"))
             )
@@ -121,9 +117,8 @@ struct TicketDetailView: View {
         Section {
             listCell(title: "날짜", content: "\(activity.startDateTime.toString().split(separator: "\n").first ?? "")")
             
-            listCell(title: "시간", content: "\(activity.startDateTime.toString().split(separator: "\n")[1])")
+            listCell(title: "시간", content: formatTime() ?? "")
             
-            // FIXME: Camera Position 적용 시 지연 발생
             NavigationLink(destination: mapView) {
                 Text("위치")
             }
@@ -134,10 +129,8 @@ struct TicketDetailView: View {
     
     private var activityStatus: some View {
         Section {
-            // MARK: 모집중인지 여부 표시
             listCell(title: "모집 상태", content: activity.status == .closed ? "모집완료" : "모집중")
             
-            // MARK: 인증 완료된 인원 표시
             if let userID = userID {
                 if selectedItem == .participant {
                     if activity.participantID.contains(userID) {
@@ -196,6 +189,9 @@ struct TicketDetailView: View {
                 }
             }
         } header: {
+            VStack(alignment: .leading) {
+                Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
+            }
             Text(selectedItem == .participant ? "호스트 정보" : "참가자 정보")
         }
     }
@@ -231,10 +227,9 @@ struct TicketDetailView: View {
                 Text("참가자가 아직 없습니다.")
                     .foregroundColor(.gray)
             } else {
-                Form {
-                    ForEach(participantProfiles, id: \.id) { participant in
-                        Text(participant.nickname)
-                    }
+                
+                ForEach(participantProfiles, id: \.id) { participant in
+                    Text(participant.nickname)
                 }
             }
         }
@@ -311,4 +306,35 @@ struct TicketDetailView: View {
             self.isLoadingParticipants = false
         }
     }
+    
+    private func formatTime() -> String? {
+        let activityDate = activity.startDateTime.toString()
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        
+        formatter.dateFormat = "yyyy년 MM월 dd일\na HH시 mm분"
+        guard let date = formatter.date(from: activityDate) else { return nil }
+        
+        formatter.dateFormat = "HH시 mm분"
+        return formatter.string(from: date)
+    }
+}
+
+#Preview {
+    TicketDetailView(
+        viewModel: .init(
+            activityID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
+            hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029"
+        ),
+        isLocationVisible: .constant(false),
+        selectedItem: .constant(.participant),
+        showMessageView: .constant(false),
+        activity: Activity.sampleData,
+        userProfile: User(
+            nickname: "",
+            affiliation: .postech,
+            email: ""
+        )
+    )
 }
