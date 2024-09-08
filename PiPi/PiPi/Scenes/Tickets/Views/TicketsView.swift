@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TicketsView: View {
+    @Binding var isShowingSheet: Bool
+    
     @State private var activities: [Activity] = []
     @State private var userProfile: User = User(
         nickname: "",
@@ -15,10 +17,6 @@ struct TicketsView: View {
         email: ""
     )
     @State private var selectedItem: TicketType = .participant
-    
-    // MARK: - 🔥
-    // 확인 및 네이밍 개선 필요
-    @Binding var isShowingSheet: Bool
     
     var activity: Activity
     
