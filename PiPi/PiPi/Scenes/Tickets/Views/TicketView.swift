@@ -78,7 +78,7 @@ fileprivate extension TicketView {
             
             HStack {
                 Rectangle()
-                    .fill(selectedItem == .participant ? Color.lightPurple : Color.lightOrange)
+                    .fill(selectedItem == .participant ? .accent : .sub)
                     .frame(width: 30)
                     .roundingCorner(20, corners : [.topLeft, .bottomLeft])
                 
@@ -87,29 +87,17 @@ fileprivate extension TicketView {
         }
     }
     
-    func formatDate() -> String? {
-        let activityDate = activity.startDateTime.toString()
-        
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        
-        formatter.dateFormat = "yyyy년 MM월 dd일\na HH시 mm분"
-        guard let date = formatter.date(from: activityDate) else { return nil }
-        
-        formatter.dateFormat = "MM/dd HH:mm분"
-        return formatter.string(from: date)
-    }
-    
     func infoText() -> some View {
-        
-        
         VStack(alignment: .leading) {
             HStack {
                 Text(activity.title)
                     .font(.system(size: 28))
                     .fontWeight(.black)
                     .padding(.bottom, 5)
+                
+                Spacer()
             }
+            .frame(width: 160)
             
             if let formattedDate = formatDate() {
                 VStack(alignment: .leading) {
@@ -128,8 +116,7 @@ fileprivate extension TicketView {
                 .foregroundColor(.gray)
             }
         }
-        .frame(width: 160)
-        .padding(.leading, 20)
+        .padding(.leading, 25)
     }
     
     func authButton() -> some View {
@@ -140,13 +127,12 @@ fileprivate extension TicketView {
                         Button(action: {
                             isPresentingPeerAuthView = true
                         }, label: {
+                            
                             // TODO: UX Writing 변경 예정
                             Text(activity.authentication[userID] == true ? "인증완료": "인증하기")
                         })
                         .buttonStyle(.borderedProminent)
-                        
-                        // FIXME: 색상 최신 버전으로 변경 필요
-                        .tint(activity.authentication[userID] == true ? .gray : Color.lightPurple)
+                        .tint(activity.authentication[userID] == true ? .gray : .accent)
                     }
                 } else {
                     if userID == activity.hostID {
@@ -156,13 +142,14 @@ fileprivate extension TicketView {
                         Button(action: {
                             isPresentingPeerAuthView = true
                         }, label: {
+                            
                             // TODO: UX Writing 변경 예정
                             Text(totalParticipants > 0 && totalParticipants == completedAuthentications ? "인증완료" : "인증하기")
                         })
                         .buttonStyle(.borderedProminent)
                         
                         // FIXME: 색상 최신 버전으로 변경 필요
-                        .tint(totalParticipants > 0 && totalParticipants == completedAuthentications ? .gray : Color.lightOrange)
+                        .tint(totalParticipants > 0 && totalParticipants == completedAuthentications ? .gray : .sub)
                     }
                 }
             }
@@ -186,7 +173,7 @@ fileprivate extension TicketView {
         }
     }
     
-    private func loadHostProfile(hostID: String) {
+    func loadHostProfile(hostID: String) {
         userDataManager.observeSingleData(eventType: .value, id: hostID) { result in
             switch result {
             case .success(let profile):
@@ -200,6 +187,19 @@ fileprivate extension TicketView {
                 }
             }
         }
+    }
+    
+    func formatDate() -> String? {
+        let activityDate = activity.startDateTime.toString()
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        
+        formatter.dateFormat = "yyyy년 MM월 dd일\na HH시 mm분"
+        guard let date = formatter.date(from: activityDate) else { return nil }
+        
+        formatter.dateFormat = "MM/dd HH:mm분"
+        return formatter.string(from: date)
     }
 }
 

@@ -75,7 +75,7 @@ struct TicketDetailView: View {
                 title: Text(alertTitle),
                 message: Text(alertMessage),
                 primaryButton: .destructive(Text(buttonText)) {
-                    primaryAction() // 각각의 액션 호출
+                    primaryAction()
                 },
                 secondaryButton: .cancel(Text("닫기"))
             )
@@ -113,7 +113,6 @@ struct TicketDetailView: View {
             
             listCell(title: "시간", content: "\(activity.startDateTime.toString().split(separator: "\n")[1])")
             
-            // FIXME: Camera Position 적용 시 지연 발생
             NavigationLink(destination: mapView) {
                 Text("위치")
             }
@@ -124,10 +123,8 @@ struct TicketDetailView: View {
     
     private var activityStatus: some View {
         Section {
-            // MARK: 모집중인지 여부 표시
             listCell(title: "모집 상태", content: activity.status == .closed ? "모집완료" : "모집중")
             
-            // MARK: 인증 완료된 인원 표시
             if let userID = userID {
                 if selectedItem == .participant {
                     if activity.participantID.contains(userID) {

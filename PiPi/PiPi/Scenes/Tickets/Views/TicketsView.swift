@@ -43,15 +43,29 @@ struct TicketsView: View {
     
     private var ticketsList: some View {
         ScrollView {
-            ForEach(activities, id: \.id) { activity in
-                if shouldDisplayTicket(for: activity, userID: userID) {
-                    TicketView(
-                        selectedItem: $selectedItem,
-                        isShowingSheet: $isShowingSheet,
-                        activity: activity,
-                        userProfile: userProfile
-                    )
-                    .padding(.top, 10)
+            if let userID = userID {
+                let filteredActivities = activities.filter { activity in
+                    if selectedItem == .participant {
+                        return activity.participantID.contains(userID)
+                    } else {
+                        return activity.hostID == userID
+                    }
+                }
+                
+                if filteredActivities.isEmpty {
+                    Text(selectedItem == .participant ? "예약 내역이 없습니다" : "주최한 모임이 없습니다.")
+                        .foregroundColor(.gray)
+                        .padding(.top, 50)
+                } else {
+                    ForEach(filteredActivities, id: \.id) { activity in
+                        TicketView(
+                            selectedItem: $selectedItem,
+                            isShowingSheet: $isShowingSheet,
+                            activity: activity,
+                            userProfile: userProfile
+                        )
+                        .padding(.top, 10)
+                    }
                 }
             }
         }
