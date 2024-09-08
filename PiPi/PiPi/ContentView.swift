@@ -22,7 +22,7 @@ struct ContentView: View {
             TicketsView(isShowingSheet: $isShowingSheet, activity: activity)
                 .tabItem {
                     Image(systemName: "ticket.fill")
-                    Text("내 티켓")
+                    Text("내 예약")
                 }
             
             ProfileView()
