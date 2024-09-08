@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import _MapKit_SwiftUI
 
 struct ActivityInformationFormView: View {
     
@@ -18,14 +19,13 @@ struct ActivityInformationFormView: View {
     @Binding var location: Coordinates?
     
     var body: some View {
-        VStack {
-            Form {
-                titleSection
-                descriptionSection
-                maxPeopleNumberSection
-                categoryPicker
-                dateTimeLocationSection
-            }
+        Form {
+            titleSection
+            descriptionSection
+            maxPeopleNumberSection
+            categoryPicker
+            dateTimeLocationSection
+            locationLink
         }
         .onAppear (perform : UIApplication.shared.hideKeyboard)
     }
@@ -71,7 +71,6 @@ private extension ActivityInformationFormView {
         Section {
             DatePicker("시작 일시", selection: $startDateTime, in: Date()...)
             estimatedTimePicker
-            locationLink
         }
     }
     
@@ -87,17 +86,32 @@ private extension ActivityInformationFormView {
     }
     
     var locationLink: some View {
-        NavigationLink(destination: {
-            LocationSelectView(coordinates: $location)
-                .navigationBarBackButtonHidden()
-        }) {
-            HStack {
-                Text("위치")
-                Text(location == nil ? "" : "선택 완료")
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        Section {
+            NavigationLink(destination: {
+                LocationSelectView(coordinates: $location)
+                    .navigationBarBackButtonHidden()
+            }) {
+                HStack {
+                    Text("위치")
+                    Text(location == nil ? "" : "선택 완료")
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
+            if let location {
+                Map(
+                    position: .constant(.camera(.init(centerCoordinate: .init(location), distance: 1000)))
+                ) {
+                    Marker("", coordinate: .init(location))
+                        .tint(.accent)
+                }
+                .disabled(true)
+                .frame(height: 150)
+                .cornerRadius(10)
+            }
+        } header: {
+            header(title: "위치 지정", subtitle: nil)
         }
     }
     
