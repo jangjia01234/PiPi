@@ -74,6 +74,16 @@ final class FirebaseDataManager<T: FirebaseData> {
         }
     }
     
+    func deleteData(id: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        ref.child(key).child(id).removeValue { error, _ in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }
+    }
+    
     private func handleSnapshot<SuccessType: Decodable>(
         snapshot: DataSnapshot
     ) -> Result<SuccessType, Error> {
