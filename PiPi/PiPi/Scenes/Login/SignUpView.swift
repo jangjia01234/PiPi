@@ -31,6 +31,8 @@ struct SignUpView: View {
                         email: $email,
                         passwordValid: $passwordValid
                     )
+                    .padding(.top, 10)
+                    .onAppear (perform : UIApplication.shared.hideKeyboard)
                     
                     Spacer()
                     
