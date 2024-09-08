@@ -9,12 +9,12 @@ import SwiftUI
 
 struct LocationAuthorizationView: View {
     
-    let authorizer = LocationAuthorizer()
-    
+    @EnvironmentObject private var appRootManager: AppRootManager
     @State private var showProgressView = false
     @State private var showLocationAuthorizeFailedAlert = false
     @State private var errorMessage: String? = nil
-    @Binding var moveToSignUpView: Bool
+    
+    let authorizer = LocationAuthorizer()
     
     var body: some View {
         ZStack {
@@ -51,11 +51,7 @@ struct LocationAuthorizationView: View {
             
             if showProgressView {
                 ProgressView()
-                    .frame(width: 70, height: 70)
-                    .controlSize(.large)
-                    .tint(.white)
-                    .background(.secondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .setAppearance()
             }
         }
         .padding()
@@ -72,9 +68,9 @@ struct LocationAuthorizationView: View {
         showProgressView = true
         Task {
             switch await authorizer.authorize() {
-            case .success(let validationResult):
-                if validationResult {
-                    moveToSignUpView = true
+            case .success(let isValid):
+                if isValid {
+                    appRootManager.currentRoot = .signUp
                 } else {
                     errorMessage = "포스텍 캠퍼스 내에서 다시 시도해주세요!"
                     showLocationAuthorizeFailedAlert = true
@@ -90,5 +86,5 @@ struct LocationAuthorizationView: View {
 }
 
 #Preview {
-    LocationAuthorizationView(moveToSignUpView: .constant(false))
+    LocationAuthorizationView()
 }

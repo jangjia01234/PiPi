@@ -9,6 +9,8 @@ import SwiftUI
 
 struct OnboardingTabView: View {
     
+    @EnvironmentObject private var appRootManager: AppRootManager
+    
     init() {
         UIPageControl.appearance().currentPageIndicatorTintColor = .accent
         UIPageControl.appearance().pageIndicatorTintColor = UIColor.accent.withAlphaComponent(0.2)
@@ -42,7 +44,7 @@ struct OnboardingTabView: View {
                         subtitle: info.subtitle
                     )
                 }
-                LocationAuthorizationView(moveToSignUpView: $moveToSignUpView)
+                LocationAuthorizationView()
                     .tag(4)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))

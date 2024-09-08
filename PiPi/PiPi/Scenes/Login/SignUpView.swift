@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SignUpView: View {
     
+    @EnvironmentObject private var appRootManager: AppRootManager
     @State private var nickname: String = ""
     @State private var password: String = ""
     @State private var affiliation: Affiliation = .postech
