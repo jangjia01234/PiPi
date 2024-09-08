@@ -304,6 +304,10 @@ struct TicketDetailView_Previews: PreviewProvider {
             selectedItem: .constant(.organizer),
             showMessageView: .constant(false),
             isAuthenticationDone: .constant(false),
+            viewModel: .init(
+                activityID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
+                hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029"
+            ),
             activity: Activity(
                 hostID: "1D2BF6E6-E2A3-486B-BDCF-F3A450C4A029",
                 title: "벨과 함께하는 배드민턴 번개",

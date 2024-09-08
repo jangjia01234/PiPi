@@ -52,6 +52,7 @@ struct TicketView: View {
                     selectedItem: $selectedItem,
                     showMessageView: $showMessageView,
                     isAuthenticationDone: $isAuthenticationDone,
+                    viewModel: viewModel,
                     activity: activity,
                     userProfile: userProfile
                 )
