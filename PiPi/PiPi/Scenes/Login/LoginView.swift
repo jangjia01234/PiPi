@@ -21,14 +21,14 @@ struct LoginView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.headline)
                 TextField("애플 계정 이메일을 입력해주세요.", text: $email)
-                    .setAppearance()
+                    .setFieldAppearance()
                     .keyboardType(.default)
                 
                 Text("비밀번호")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.headline)
                 SecureField("비밀번호를 입력해주세요.", text: $password)
-                    .setAppearance()
+                    .setFieldAppearance()
                     .keyboardType(.default)
                 
                 Spacer()

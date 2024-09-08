@@ -43,6 +43,7 @@
 		44DE23432C8C780B00579310 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 44DE23422C8C780B00579310 /* FirebaseAuth */; };
 		44DE23452C8CC27D00579310 /* AppRootManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DE23442C8CC27D00579310 /* AppRootManager.swift */; };
 		44DE23472C8D75A400579310 /* RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DE23462C8D75A400579310 /* RoundedCorner.swift */; };
+		44DE23492C8D77C400579310 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DE23482C8D77C400579310 /* LoginView.swift */; };
 		8D451A092C5A8E89005EA90A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D451A082C5A8E89005EA90A /* GoogleService-Info.plist */; };
 		8D451A0C2C5A8F38005EA90A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8D451A0B2C5A8F38005EA90A /* FirebaseAnalytics */; };
 		8D451A0E2C5A8F38005EA90A /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 8D451A0D2C5A8F38005EA90A /* FirebaseDatabase */; };
@@ -95,6 +96,7 @@
 		44DE23402C8C771F00579310 /* FirebaseAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthManager.swift; sourceTree = "<group>"; };
 		44DE23442C8CC27D00579310 /* AppRootManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootManager.swift; sourceTree = "<group>"; };
 		44DE23462C8D75A400579310 /* RoundedCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedCorner.swift; sourceTree = "<group>"; };
+		44DE23482C8D77C400579310 /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		8D451A082C5A8E89005EA90A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8D451A112C5A9BEE005EA90A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D5B59D92C6095330096B5AF /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
@@ -270,6 +272,7 @@
 		44DE233E2C8C761500579310 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				44DE23482C8D77C400579310 /* LoginView.swift */,
 				242DF4562C5902F2006D8627 /* SignUpView.swift */,
 				441FBFD42C6A9E5700EEEFD9 /* UserDataEntryView.swift */,
 			);
@@ -425,6 +428,7 @@
 				444D2EF72C5B5AA20019A966 /* PiPiApp.swift in Sources */,
 				44DE23472C8D75A400579310 /* RoundedCorner.swift in Sources */,
 				444D2EF62C5B2D5A0019A966 /* CLLocationCoordinate2D+.swift in Sources */,
+				44DE23492C8D77C400579310 /* LoginView.swift in Sources */,
 				D3AE25262C5A5C28009BC64C /* iMessageConnect.swift in Sources */,
 				8D83215F2C5967B900C9ABA1 /* TicketView.swift in Sources */,
 				4411F9B52C64A60900FF4845 /* ActivityInformationSectionView.swift in Sources */,
