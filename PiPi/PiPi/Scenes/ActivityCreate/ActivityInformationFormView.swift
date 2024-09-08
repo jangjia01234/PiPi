@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import _MapKit_SwiftUI
 
 struct ActivityInformationFormView: View {
     
@@ -24,6 +25,7 @@ struct ActivityInformationFormView: View {
             maxPeopleNumberSection
             categoryPicker
             dateTimeLocationSection
+            locationLink
         }
     }
 }
@@ -68,7 +70,6 @@ private extension ActivityInformationFormView {
         Section {
             DatePicker("시작 일시", selection: $startDateTime, in: Date()...)
             estimatedTimePicker
-            locationLink
         }
     }
     
@@ -84,17 +85,34 @@ private extension ActivityInformationFormView {
     }
     
     var locationLink: some View {
-        NavigationLink(destination: {
-            LocationSelectView(coordinates: $location)
-                .navigationBarBackButtonHidden()
-        }) {
-            HStack {
-                Text("위치")
-                Text(location == nil ? "" : "선택 완료")
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        Section {
+            NavigationLink(destination: {
+                LocationSelectView(coordinates: $location)
+                    .navigationBarBackButtonHidden()
+            }) {
+                HStack {
+                    Text("위치")
+                    Text(location == nil ? "" : "선택 완료")
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
+            
+            if let selectedLocation = location {
+                Map(coordinateRegion: .constant(MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(
+                        latitude: selectedLocation.latitude,
+                        longitude: selectedLocation.longitude
+                    ),
+                    span: MKCoordinateSpan(latitudeDelta: 0.0001, longitudeDelta: 0.0001)
+                )))
+                .frame(height: 150) // 지도 크기 고정
+                .cornerRadius(10)
+            }
+            
+        } header: {
+            header(title: "위치 지정", subtitle: nil)
         }
     }
     
