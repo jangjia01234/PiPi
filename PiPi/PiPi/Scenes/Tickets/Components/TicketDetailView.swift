@@ -17,6 +17,7 @@ struct TicketDetailView: View {
     @Binding var selectedItem: TicketType
     @Binding var showMessageView: Bool
     
+    @State private var isEditing: Bool = false
     @State private var imessageReceiverEmail: String?
     @State private var showAlert = false
     @State private var hostProfile: User?
@@ -56,6 +57,9 @@ struct TicketDetailView: View {
             
             fetchParticipantProfiles()
             updateMapRegion()
+        }
+        .sheet(isPresented: $isEditing) {
+            ActivityCreateView(activity: activity)
         }
         .sheet(isPresented: $showMessageView) {
             if let email = imessageReceiverEmail {
@@ -115,15 +119,28 @@ struct TicketDetailView: View {
     
     private var activityInfo: some View {
         Section {
+            listCell(title: "활동명", content: activity.title)
             listCell(title: "날짜", content: "\(activity.startDateTime.toString().split(separator: "\n").first ?? "")")
+            listCell(title: "시간", content: "\(activity.startDateTime.toString().split(separator: "\n")[1])")
             
-            listCell(title: "시간", content: formatTime() ?? "")
-            
+            // FIXME: Camera Position 적용 시 지연 발생
             NavigationLink(destination: mapView) {
                 Text("위치")
             }
         } header: {
-            Text("모임 정보")
+            HStack{
+                Text("모임 정보")
+                Spacer()
+                if selectedItem == .organizer {
+                    Button(action: {
+                        isEditing = true
+                    }) {
+                        Image(systemName: "square.and.pencil")
+                            .foregroundColor(.gray)
+                            .font(.system(size: 18))
+                    }
+                }
+            }
         }
     }
     
@@ -319,6 +336,7 @@ struct TicketDetailView: View {
         formatter.dateFormat = "HH시 mm분"
         return formatter.string(from: date)
     }
+    
 }
 
 #Preview {
