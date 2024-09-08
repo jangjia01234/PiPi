@@ -9,19 +9,19 @@ import SwiftUI
 
 struct LocationAuthorizationView: View {
     
-    let authorizer = LocationAuthorizer()
-    
+    @EnvironmentObject private var appRootManager: AppRootManager
     @State private var showProgressView = false
     @State private var showLocationAuthorizeFailedAlert = false
     @State private var errorMessage: String? = nil
-    @Binding var moveToSignUpView: Bool
+    
+    let authorizer = LocationAuthorizer()
     
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 120) {
                 VStack(spacing: 70) {
                     VStack(spacing: 30) {
-                        Text("포스텍 캠퍼스 내에서\n위치를 인증해주세요")
+                        Text("회원가입을 위해\n위치를 인증해주세요")
                             .multilineTextAlignment(.center)
                             .font(.title)
                             .bold()
@@ -35,27 +35,34 @@ struct LocationAuthorizationView: View {
                     }
                     Image("locationAuthorize")
                 }
-                .padding(.bottom, 125)
-                
-                Button(action: {
-                    authorizeLocation()
-                }) {
-                    Text("위치 인증하기")
-                        .fontWeight(.bold)
-                        .frame(maxWidth: .infinity, maxHeight: 58)
-                        .foregroundStyle(.white)
-                        .background(.accent)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                VStack(spacing: 20) {
+                    Button(action: {
+                        authorizeLocation()
+                    }) {
+                        Text("위치 인증하기")
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, maxHeight: 58)
+                            .foregroundStyle(.white)
+                            .background(.accent)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    VStack {
+                        Text("이미 가입을 하셨다면")
+                            .font(.caption)
+                            .fontWeight(.light)
+                        
+                        NavigationLink(destination: LoginView()) {
+                            Text("로그인하러 가기")
+                                .underline()
+                                .foregroundStyle(.accent)
+                        }
+                    }
                 }
             }
             
             if showProgressView {
                 ProgressView()
-                    .frame(width: 70, height: 70)
-                    .controlSize(.large)
-                    .tint(.white)
-                    .background(.secondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .setAppearance()
             }
         }
         .padding()
@@ -72,9 +79,9 @@ struct LocationAuthorizationView: View {
         showProgressView = true
         Task {
             switch await authorizer.authorize() {
-            case .success(let validationResult):
-                if validationResult {
-                    moveToSignUpView = true
+            case .success(let isValid):
+                if isValid {
+                    appRootManager.currentRoot = .signUp
                 } else {
                     errorMessage = "포스텍 캠퍼스 내에서 다시 시도해주세요!"
                     showLocationAuthorizeFailedAlert = true
@@ -90,5 +97,5 @@ struct LocationAuthorizationView: View {
 }
 
 #Preview {
-    LocationAuthorizationView(moveToSignUpView: .constant(false))
+    LocationAuthorizationView()
 }

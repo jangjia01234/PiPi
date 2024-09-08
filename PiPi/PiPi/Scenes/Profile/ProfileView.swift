@@ -61,8 +61,8 @@ struct ProfileView: View {
                     }
                     .scrollContentBackground(.hidden)
                 } else {
-                    List {
-                        Section {
+                    Form {
+                        Section("프로필 정보") {
                             HStack {
                                 Text("닉네임")
                                     .frame(width: 60, alignment: .leading)
@@ -88,6 +88,15 @@ struct ProfileView: View {
                             }
                         }
                         .listRowBackground(Color(.secondarySystemBackground))
+                        
+                        Section("계정") {
+                            Button(action: {
+                                signOut()
+                            }) {
+                                Text("로그아웃")
+                            }
+                        }
+                        .listRowBackground(Color(.secondarySystemBackground))
                     }
                     .scrollContentBackground(.hidden)
                 }
@@ -102,6 +111,17 @@ struct ProfileView: View {
         }
         .navigationBarBackButtonHidden(true)
     }
+    
+    private func signOut() {
+        Task {
+            do {
+                try await FirebaseAuthManager.shared.signOut()
+            } catch {
+                dump(error)
+            }
+        }
+    }
+    
     private func loadProfile(userID: String) {
         userDataManager.observeSingleData(eventType: .value, id: userID) { result in
             switch result {
@@ -116,6 +136,7 @@ struct ProfileView: View {
             }
         }
     }
+    
     private func saveProfile() {
         guard let userID else { return }
         
@@ -129,7 +150,7 @@ struct ProfileView: View {
         do {
             try userDataManager.updateData(profile, id: profile.id)
             print("UserProfile 수정 성공")
-            isEditing = false // 수정 완료 후 편집 모드 해제
+            isEditing = false
         } catch {
             print("UserProfile 수정 실패: \(error.localizedDescription)")
         }

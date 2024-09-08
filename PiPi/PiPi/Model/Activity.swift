@@ -104,6 +104,26 @@ struct Activity: Identifiable, FirebaseData {
     
 }
 
+extension Activity {
+    func removeParticipant(_ participant: String) -> Activity {
+        let updatedParticipantIDs = participantID.filter { $0 != participant }
+        return Activity(
+            id: id,
+            hostID: hostID,
+            title: title,
+            description: description,
+            maxPeopleNumber: maxPeopleNumber,
+            participantID: updatedParticipantIDs,
+            category: category,
+            startDateTime: startDateTime,
+            estimatedTime: estimatedTime,
+            coordinates: coordinates,
+            authentication: authentication.filter { $0.key != participant }
+        )
+    }
+}
+
+
 extension Activity: Equatable, Hashable {
     
     func hash(into hasher: inout Hasher) {

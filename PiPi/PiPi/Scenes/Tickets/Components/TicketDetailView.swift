@@ -18,6 +18,8 @@ struct TicketDetailView: View {
     @Binding var showMessageView: Bool
     @Binding var isAuthenticationDone: Bool
     
+    @ObservedObject var viewModel: ActivityDetailViewModel
+    
     @State private var hostProfile: User?
     @State private var participantProfiles: [User] = []
     @State private var isLoadingHostProfile: Bool = false
@@ -26,6 +28,7 @@ struct TicketDetailView: View {
         center: .postech,
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
+    @State private var showAlert = false
     
     private let userDataManager = FirebaseDataManager<User>()
     
@@ -34,14 +37,18 @@ struct TicketDetailView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                activityInfo
-                activityStatus
-                userInfo
+            VStack{
+                List {
+                    activityInfo
+                    activityStatus
+                    userInfo
+                    actionButton()
+                }
+                .foregroundColor(.black)
+                .navigationBarTitle("\(activity.title)", displayMode: .inline)
+                .navigationBarItems(trailing: doneButton)
+                
             }
-            .foregroundColor(.black)
-            .navigationBarTitle("\(activity.title)", displayMode: .inline)
-            .navigationBarItems(trailing: doneButton)
         }
         .onAppear {
             if activity.hostID != userProfile.id {
@@ -50,6 +57,48 @@ struct TicketDetailView: View {
             
             fetchParticipantProfiles()
             updateMapRegion()
+        }
+    }
+    
+    private func actionButton() -> some View {
+        let (buttonText, alertTitle, alertMessage, primaryAction) = getButtonContent()
+        
+        return Button(action: {
+            showAlert = true
+        }) {
+            Text(buttonText)
+                .font(.callout)
+                .fontWeight(.bold)
+                .foregroundColor(.red)
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text(alertTitle),
+                message: Text(alertMessage),
+                primaryButton: .destructive(Text(buttonText)) {
+                    primaryAction() // 각각의 액션 호출
+                },
+                secondaryButton: .cancel(Text("닫기"))
+            )
+        }
+    }
+    
+    private func getButtonContent() -> (String, String, String, () -> Void) {
+        if selectedItem == .participant {
+            return (
+                "모임 참가 취소",
+                "참가 취소",
+                "정말 취소하시겠습니까?",
+                {viewModel.deleteParticipant()}
+            )
+        } else {
+            return (
+                "모임 삭제",
+                "모임 삭제",
+                "모임을 삭제하면 전체 참가자에게도 삭제됩니다. 정말 삭제하시겠습니까?",
+                {viewModel.deleteActivity()}
+            )
         }
     }
     
@@ -110,42 +159,42 @@ struct TicketDetailView: View {
     }
     
     private var userInfo: some View {
-            Section {
-                if selectedItem == .participant {
-                    if !userProfile.nickname.isEmpty {
-                        HStack {
-                            Text("닉네임")
-                            
-                            Spacer()
-                            
-                            // FIXME: 실제 주최자의 닉네임으로 변경 필요
-                            Text(userProfile.nickname)
-                            
-                            // FIXME: 문의하기 버튼 탭할 경우 시트가 올라오지 않는 에러 발생
-                            Button(action: {
-                                showMessageView = true
-                            }) {
-                                Image(systemName: "ellipsis.message")
-                                    .foregroundColor(.gray)
-                                    .frame(width: 30, height: 30)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                            }
+        Section {
+            if selectedItem == .participant {
+                if !userProfile.nickname.isEmpty {
+                    HStack {
+                        Text("닉네임")
+                        
+                        Spacer()
+                        
+                        // FIXME: 실제 주최자의 닉네임으로 변경 필요
+                        Text(userProfile.nickname)
+                        
+                        // FIXME: 문의하기 버튼 탭할 경우 시트가 올라오지 않는 에러 발생
+                        Button(action: {
+                            showMessageView = true
+                        }) {
+                            Image(systemName: "ellipsis.message")
+                                .foregroundColor(.gray)
+                                .frame(width: 30, height: 30)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
-                    } else {
-                        Text("주최자 정보 없음")
-                            .foregroundColor(.gray)
                     }
                 } else {
-                    if !activity.participantID.isEmpty {
-                        participantsInfo
-                    } else {
-                        Text("참가자가 아직 없습니다.")
-                            .foregroundColor(.gray)
-                    }
+                    Text("주최자 정보 없음")
+                        .foregroundColor(.gray)
                 }
-            } header: {
-                Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
+            } else {
+                if !activity.participantID.isEmpty {
+                    participantsInfo
+                } else {
+                    Text("참가자가 아직 없습니다.")
+                        .foregroundColor(.gray)
+                }
             }
+        } header: {
+            Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
+        }
     }
     
     private func listCell(title: String, content: String) -> some View {

@@ -46,6 +46,38 @@ final class ActivityDetailViewModel: ObservableObject {
         }
     }
     
+    
+    func deleteParticipant() {
+        guard let activity else {
+            print("Activity 없음")
+            return
+        }
+        
+        if activity.participantID.contains(userID) {
+            let updatedActivity = activity.removeParticipant(userID)
+            
+            do {
+                try activityDataManager.updateData(updatedActivity, id: activityID)
+                print("참가 취소 성공")
+            } catch {
+                print("참가 취소 실패: \(error.localizedDescription)")
+            }
+        } else {
+            print("참가자 목록에 사용자가 포함되지 않음")
+        }
+    }
+    
+    func deleteActivity() {
+        activityDataManager.deleteData(id: activityID) { result in
+            switch result {
+            case .success:
+                print("Activity deleted successfully.")
+            case .failure(let error):
+                print("Error deleting activity: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func refresh(newActivityID: String, newHostID: String) {
         self.activityID = newActivityID
         self.hostID = newHostID
@@ -68,9 +100,9 @@ final class ActivityDetailViewModel: ObservableObject {
                 switch result {
                 case .success(let fetchedActivity):
                     self.activity = fetchedActivity
-                    self.canJoin = (fetchedActivity.hostID != self.userID) 
-                                    && (fetchedActivity.status == .open)
-                                    && (!fetchedActivity.participantID.contains(self.userID))
+                    self.canJoin = (fetchedActivity.hostID != self.userID)
+                    && (fetchedActivity.status == .open)
+                    && (!fetchedActivity.participantID.contains(self.userID))
                 case .failure(let error):
                     dump("Activity data not found: \(error)")
                 }

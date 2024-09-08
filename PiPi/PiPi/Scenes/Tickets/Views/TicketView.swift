@@ -30,6 +30,9 @@ struct TicketView: View {
     var userProfile: User
     
     var body: some View {
+        
+        let viewModel = ActivityDetailViewModel(activityID: activity.id, hostID: activity.hostID)
+        
         NavigationStack {
             ZStack {
                 backgroundRectangle()
