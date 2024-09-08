@@ -18,10 +18,10 @@ struct LocationAuthorizationView: View {
     
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 120) {
                 VStack(spacing: 70) {
                     VStack(spacing: 30) {
-                        Text("포스텍 캠퍼스 내에서\n위치를 인증해주세요")
+                        Text("회원가입을 위해\n위치를 인증해주세요")
                             .multilineTextAlignment(.center)
                             .font(.title)
                             .bold()
@@ -35,17 +35,28 @@ struct LocationAuthorizationView: View {
                     }
                     Image("locationAuthorize")
                 }
-                .padding(.bottom, 125)
-                
-                Button(action: {
-                    authorizeLocation()
-                }) {
-                    Text("위치 인증하기")
-                        .fontWeight(.bold)
-                        .frame(maxWidth: .infinity, maxHeight: 58)
-                        .foregroundStyle(.white)
-                        .background(.accent)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                VStack(spacing: 20) {
+                    Button(action: {
+                        authorizeLocation()
+                    }) {
+                        Text("위치 인증하기")
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, maxHeight: 58)
+                            .foregroundStyle(.white)
+                            .background(.accent)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    VStack {
+                        Text("이미 가입을 하셨다면")
+                            .font(.caption)
+                            .fontWeight(.light)
+                        
+                        NavigationLink(destination: LoginView()) {
+                            Text("로그인하러 가기")
+                                .underline()
+                                .foregroundStyle(.accent)
+                        }
+                    }
                 }
             }
             
