@@ -100,17 +100,31 @@ private extension ActivityInformationFormView {
             }
             
             if let selectedLocation = location {
+                let identifiableLocation = IdentifiableCoordinates(coordinates: selectedLocation)
+                
                 Map(coordinateRegion: .constant(MKCoordinateRegion(
                     center: CLLocationCoordinate2D(
                         latitude: selectedLocation.latitude,
                         longitude: selectedLocation.longitude
                     ),
-                    span: MKCoordinateSpan(latitudeDelta: 0.0001, longitudeDelta: 0.0001)
-                )))
-                .frame(height: 150) // 지도 크기 고정
+                    span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
+                )), annotationItems: [identifiableLocation]) { location in
+                    MapAnnotation(coordinate: CLLocationCoordinate2D(
+                        latitude: location.coordinates.latitude,
+                        longitude: location.coordinates.longitude
+                    )) {
+                        Image(systemName: "mappin.and.ellipse")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                            .foregroundStyle(.accent)
+                            .offset(y: -11.5)
+                            .zIndex(2)
+                    }
+                }
+                .frame(height: 150)
                 .cornerRadius(10)
             }
-            
         } header: {
             header(title: "위치 지정", subtitle: nil)
         }
