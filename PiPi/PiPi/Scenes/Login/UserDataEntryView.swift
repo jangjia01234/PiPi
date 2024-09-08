@@ -33,7 +33,7 @@ struct UserDataEntryView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.headline)
             SecureField("비밀번호를 입력해주세요.", text: $password)
-                .setAppearance()
+                .setFieldAppearance()
                 .keyboardType(.default)
             Text("* 비밀번호는 8자 이상, 대문자, 소문자, 숫자를 포함해야 합니다.")
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -49,7 +49,7 @@ struct UserDataEntryView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.headline)
             TextField("닉네임을 입력해주세요.", text: $nickname)
-                .setAppearance()
+                .setFieldAppearance()
                 .keyboardType(.default)
         }
     }
@@ -87,23 +87,10 @@ struct UserDataEntryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             TextField("애플 계정 이메일을 입력해주세요.", text: $email)
-                .setAppearance()
+                .setFieldAppearance()
                 .keyboardType(.emailAddress)
         }
     }
-}
-
-fileprivate extension View {
-    
-    func setAppearance() -> some View {
-        self.font(.body)
-            .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
-            .textFieldStyle(PlainTextFieldStyle())
-            .autocapitalization(.none)
-            .background(Color(.systemGray6))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-    }
-    
 }
 
 #Preview {

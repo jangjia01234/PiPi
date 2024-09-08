@@ -1,5 +1,5 @@
 //
-//  OnboardingTabView.swift
+//  OnboardingView.swift
 //  PiPi
 //
 //  Created by 신혜연 on 7/30/24.
@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-struct OnboardingTabView: View {
+struct OnboardingView: View {
+    
+    @EnvironmentObject private var appRootManager: AppRootManager
     
     init() {
         UIPageControl.appearance().currentPageIndicatorTintColor = .accent
@@ -15,10 +17,9 @@ struct OnboardingTabView: View {
     }
     
     @State private var tabSelection = 0
-    @State private var moveToSignUpView = false
     
     var body: some View {
-        VStack {
+        NavigationStack {
             HStack {
                 Spacer()
                 Button {
@@ -42,19 +43,17 @@ struct OnboardingTabView: View {
                         subtitle: info.subtitle
                     )
                 }
-                LocationAuthorizationView(moveToSignUpView: $moveToSignUpView)
+                LocationAuthorizationView()
                     .tag(4)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-            .fullScreenCover(isPresented: $moveToSignUpView) {
-                OnboardingProfileView()
-            }
+            .navigationTitle("")
         }
     }
     
 }
 
-private extension OnboardingTabView {
+private extension OnboardingView {
     
     struct OnboardingInfo {
         
@@ -92,5 +91,5 @@ private extension OnboardingTabView {
 }
 
 #Preview {
-    OnboardingTabView()
+    OnboardingView()
 }
