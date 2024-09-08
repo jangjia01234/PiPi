@@ -24,18 +24,25 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct PiPiApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @AppStorage("userID") var userID: String?
     
+    @StateObject private var appRootManager = AppRootManager()
     @State var isShowingSheet: Bool = false
+    
     var activity: Activity = Activity.sampleData
     
     var body: some Scene {
         WindowGroup {
-            if let userID {
-                ContentView(isShowingSheet: $isShowingSheet, activity: activity)
-            } else {
-                OnboardingTabView()
+            Group {
+                switch appRootManager.currentRoot {
+                case .onboarding:
+                    OnboardingTabView()
+                case .content:
+                    ContentView(isShowingSheet: $isShowingSheet, activity: activity)
+                case .signUp:
+                    SignUpView()
+                }
             }
+            .environmentObject(appRootManager)
         }
     }
     
