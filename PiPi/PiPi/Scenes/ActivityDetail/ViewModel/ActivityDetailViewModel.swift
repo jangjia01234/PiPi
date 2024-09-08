@@ -68,6 +68,17 @@ final class ActivityDetailViewModel: ObservableObject {
         }
     }
     
+    // 🔔 모임 삭제 기능 추가
+    func deleteActivity() {
+        activityDataManager.deleteData(id: activityID) { result in
+            switch result {
+            case .success:
+                print("Activity deleted successfully.")
+            case .failure(let error):
+                print("Error deleting activity: \(error.localizedDescription)")
+            }
+        }
+    }
     
     func refresh(newActivityID: String, newHostID: String) {
         self.activityID = newActivityID

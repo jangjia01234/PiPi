@@ -26,7 +26,7 @@ struct TicketDetailView: View {
         center: .postech,
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
-    @State private var showCancelAlert = false
+    @State private var showAlert = false
     
     private let userDataManager = FirebaseDataManager<User>()
     
@@ -41,28 +41,7 @@ struct TicketDetailView: View {
                     activityInfo
                     activityStatus
                     userInfo
-                    
-                    if selectedItem == .participant {
-                        Button(action: {
-                            showCancelAlert = true // 알림창 표시
-                        }) {
-                            Text("참가 취소")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .foregroundColor(.red)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .alert(isPresented: $showCancelAlert) {
-                            Alert(
-                                title: Text("참가 취소"),
-                                message: Text("정말 취소하시겠습니까?"),
-                                primaryButton: .destructive(Text("참가 취소")) {
-                                    viewModel.deleteParticipant()
-                                },
-                                secondaryButton: .cancel(Text("닫기"))
-                            )
-                        }
-                    }
+                    actionButton()
                 }
                 .foregroundColor(.black)
                 .navigationBarTitle("\(activity.title)", displayMode: .inline)
@@ -76,6 +55,51 @@ struct TicketDetailView: View {
             }
             fetchParticipantProfiles()
             updateMapRegion()
+        }
+    }
+    
+    
+    // 🔔participant와 organizer의 버튼을 통합하여 생성하는 함수
+    private func actionButton() -> some View {
+        let (buttonText, alertTitle, alertMessage, primaryAction) = getButtonContent()
+        
+        return Button(action: {
+            showAlert = true
+        }) {
+            Text(buttonText)
+                .font(.callout)
+                .fontWeight(.bold)
+                .foregroundColor(.red)
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text(alertTitle),
+                message: Text(alertMessage),
+                primaryButton: .destructive(Text(buttonText)) {
+                    primaryAction() // 각각의 액션 호출
+                },
+                secondaryButton: .cancel(Text("닫기"))
+            )
+        }
+    }
+    
+    // 🔔버튼에 필요한 텍스트와 액션을 반환하는 함수
+    private func getButtonContent() -> (String, String, String, () -> Void) {
+        if selectedItem == .participant {
+            return (
+                "모임 참가 취소",
+                "참가 취소",
+                "정말 취소하시겠습니까?",
+                {viewModel.deleteParticipant()}
+            )
+        } else {
+            return (
+                "모임 삭제",
+                "모임 삭제",
+                "모임을 삭제하면 전체 참가자에게도 삭제됩니다. 정말 삭제하시겠습니까?",
+                {viewModel.deleteActivity()}
+            )
         }
     }
     
