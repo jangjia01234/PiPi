@@ -31,7 +31,8 @@ struct LocationAuthorizer {
     }
     
     private func roadValidation(_ roadAddress: RoadAddress) -> Bool {
-        roadAddress.roadName == "청암로" && roadAddress.mainBuildingNo == "77"
+        (roadAddress.roadName == "청암로" || roadAddress.roadName == "지곡로")
+        && roadAddress.mainBuildingNo == "77"
     }
     
     private func fetchResopnse(coordinate: CLLocationCoordinate2D) async -> Result<Response, Error> {
