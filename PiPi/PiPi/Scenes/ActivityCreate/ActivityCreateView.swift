@@ -12,22 +12,36 @@ struct ActivityCreateView: View {
     @Environment(\.dismiss) private var dismiss
     @FocusState private var isFocused
     
-    @State private var title = ""
-    @State private var description = ""
-    @State private var maxPeopleNumber = 2
-    @State private var category: Activity.Category = .meal
-    @State private var startDateTime = Date()
-    @State private var estimatedTime: Int? = nil
-    @State private var location: Coordinates? = nil
-    
+    @State private var title: String
+    @State private var description: String
+    @State private var maxPeopleNumber: Int
+    @State private var category: Activity.Category
+    @State private var startDateTime: Date
+    @State private var estimatedTime: Int?
+    @State private var location: Coordinates?
     @State private var needValueFilledAlertIsPresented = false
     @State private var registerAlertIsPresented = false
+    
+    var activity: Activity?
+    var isEditing: Bool
     
     private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let activityDataManager = FirebaseDataManager<Activity>()
     
     private var allRequestedValuesFilled: Bool {
         !title.isEmpty && !description.isEmpty && location != nil
+    }
+    
+    init(activity: Activity? = nil) {
+        self.activity = activity
+        self.title = activity?.title ?? ""
+        self.description = activity?.description ?? ""
+        self.maxPeopleNumber = activity?.maxPeopleNumber ?? 2
+        self.category = activity?.category ?? .meal
+        self.startDateTime = activity?.startDateTime ?? Date()
+        self.estimatedTime = activity?.estimatedTime ?? nil
+        self.location = activity?.coordinates ?? nil
+        self.isEditing = (activity != nil)
     }
     
     var body: some View {
@@ -43,7 +57,7 @@ struct ActivityCreateView: View {
             )
             .padding(.top)
             .background(Color(.secondarySystemBackground))
-            .navigationTitle("활동 등록")
+            .navigationTitle(isEditing ? "활동 수정" : "활동 등록")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -65,16 +79,18 @@ struct ActivityCreateView: View {
             .alert("필요한 정보를 모두 채워주세요!", isPresented: $needValueFilledAlertIsPresented) {
                 Button("확인") {}
             }
-            .alert("신청하시겠습니까?", isPresented: $registerAlertIsPresented) {
+            .alert(isEditing ? "수정하시겠습니까?" : "등록하시겠습니까?", isPresented: $registerAlertIsPresented) {
                 Button("취소") {}
                 Button(action: {
-                    registerActivity()
+                    if isEditing {
+                        updateActivity()
+                    } else {
+                        registerActivity()
+                    }
                     dismiss()
                 }) {
                     Text("확인")
                 }
-            } message: {
-                Text("이벤트를 직접 개설한 후에는 수정할 수 없습니다.")
             }
         }
     }
@@ -105,8 +121,36 @@ struct ActivityCreateView: View {
         }
     }
     
+    private func updateActivity() {
+        guard let activity = activity,
+              let location = location else { return }
+        
+        let updatedActivity = Activity(
+            id: activity.id,
+            hostID: activity.hostID,
+            title: title,
+            description: description,
+            maxPeopleNumber: maxPeopleNumber,
+            participantID: activity.participantID,
+            category: category,
+            startDateTime: startDateTime,
+            estimatedTime: estimatedTime,
+            coordinates: location,
+            authentication: activity.authentication
+        )
+        
+        do {
+            try activityDataManager.updateData(
+                updatedActivity,
+                id: updatedActivity.id
+            )
+        } catch {
+            dump(error)
+        }
+    }
+    
 }
 
 #Preview {
-    ActivityCreateView()
+    ActivityCreateView(activity: Activity.sampleData)
 }
