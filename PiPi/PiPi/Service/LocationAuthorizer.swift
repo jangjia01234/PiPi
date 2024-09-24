@@ -14,22 +14,20 @@ struct LocationAuthorizer {
     private let locationManager = LocationManager()
     
     func authorize() async -> Result<Bool, Error> {
-        locationManager.requestLocation()
-        
-        while locationManager.currentLocation == nil {}
-        
-        guard let coordinate = locationManager.currentLocation else {
-            return .failure(LocationAuthorizeError.locationFailed)
-        }
-        
-        switch await fetchResopnse(coordinate: coordinate) {
-        case .success(let response):
-            guard let document = response.documents.first else {
-                return .failure(LocationAuthorizeError.invalidData)
-            }
+        do {
+            let coordinate = try await locationManager.currentLocation
             
-            return .success(addressValidation(document.address))
-        case .failure(let error):
+            switch await fetchResopnse(coordinate: coordinate) {
+            case .success(let response):
+                guard let document = response.documents.first else {
+                    return .failure(LocationAuthorizeError.invalidData)
+                }
+                
+                return .success(addressValidation(document.address))
+            case .failure(let error):
+                return .failure(error)
+            }
+        } catch {
             return .failure(error)
         }
     }
