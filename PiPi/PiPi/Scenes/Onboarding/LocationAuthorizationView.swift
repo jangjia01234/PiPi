@@ -12,6 +12,7 @@ struct LocationAuthorizationView: View {
     @EnvironmentObject private var appRootManager: AppRootManager
     @State private var showProgressView = false
     @State private var showLocationAuthorizeFailedAlert = false
+    @State private var showLocationAuthorizeSuccessAlert = false
     @State private var errorMessage: String? = nil
     
     let authorizer = LocationAuthorizer()
@@ -73,6 +74,15 @@ struct LocationAuthorizationView: View {
                 dismissButton: .cancel(Text("확인"))
             )
         }
+        .alert(isPresented: $showLocationAuthorizeSuccessAlert) {
+            Alert(
+                title: Text("인증에 성공했습니다!"),
+                primaryButton: .default(Text("회원가입하기")) {
+                    appRootManager.currentRoot = .signUp
+                },
+                secondaryButton: .cancel(Text("취소"))
+            )
+        }
     }
     
     private func authorizeLocation() {
@@ -81,7 +91,7 @@ struct LocationAuthorizationView: View {
             switch await authorizer.authorize() {
             case .success(let isValid):
                 if isValid {
-                    appRootManager.currentRoot = .signUp
+                    showLocationAuthorizeSuccessAlert = true
                 } else {
                     errorMessage = "포스텍 캠퍼스 내에서 다시 시도해주세요!"
                     showLocationAuthorizeFailedAlert = true
