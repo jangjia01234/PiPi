@@ -10,18 +10,22 @@ import MapKit
 final class LocationManager: NSObject, CLLocationManagerDelegate {
     
     private let manager = CLLocationManager()
+    private var continuation: CheckedContinuation<CLLocationCoordinate2D, Error>?
     
-    private(set) var currentLocation: CLLocationCoordinate2D? = nil
+    var currentLocation: CLLocationCoordinate2D {
+        get async throws {
+            return try await withCheckedThrowingContinuation { continuation in
+                self.continuation = continuation
+                manager.requestLocation()
+            }
+        }
+    }
     
     override init() {
         super.init()
         
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
-    }
-    
-    func requestLocation() {
-        manager.requestLocation()
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -34,11 +38,15 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        currentLocation = locations.first?.coordinate
+        if let lastLocation = locations.last {
+            continuation?.resume(returning: lastLocation.coordinate)
+            continuation = nil
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
-        dump(error)
+        continuation?.resume(throwing: error)
+        continuation = nil
     }
     
 }
