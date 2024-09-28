@@ -59,8 +59,16 @@ struct LocationAuthorizationView: View {
                         }
                     }
                 }
+                .alert(isPresented: $showLocationAuthorizeSuccessAlert) {
+                    Alert(
+                        title: Text("인증에 성공했습니다!"),
+                        primaryButton: .default(Text("회원가입하기")) {
+                            appRootManager.currentRoot = .signUp
+                        },
+                        secondaryButton: .cancel(Text("취소"))
+                    )
+                }
             }
-            
             if showProgressView {
                 ProgressView()
                     .setAppearance()
@@ -72,15 +80,6 @@ struct LocationAuthorizationView: View {
                 title: Text("인증에 실패했습니다"),
                 message: Text(errorMessage ?? ""),
                 dismissButton: .cancel(Text("확인"))
-            )
-        }
-        .alert(isPresented: $showLocationAuthorizeSuccessAlert) {
-            Alert(
-                title: Text("인증에 성공했습니다!"),
-                primaryButton: .default(Text("회원가입하기")) {
-                    appRootManager.currentRoot = .signUp
-                },
-                secondaryButton: .cancel(Text("취소"))
             )
         }
     }
