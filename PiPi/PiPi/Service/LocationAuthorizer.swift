@@ -103,7 +103,7 @@ private struct Meta: Decodable {
 
 private struct Document: Decodable {
     
-    let roadAddress: RoadAddress
+    let roadAddress: RoadAddress?
     let address: Address
     
     enum CodingKeys: String, CodingKey {
