@@ -56,4 +56,8 @@ final class FirebaseAuthManager {
         try auth.signOut()
     }
     
+    func sendPasswordResetEmail(email: String) {
+        auth.sendPasswordReset(withEmail: email)
+    }
+    
 }

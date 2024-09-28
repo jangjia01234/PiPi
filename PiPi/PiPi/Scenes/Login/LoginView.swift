@@ -14,24 +14,34 @@ struct LoginView: View {
     @State private var password = ""
     @State private var showProgressView = false
     @State private var showLoginFailAlert = false
+    @State private var showSendPasswordResetEmailAlert = false
+    @State private var passwordResetEmail = ""
     @State private var loginError: LoginError? = nil
     
     var body: some View {
         NavigationStack {
             ZStack {
-                VStack(spacing: 16) {
-                    Text("이메일")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.headline)
-                    TextField("애플 계정 이메일을 입력해주세요.", text: $email)
-                        .setFieldAppearance()
-                        .keyboardType(.default)
-                    Text("비밀번호")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.headline)
-                    SecureField("비밀번호를 입력해주세요.", text: $password)
-                        .setFieldAppearance()
-                        .keyboardType(.default)
+                VStack(spacing: 30) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("이메일")
+                            .font(.headline)
+                        TextField("애플 계정 이메일을 입력해주세요.", text: $email)
+                            .setFieldAppearance()
+                            .keyboardType(.default)
+                        Text("비밀번호")
+                            .font(.headline)
+                        SecureField("비밀번호를 입력해주세요.", text: $password)
+                            .setFieldAppearance()
+                            .keyboardType(.default)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Button {
+                        showSendPasswordResetEmailAlert = true
+                    } label: {
+                        Text("비밀번호 찾기")
+                            .foregroundStyle(Color(.systemGray))
+                    }
                     
                     Spacer()
                     
@@ -45,6 +55,15 @@ struct LoginView: View {
                             .background(.accent)
                             .cornerRadius(10)
                     }
+                }
+                .alert(
+                    "비밀번호 재설정 이메일 보내기",
+                    isPresented: $showSendPasswordResetEmailAlert
+                ) {
+                        TextField("이메일", text: $passwordResetEmail)
+                        Button("취소", role: .cancel) {}
+                        Button("보내기", action: sendPasswordResetEmail)
+                            .disabled(passwordResetEmail.isEmpty)
                 }
                 .padding()
                 
@@ -98,6 +117,10 @@ struct LoginView: View {
         }
         
         return true
+    }
+    
+    private func sendPasswordResetEmail() {
+        FirebaseAuthManager.shared.sendPasswordResetEmail(email: passwordResetEmail)
     }
     
     enum LoginError: LocalizedError {
