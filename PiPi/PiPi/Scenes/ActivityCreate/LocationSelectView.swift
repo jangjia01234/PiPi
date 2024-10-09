@@ -16,6 +16,11 @@ struct LocationSelectView: View {
     
     @Binding var coordinates: Coordinates?
     
+    private let hyoGokRegion = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 36.01051920474252, longitude: 129.3263160974566),
+        span: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+    )
+    
     init(coordinates: Binding<Coordinates?>) {
         if let coordinates = coordinates.wrappedValue {
             self.position = .camera(.init(centerCoordinate: .init(coordinates), distance: 1000))
@@ -36,6 +41,7 @@ struct LocationSelectView: View {
             Map(position: $position)
                 .onMapCameraChange { context in
                     centerCoordinate = context.camera.centerCoordinate
+                    enforceRegionLimit()
                 }
             
             Image(systemName: "mappin.and.ellipse")
@@ -48,6 +54,18 @@ struct LocationSelectView: View {
             
             bottomSubmitButton
                 .zIndex(2)
+        }
+    }
+    
+    private func enforceRegionLimit() {
+        let maxLat = hyoGokRegion.center.latitude + (hyoGokRegion.span.latitudeDelta / 2)
+        let minLat = hyoGokRegion.center.latitude - (hyoGokRegion.span.latitudeDelta / 2)
+        let maxLon = hyoGokRegion.center.longitude + (hyoGokRegion.span.longitudeDelta / 2)
+        let minLon = hyoGokRegion.center.longitude - (hyoGokRegion.span.longitudeDelta / 2)
+        
+        if centerCoordinate.latitude > maxLat || centerCoordinate.latitude < minLat ||
+            centerCoordinate.longitude > maxLon || centerCoordinate.longitude < minLon {
+            position = .region(hyoGokRegion)
         }
     }
 }
