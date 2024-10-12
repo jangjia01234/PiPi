@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct SignUpView: View {
     
@@ -17,6 +18,8 @@ struct SignUpView: View {
     @State private var isButtonEnabled: Bool = false
     @State private var passwordValid: Bool = true
     @State private var showProgressView = false
+    @State private var showSignUpFailedAlert: Bool = false
+    @State private var errorMessage = ""
     
     private let userDataManager = FirebaseDataManager<User>()
     
@@ -55,6 +58,13 @@ struct SignUpView: View {
                     ProgressView()
                         .setAppearance()
                 }
+            }
+            .alert(isPresented: $showSignUpFailedAlert) {
+                Alert(
+                    title: Text("회원가입 실패"),
+                    message: Text(errorMessage),
+                    dismissButton: .cancel(Text("확인"))
+                )
             }
             .onChange(of: [nickname, password, email]) {
                 validateForm()
@@ -100,7 +110,17 @@ struct SignUpView: View {
             case .success(let user):
                 saveUser(id: user.uid)
             case .failure(let error):
-                dump(error)
+                if let authErrorCode = AuthErrorCode(rawValue: error.code) {
+                    switch authErrorCode {
+                    case .emailAlreadyInUse:
+                        errorMessage = "이미 가입된 이메일입니다."
+                    default:
+                        errorMessage = error.localizedDescription
+                    }
+                } else {
+                    errorMessage = error.localizedDescription
+                }
+                showSignUpFailedAlert = true
             }
             showProgressView = false
         }

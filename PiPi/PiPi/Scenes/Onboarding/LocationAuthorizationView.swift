@@ -11,9 +11,9 @@ struct LocationAuthorizationView: View {
     
     @EnvironmentObject private var appRootManager: AppRootManager
     @State private var showProgressView = false
-    @State private var showLocationAuthorizeFailedAlert = false
-    @State private var showLocationAuthorizeSuccessAlert = false
-    @State private var errorMessage: String? = nil
+    @State private var showAlert = false
+    @State private var errorMessage: String = ""
+    @State private var alertType: AlertType? = nil
     
     let authorizer = LocationAuthorizer()
     
@@ -59,15 +59,6 @@ struct LocationAuthorizationView: View {
                         }
                     }
                 }
-                .alert(isPresented: $showLocationAuthorizeSuccessAlert) {
-                    Alert(
-                        title: Text("인증에 성공했습니다!"),
-                        primaryButton: .default(Text("회원가입하기")) {
-                            appRootManager.currentRoot = .signUp
-                        },
-                        secondaryButton: .cancel(Text("취소"))
-                    )
-                }
             }
             if showProgressView {
                 ProgressView()
@@ -75,12 +66,25 @@ struct LocationAuthorizationView: View {
             }
         }
         .padding(.horizontal)
-        .alert(isPresented: $showLocationAuthorizeFailedAlert) {
-            Alert(
-                title: Text("인증에 실패했습니다"),
-                message: Text(errorMessage ?? ""),
-                dismissButton: .cancel(Text("확인"))
-            )
+        .alert(item: $alertType) { type in
+            switch type {
+            case .locationAuthorizationFail(let error):
+                return Alert(
+                   title: Text("인증에 성공했습니다!"),
+                   primaryButton: .default(Text("회원가입하기")) {
+                       appRootManager.currentRoot = .signUp
+                   },
+                   secondaryButton: .cancel(Text("취소"))
+               )
+            case .locationAuthorizationSuccess:
+                return Alert(
+                   title: Text("인증에 성공했습니다!"),
+                   primaryButton: .default(Text("회원가입하기")) {
+                       appRootManager.currentRoot = .signUp
+                   },
+                   secondaryButton: .cancel(Text("취소"))
+               )
+            }
         }
     }
     
@@ -90,16 +94,35 @@ struct LocationAuthorizationView: View {
             switch await authorizer.authorize() {
             case .success(let isValid):
                 if isValid {
-                    showLocationAuthorizeSuccessAlert = true
+                    alertType = .locationAuthorizationSuccess
+                    showAlert = true
                 } else {
-                    errorMessage = "포스텍 캠퍼스 내에서 다시 시도해주세요!"
-                    showLocationAuthorizeFailedAlert = true
+                    alertType = .locationAuthorizationFail(error: "포스텍 캠퍼스 내에서 다시 시도해주세요!")
+                    showAlert = true
                 }
             case .failure(let error):
-                errorMessage = error.localizedDescription
-                showLocationAuthorizeFailedAlert = true
+                alertType = .locationAuthorizationFail(error: error.localizedDescription)
+                showAlert = true
             }
             showProgressView = false
+        }
+    }
+    
+}
+
+extension LocationAuthorizationView {
+    
+    enum AlertType: Identifiable {
+        case locationAuthorizationFail(error: String)
+        case locationAuthorizationSuccess
+        
+        var id: String {
+            switch self {
+            case .locationAuthorizationFail(let error):
+                return "locationFail\(error)"
+            case .locationAuthorizationSuccess:
+                return "locationSuccess"
+            }
         }
     }
     
