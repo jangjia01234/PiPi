@@ -107,22 +107,14 @@ struct HomeView: View {
         .onChange(of: selectedCategory) {
             selectedMarkerActivity = nil
             let currentDate = Date()
-
-            if let selectedCategory {
-                activitiesToShow = activities.filter {
-                    ($0.category == selectedCategory) &&
-                    ($0.status == .open) &&
-                    ($0.startDateTime >= currentDate)
-                }
-            } else {
-                activitiesToShow = activities.filter {
-                    $0.status == .open &&
-                    $0.startDateTime >= currentDate
-                }
+            activitiesToShow = activities.filter { activity in
+                activity.status == .open &&
+                activity.startDateTime >= currentDate &&
+                (selectedCategory == nil || activity.category == selectedCategory)
             }
+            
         }
     }
-    
 }
 
 #Preview {
