@@ -34,12 +34,12 @@ final class FirebaseAuthManager {
         auth.removeStateDidChangeListener(handle)
     }
     
-    func signUp(email: String, password: String) async -> Result<User, Error> {
+    func signUp(email: String, password: String) async -> Result<User, NSError> {
         do {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
             return .success(result.user)
         } catch {
-            return .failure(error)
+            return .failure(error as NSError)
         }
     }
     
