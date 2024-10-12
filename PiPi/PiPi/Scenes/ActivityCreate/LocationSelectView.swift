@@ -16,17 +16,14 @@ struct LocationSelectView: View {
     
     @Binding var coordinates: Coordinates?
     
-    private let hyoGokRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 36.01051920474252, longitude: 129.3263160974566),
-        span: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
-    )
+    private let cameraBoundary = MKCoordinateRegion.cameraBoundary
     
     init(coordinates: Binding<Coordinates?>) {
         if let coordinates = coordinates.wrappedValue {
             self.position = .camera(.init(centerCoordinate: .init(coordinates), distance: 1000))
         } else {
             let rect = MKMapRect(origin: .init(.postech), size: .init(width: 2000, height: 2000))
-            let region = MKCoordinateRegion(rect)   
+            let region = MKCoordinateRegion(rect)
             self.position = .region(region)
         }
         
@@ -58,14 +55,14 @@ struct LocationSelectView: View {
     }
     
     private func enforceRegionLimit() {
-        let maxLat = hyoGokRegion.center.latitude + (hyoGokRegion.span.latitudeDelta / 2)
-        let minLat = hyoGokRegion.center.latitude - (hyoGokRegion.span.latitudeDelta / 2)
-        let maxLon = hyoGokRegion.center.longitude + (hyoGokRegion.span.longitudeDelta / 2)
-        let minLon = hyoGokRegion.center.longitude - (hyoGokRegion.span.longitudeDelta / 2)
+        let maxLat = cameraBoundary.center.latitude + (cameraBoundary.span.latitudeDelta / 2)
+        let minLat = cameraBoundary.center.latitude - (cameraBoundary.span.latitudeDelta / 2)
+        let maxLon = cameraBoundary.center.longitude + (cameraBoundary.span.longitudeDelta / 2)
+        let minLon = cameraBoundary.center.longitude - (cameraBoundary.span.longitudeDelta / 2)
         
         if centerCoordinate.latitude > maxLat || centerCoordinate.latitude < minLat ||
             centerCoordinate.longitude > maxLon || centerCoordinate.longitude < minLon {
-            position = .region(hyoGokRegion)
+            position = .region(cameraBoundary)
         }
     }
 }
