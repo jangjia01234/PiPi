@@ -24,6 +24,12 @@ struct HomeView: View {
     private let locationManager = LocationManager()
     private let activityDataManager = FirebaseDataManager<Activity>()
     
+    private let southWest = CLLocationCoordinate2D(latitude: 33.0, longitude: 126.0)
+    private let northEast = CLLocationCoordinate2D(latitude: 38.5, longitude: 130.0)
+    private let maxZoomOutDistance: CLLocationDistance = 1600000
+    private let desiredLocation = CLLocationCoordinate2D(latitude: 35.946239360942876, longitude: 127.73839221769023)
+
+    
     var body: some View {
         ZStack {
             Map(
@@ -47,25 +53,15 @@ struct HomeView: View {
                 let currentCoordinate = context.camera.centerCoordinate
                 let currentDistance = context.camera.distance
 
-                // MARK: 대한민국의 경계 좌표 (남서쪽과 북동쪽)
-                let southWest = CLLocationCoordinate2D(latitude: 33.0, longitude: 126.0) // 남서쪽 경계
-                let northEast = CLLocationCoordinate2D(latitude: 38.5, longitude: 130.0) // 북동쪽 경계
-                
-                let maxZoomOutDistance: CLLocationDistance = 1600000
+                let clampedCoordinate = CLLocationCoordinate2D(
+                    latitude: min(max(currentCoordinate.latitude, southWest.latitude), northEast.latitude),
+                    longitude: min(max(currentCoordinate.longitude, southWest.longitude), northEast.longitude)
+                )
 
-                var clampedCoordinate = currentCoordinate
-                
-                clampedCoordinate.latitude = min(max(currentCoordinate.latitude, southWest.latitude), northEast.latitude)
-                clampedCoordinate.longitude = min(max(currentCoordinate.longitude, southWest.longitude), northEast.longitude)
-
-                if currentDistance > maxZoomOutDistance {
-                    let desiredLatitude: CLLocationDegrees = 35.946239360942876
-                    let desiredLongitude: CLLocationDegrees = 127.73839221769023
-                    
-                    cameraPosition = .camera(.init(centerCoordinate: CLLocationCoordinate2D(latitude: desiredLatitude, longitude: desiredLongitude), distance: maxZoomOutDistance))
-                } else {
-                    cameraPosition = .camera(.init(centerCoordinate: clampedCoordinate, distance: currentDistance))
-                }
+                cameraPosition = .camera(.init(
+                        centerCoordinate: currentDistance > maxZoomOutDistance ? desiredLocation : clampedCoordinate,
+                        distance: currentDistance > maxZoomOutDistance ? maxZoomOutDistance : currentDistance
+                    ))
             }
             
             ZStack {
