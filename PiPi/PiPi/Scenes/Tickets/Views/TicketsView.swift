@@ -45,11 +45,7 @@ struct TicketsView: View {
         ScrollView {
             if let userID = userID {
                 let filteredActivities = activities.filter { activity in
-                    if selectedItem == .participant {
-                        return activity.participantID.contains(userID)
-                    } else {
-                        return activity.hostID == userID
-                    }
+                    return selectedItem == .participant ? activity.participantID.contains(userID) : activity.hostID == userID
                 }
                 
                 if filteredActivities.isEmpty {
