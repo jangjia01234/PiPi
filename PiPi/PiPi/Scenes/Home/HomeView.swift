@@ -24,16 +24,15 @@ struct HomeView: View {
     private let locationManager = LocationManager()
     private let activityDataManager = FirebaseDataManager<Activity>()
     
-    private let southWest = CLLocationCoordinate2D(latitude: 33.0, longitude: 126.0)
-    private let northEast = CLLocationCoordinate2D(latitude: 38.5, longitude: 130.0)
-    private let maxZoomOutDistance: CLLocationDistance = 1600000
-    private let desiredLocation = CLLocationCoordinate2D(latitude: 35.946239360942876, longitude: 127.73839221769023)
-
-    
     var body: some View {
         ZStack {
             Map(
                 position: $cameraPosition,
+                bounds: .init(
+                    centerCoordinateBounds: .cameraBoundary,
+                    minimumDistance: 500,
+                    maximumDistance: 3000000
+                ),
                 interactionModes: [.zoom, .pan, .rotate],
                 selection: $selectedMarkerActivity,
                 scope: mapScope
@@ -49,20 +48,6 @@ struct HomeView: View {
                 }
             }
             .zIndex(1)
-            .onMapCameraChange { context in
-                let currentCoordinate = context.camera.centerCoordinate
-                let currentDistance = context.camera.distance
-
-                let clampedCoordinate = CLLocationCoordinate2D(
-                    latitude: min(max(currentCoordinate.latitude, southWest.latitude), northEast.latitude),
-                    longitude: min(max(currentCoordinate.longitude, southWest.longitude), northEast.longitude)
-                )
-
-                cameraPosition = .camera(.init(
-                        centerCoordinate: currentDistance > maxZoomOutDistance ? desiredLocation : clampedCoordinate,
-                        distance: currentDistance > maxZoomOutDistance ? maxZoomOutDistance : currentDistance
-                    ))
-            }
             
             ZStack {
                 VStack {
