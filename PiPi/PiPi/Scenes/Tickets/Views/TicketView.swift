@@ -157,7 +157,7 @@ struct TicketView: View {
         .foregroundColor(.gray)
     }
     
-    // MARK: - functions
+    // MARK: - Functions
     private func handleModalStatus(content: String) {
         switch content {
         case "리스트":
