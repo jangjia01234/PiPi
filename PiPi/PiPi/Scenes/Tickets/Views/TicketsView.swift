@@ -53,6 +53,7 @@ struct TicketsView: View {
                         .foregroundColor(.gray)
                         .padding(.top, 50)
                 } else {
+                    // TODO: 날짜순으로 정렬 예정
                     ForEach(filteredActivities, id: \.id) { activity in
                         TicketView(
                             selectedItem: $selectedItem,

@@ -23,14 +23,13 @@ struct TicketView: View {
     
     private let userDataManager = FirebaseDataManager<User>()
     private let userID = FirebaseAuthManager.shared.currentUser?.uid
+    private let currentDate = Date()
     
     var activity: Activity
     var userProfile: User
     
     var body: some View {
-        NavigationStack {
-            ticketView
-        }
+        NavigationStack { ticketView }
         .sheet(isPresented: $showTicketDetailView) {
             let viewModel = ActivityDetailViewModel(activityID: activity.id, hostID: activity.hostID)
             
@@ -75,7 +74,7 @@ struct TicketView: View {
     private var backgroundRectangle: some View {
         HStack {
             Rectangle()
-                .fill(selectedItem == .participant ? .accent : .sub)
+                .fill(activity.status == .closed ? .gray : (selectedItem == .participant ? .accent : .sub))
                 .frame(width: 30)
                 .roundingCorner(20, corners : [.topLeft, .bottomLeft])
             
@@ -85,7 +84,6 @@ struct TicketView: View {
             RoundedRectangle(cornerRadius: 20)
                 .fill(.white)
                 .onTapGesture { showTicketDetailView = true }
-            
         }
     }
     
@@ -117,17 +115,14 @@ struct TicketView: View {
     private var authButton: some View {
         VStack {
             if let userID = userID {
-                // MARK: 참가자일 경우 버튼 표시
                 if selectedItem == .participant && activity.participantID.contains(userID) {
                     authButtonStyle(text: activity.authentication[userID] == true ? "인증완료": "인증하기", color: activity.authentication[userID] == true ? .gray : .accent)
-                        .disabled(activity.authentication[userID] == true)
+                        .disabled((activity.authentication[userID] == true) || activity.status == .closed)
                 } else {
-                    // MARK: 주최자일 경우 버튼 표시
                     let totalParticipants = activity.authentication.count
                     let completedAuthentications = activity.authentication.values.filter { $0 == true }.count
-                    
                     authButtonStyle(text: totalParticipants > 0 && totalParticipants == completedAuthentications ? "인증완료" : "인증하기", color: .sub)
-                        .disabled(totalParticipants > 0 && totalParticipants == completedAuthentications)
+                        .disabled((totalParticipants > 0 && totalParticipants == completedAuthentications) || activity.status == .closed)
                 }
             }
         }
@@ -154,9 +149,7 @@ struct TicketView: View {
         VStack {
             if let formattedDate = formatDate() {
                 if let estimatedTime = activity.estimatedTime {
-                    Text(estimatedTime > 0
-                         ? "\(formattedDate)\n\(activity.estimatedTime ?? 0)시간 소요"
-                         : formattedDate)
+                    Text(estimatedTime > 0 ? "\(formattedDate)\n\(activity.estimatedTime ?? 0)시간 소요" : formattedDate)
                 }
             }
         }
@@ -198,14 +191,13 @@ struct TicketView: View {
     
     private func formatDate() -> String? {
         let activityDate = activity.startDateTime.toString()
-        
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
         
-        formatter.dateFormat = "yyyy년 MM월 dd일\na HH시 mm분"
         guard let date = formatter.date(from: activityDate) else { return nil }
         
+        formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "MM/dd HH시 mm분"
+        
         return formatter.string(from: date)
     }
 }
