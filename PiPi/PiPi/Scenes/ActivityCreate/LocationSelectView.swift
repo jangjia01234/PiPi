@@ -16,29 +16,26 @@ struct LocationSelectView: View {
     
     @Binding var coordinates: Coordinates?
     
-    private let cameraBoundary = MKCoordinateRegion.cameraBoundary
-    
     init(coordinates: Binding<Coordinates?>) {
-        if let coordinates = coordinates.wrappedValue {
-            self.position = .camera(.init(centerCoordinate: .init(coordinates), distance: 1000))
-        } else {
-            let rect = MKMapRect(origin: .init(.postech), size: .init(width: 2000, height: 2000))
-            let region = MKCoordinateRegion(rect)
-            self.position = .region(region)
-        }
-        
         self._coordinates = coordinates
+        self.position = coordinates.wrappedValue != nil
+        ? .camera(.init(centerCoordinate: .init(coordinates.wrappedValue!), distance: 1000))
+        : .region(.init(MKMapRect(origin: .init(.postech), size: .init(width: 2000, height: 2000))))
     }
     
     var body: some View {
         ZStack {
             topBackButton
                 .zIndex(2)
-            
-            Map(position: $position)
+             
+            Map(position: $position,
+                bounds: .init(
+                    centerCoordinateBounds: .cameraBoundary,
+                    minimumDistance: 500,
+                    maximumDistance: 4000
+                ))
                 .onMapCameraChange { context in
                     centerCoordinate = context.camera.centerCoordinate
-                    enforceRegionLimit()
                 }
             
             Image(systemName: "mappin.and.ellipse")
@@ -51,18 +48,6 @@ struct LocationSelectView: View {
             
             bottomSubmitButton
                 .zIndex(2)
-        }
-    }
-    
-    private func enforceRegionLimit() {
-        let maxLat = cameraBoundary.center.latitude + (cameraBoundary.span.latitudeDelta / 2)
-        let minLat = cameraBoundary.center.latitude - (cameraBoundary.span.latitudeDelta / 2)
-        let maxLon = cameraBoundary.center.longitude + (cameraBoundary.span.longitudeDelta / 2)
-        let minLon = cameraBoundary.center.longitude - (cameraBoundary.span.longitudeDelta / 2)
-        
-        if centerCoordinate.latitude > maxLat || centerCoordinate.latitude < minLat ||
-            centerCoordinate.longitude > maxLon || centerCoordinate.longitude < minLon {
-            position = .region(cameraBoundary)
         }
     }
 }
