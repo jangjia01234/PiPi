@@ -76,6 +76,7 @@ struct TicketView: View {
             Rectangle()
                 .fill(activity.status == .closed ? .gray : (selectedItem == .participant ? .accent : .sub))
                 .frame(width: 30)
+                .opacity(activity.status == .closed ? 0.5 : 1.0)
                 .roundingCorner(20, corners : [.topLeft, .bottomLeft])
             
             Spacer()
