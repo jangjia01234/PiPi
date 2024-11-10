@@ -28,6 +28,11 @@ struct HomeView: View {
         ZStack {
             Map(
                 position: $cameraPosition,
+                bounds: .init(
+                    centerCoordinateBounds: .cameraBoundary,
+                    minimumDistance: 500,
+                    maximumDistance: 3000000
+                ),
                 interactionModes: [.zoom, .pan, .rotate],
                 selection: $selectedMarkerActivity,
                 scope: mapScope
