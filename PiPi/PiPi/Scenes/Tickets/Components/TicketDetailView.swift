@@ -36,25 +36,9 @@ struct TicketDetailView: View {
     var userProfile: User
     
     var body: some View {
-        NavigationStack {
-            VStack{
-                List {
-                    activityInfo
-                    activityStatus
-                    userInfo
-                    actionButton()
-                }
-                .foregroundColor(.black)
-                .navigationBarTitle("\(activity.title)", displayMode: .inline)
-                .navigationBarItems(trailing: doneButton)
-                
-            }
-        }
+        NavigationStack { detailList }
         .onAppear {
-            if activity.hostID != userProfile.id {
-                fetchHostProfile()
-            }
-            
+            fetchHostProfile()
             fetchParticipantProfiles()
             updateMapRegion()
         }
@@ -68,12 +52,149 @@ struct TicketDetailView: View {
         }
     }
     
+    // MARK: - Subviews
+    private var detailList: some View {
+        List {
+            activityInfo
+            activityStatus
+            userInfo
+            actionButton()
+        }
+        .navigationBarTitle("\(activity.title)", displayMode: .inline)
+        .navigationBarItems(trailing: doneButton)
+    }
+    
+    private var doneButton: some View {
+        Button("완료") {
+            isLocationVisible = false
+            dismiss()
+        }
+    }
+    
+    private var activityInfo: some View {
+        Section {
+            listCell(title: "활동명", content: activity.title)
+            listCell(title: "날짜", content: "\(activity.startDateTime.toString().split(separator: "\n").first ?? "")")
+            listCell(title: "시간", content: "\(activity.startDateTime.toString().split(separator: "\n")[1])")
+            
+            // FIXME: Camera Position 적용 시 지연 발생
+            NavigationLink(destination: mapView) { Text("위치") }
+        } header: {
+            HStack{
+                Text("모임 정보")
+                Spacer()
+                
+                if selectedItem == .organizer { editButton }
+            }
+        }
+    }
+    
+    private var editButton: some View {
+        Button {
+            isEditing = true
+        } label: {
+            Image(systemName: "square.and.pencil")
+                .foregroundColor(.gray)
+                .font(.system(size: 18))
+        }
+    }
+    
+    private var activityStatus: some View {
+        Section {
+            listCell(title: "모집 상태", content: activity.status == .closed ? "모집완료" : "모집중")
+            
+            if let userID = userID {
+                let totalParticipants = activity.authentication.count
+                let completedAuthentications = activity.authentication.values.filter { $0 == true }.count
+                
+                // MARK: 인증 여부 확인 (참가자 / 주최자)
+                if activity.participantID.contains(userID) {
+                    listCell(title: "인증 여부", content: activity.authentication[userID] == true ? "완료" : "미완료")
+                } else if userID == activity.hostID {
+                    HStack {
+                        Text("인증 완료")
+                        Spacer()
+                        Text("\(completedAuthentications)명 / \(totalParticipants)명 완료")
+                            .foregroundColor(completedAuthentications == totalParticipants ? .accentColor : .black)
+                    }
+                }
+            } else {
+                listCell(title: "인증 여부", content: "사용자 미확인")
+            }
+        } header: { Text("상태") }
+    }
+    
+    private var userInfo: some View {
+        Section {
+            if selectedItem == .participant {
+                if let host = hostProfile {
+                    HStack {
+                        Text("호스트")
+                        Spacer()
+                        Text(host.nickname)
+                        iMessageButton(email: host.email)
+                    }
+                } else {
+                    Text("호스트 정보 없음")
+                        .foregroundColor(.gray)
+                }
+            } else {
+                if !participantProfiles.isEmpty {
+                    ForEach(participantProfiles, id: \.id) { participant in
+                        HStack {
+                            Text(participant.nickname)
+                            Spacer()
+                            iMessageButton(email: participant.email)
+                        }
+                    }
+                } else {
+                    Text("참가자가 아직 없습니다.")
+                        .foregroundColor(.gray)
+                }
+            }
+        } header: {
+            Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
+        }
+    }
+    
+    private var participantsInfo: some View {
+        VStack {
+            if isLoadingParticipants {
+                Text("참가자 정보를 불러오는 중...")
+            } else if participantProfiles.isEmpty {
+                Text("참가자가 아직 없습니다.")
+            } else {
+                ForEach(participantProfiles, id: \.id) { participant in
+                    Text(participant.nickname)
+                        .foregroundColor(.black)
+                }
+            }
+        }
+        .foregroundColor(.gray)
+    }
+    
+    private var mapView: some View {
+        Map(
+            coordinateRegion: $cameraPosition,
+            annotationItems: [activity]
+        ) { activity in
+            MapMarker(
+                coordinate: CLLocationCoordinate2D(
+                    latitude: activity.coordinates.latitude,
+                    longitude: activity.coordinates.longitude
+                ),
+                tint: .accent
+            )
+        }
+    }
+    
+    // MARK: - Subview Functions
     private func actionButton() -> some View {
         let (buttonText, alertTitle, alertMessage, primaryAction) = getButtonContent()
         
-        return Button(action: {
+        return Button {
             showAlert = true
-        }) {
+        } label: {
             Text(buttonText)
                 .font(.callout)
                 .fontWeight(.bold)
@@ -110,118 +231,13 @@ struct TicketDetailView: View {
         }
     }
     
-    private var doneButton: some View {
-        Button("완료") {
-            isLocationVisible = false
-            dismiss()
-        }
-    }
-    
-    private var activityInfo: some View {
-        Section {
-            listCell(title: "활동명", content: activity.title)
-            listCell(title: "날짜", content: "\(activity.startDateTime.toString().split(separator: "\n").first ?? "")")
-            listCell(title: "시간", content: "\(activity.startDateTime.toString().split(separator: "\n")[1])")
-            
-            // FIXME: Camera Position 적용 시 지연 발생
-            NavigationLink(destination: mapView) {
-                Text("위치")
-            }
-        } header: {
-            HStack{
-                Text("모임 정보")
-                Spacer()
-                if selectedItem == .organizer {
-                    Button(action: {
-                        isEditing = true
-                    }) {
-                        Image(systemName: "square.and.pencil")
-                            .foregroundColor(.gray)
-                            .font(.system(size: 18))
-                    }
-                }
-            }
-        }
-    }
-    
-    private var activityStatus: some View {
-        Section {
-            listCell(title: "모집 상태", content: activity.status == .closed ? "모집완료" : "모집중")
-            
-            if let userID = userID {
-                if selectedItem == .participant {
-                    if activity.participantID.contains(userID) {
-                        listCell(title: "인증 여부", content: activity.authentication[userID] == true ? "완료" : "미완료")
-                    }
-                } else {
-                    if userID == activity.hostID {
-                        let totalParticipants = activity.authentication.count
-                        let completedAuthentications = activity.authentication.values.filter { $0 == true }.count
-                        
-                        if totalParticipants > 0 {
-                            HStack {
-                                Text("인증 완료")
-                                Spacer()
-                                Text("\(completedAuthentications)명 / \(totalParticipants)명 완료")
-                                    .foregroundColor(completedAuthentications == totalParticipants ? .accentColor : .black)
-                            }
-                        }
-                    }
-                }
-            } else {
-                listCell(title: "인증 여부", content: "사용자 미확인")
-            }
-        } header: {
-            Text("상태")
-        }
-    }
-    
-    private var userInfo: some View {
-        Section {
-            if selectedItem == .participant {
-                if let host = hostProfile {
-                    HStack {
-                        Text("호스트")
-                        Spacer()
-                        Text(host.nickname)
-                        iMessageButton(email: host.email)
-                    }
-                } else {
-                    Text("호스트 정보 없음")
-                        .foregroundColor(.gray)
-                }
-            } else {
-                if !participantProfiles.isEmpty {
-                    ForEach(participantProfiles, id: \.id) { participant in
-                        HStack {
-                            Text(participant.nickname)
-                            Spacer()
-                            // 참가자에게 메시지 보내기 버튼
-                            iMessageButton(email: participant.email)
-                        }
-                    }
-                } else {
-                    Text("참가자가 아직 없습니다.")
-                        .foregroundColor(.gray)
-                }
-            }
-        } header: {
-            VStack(alignment: .leading) {
-                Text(selectedItem == .participant ? "주최자 정보" : "참가자 정보")
-            }
-            Text(selectedItem == .participant ? "호스트 정보" : "참가자 정보")
-        }
-    }
-    
     private func iMessageButton(email: String) -> some View {
-        Button(action: {
+        Button {
             if MFMessageComposeViewController.canSendText() {
                 imessageReceiverEmail = email
                 showMessageView = true
-            } else {
-                print("iMessage를 사용할 수 없습니다.")
-            }
-        }) {
+            } else { print("iMessage를 사용할 수 없습니다.") }
+        } label: {
             Image(systemName: "ellipsis.message")
                 .foregroundColor(.blue)
         }
@@ -235,38 +251,8 @@ struct TicketDetailView: View {
         }
     }
     
-    private var participantsInfo: some View {
-        VStack {
-            if isLoadingParticipants {
-                Text("참가자 정보를 불러오는 중...")
-                    .foregroundColor(.gray)
-            } else if participantProfiles.isEmpty {
-                Text("참가자가 아직 없습니다.")
-                    .foregroundColor(.gray)
-            } else {
-                
-                ForEach(participantProfiles, id: \.id) { participant in
-                    Text(participant.nickname)
-                }
-            }
-        }
-    }
     
-    private var mapView: some View {
-        Map(
-            coordinateRegion: $cameraPosition,
-            annotationItems: [activity]
-        ) { activity in
-            MapMarker(
-                coordinate: CLLocationCoordinate2D(
-                    latitude: activity.coordinates.latitude,
-                    longitude: activity.coordinates.longitude
-                ),
-                tint: .accent
-            )
-        }
-    }
-    
+    // MARK: - Functions
     private func updateMapRegion() {
         let coordinate = CLLocationCoordinate2D(
             latitude: activity.coordinates.latitude,
@@ -282,17 +268,19 @@ struct TicketDetailView: View {
     private func nicknameOrPlaceholder(_ nickname: String) -> String {
         return nickname.isEmpty ? "닉네임이 없습니다." : nickname
     }
-    
+
     private func fetchHostProfile() {
-        isLoadingHostProfile = true
-        userDataManager.observeSingleData(eventType: .value, id: activity.hostID) { result in
-            switch result {
-            case .success(let profile):
-                self.hostProfile = profile
-            case .failure(let error):
-                print("호스트 프로필 가져오기 실패: \(error)")
+        if activity.hostID != userProfile.id {
+            isLoadingHostProfile = true
+            userDataManager.observeSingleData(eventType: .value, id: activity.hostID) { result in
+                switch result {
+                case .success(let profile):
+                    self.hostProfile = profile
+                case .failure(let error):
+                    print("호스트 프로필 가져오기 실패: \(error)")
+                }
+                self.isLoadingHostProfile = false
             }
-            self.isLoadingHostProfile = false
         }
     }
     
@@ -324,19 +312,17 @@ struct TicketDetailView: View {
         }
     }
     
-    private func formatTime() -> String? {
+    private func formatDate() -> String? {
         let activityDate = activity.startDateTime.toString()
-        
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
         
-        formatter.dateFormat = "yyyy년 MM월 dd일\na HH시 mm분"
         guard let date = formatter.date(from: activityDate) else { return nil }
         
-        formatter.dateFormat = "HH시 mm분"
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "MM/dd HH시 mm분"
+        
         return formatter.string(from: date)
     }
-    
 }
 
 #Preview {

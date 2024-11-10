@@ -23,138 +23,143 @@ struct TicketView: View {
     
     private let userDataManager = FirebaseDataManager<User>()
     private let userID = FirebaseAuthManager.shared.currentUser?.uid
+    private let currentDate = Date()
     
     var activity: Activity
     var userProfile: User
     
     var body: some View {
-        
-        let viewModel = ActivityDetailViewModel(activityID: activity.id, hostID: activity.hostID)
-        
-        NavigationStack {
-            ZStack {
-                backgroundRectangle()
-                
-                HStack(alignment: .top) {
-                    infoText()
-                    Spacer()
-                    authButton()
-                }
-                .padding(20)
-            }
-            .frame(height: 180)
-            .padding(.horizontal, 20)
-            .sheet(isPresented: $showTicketDetailView) {
-                TicketDetailView(
-                    viewModel: viewModel,
-                    isLocationVisible: $isLocationVisible,
-                    selectedItem: $selectedItem,
-                    showMessageView: $showMessageView,
-                    activity: activity,
-                    userProfile: userProfile
-                )
-            }
-            .sheet(isPresented: $isPresentingPeerAuthView) {
-                PeerAuthView(
-                    activity: activity
-                )
-            }
+        NavigationStack { ticketView }
+        .sheet(isPresented: $showTicketDetailView) {
+            let viewModel = ActivityDetailViewModel(activityID: activity.id, hostID: activity.hostID)
+            
+            TicketDetailView(
+                viewModel: viewModel,
+                isLocationVisible: $isLocationVisible,
+                selectedItem: $selectedItem,
+                showMessageView: $showMessageView,
+                activity: activity,
+                userProfile: userProfile
+            )
+        }
+        .sheet(isPresented: $isPresentingPeerAuthView) {
+            PeerAuthView(activity: activity)
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
             loadHostProfile(hostID: activity.hostID)
         }
     }
-}
-
-fileprivate extension TicketView {
-    func backgroundRectangle() -> some View {
+    
+    // MARK: - Subviews
+    private var ticketView: some View {
         ZStack {
+            backgroundRectangle
+            ticketContent
+        }
+        .frame(height: 180)
+        .padding(.horizontal, 20)
+    }
+    
+    private var ticketContent: some View {
+        VStack(alignment: .leading) {
+            ticketTopArea
+            ticketDetailText
+            Spacer()
+        }
+        .padding(20)
+        .padding(.leading, 20)
+    }
+    
+    private var backgroundRectangle: some View {
+        HStack {
+            Rectangle()
+                .fill(activity.status == .closed ? .gray : (selectedItem == .participant ? .accent : .sub))
+                .frame(width: 30)
+                .opacity(activity.status == .closed ? 0.5 : 1.0)
+                .roundingCorner(20, corners : [.topLeft, .bottomLeft])
+            
+            Spacer()
+        }
+        .background {
             RoundedRectangle(cornerRadius: 20)
                 .fill(.white)
-                .onTapGesture {
-                    showTicketDetailView = true
-                }
-            
-            HStack {
-                Rectangle()
-                    .fill(selectedItem == .participant ? .accent : .sub)
-                    .frame(width: 30)
-                    .roundingCorner(20, corners : [.topLeft, .bottomLeft])
-                
-                Spacer()
-            }
+                .onTapGesture { showTicketDetailView = true }
         }
     }
     
-    func infoText() -> some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text(activity.title)
-                    .font(.system(size: 28))
-                    .fontWeight(.black)
-                    .padding(.bottom, 5)
-                
-                Spacer()
-            }
-            .frame(width: 160)
-            
-            if let formattedDate = formatDate() {
-                VStack(alignment: .leading) {
-                    Text(formattedDate)
-                    
-                    if let estimatedTime = activity.estimatedTime {
-                        if estimatedTime > 0 {
-                            Text("약 \(activity.estimatedTime ?? 0)시간 소요")
-                                .font(.footnote)
-                        } else {
-                            Text("소요 시간 미정")
-                                .font(.footnote)
-                        }
-                    }
-                }
-                .foregroundColor(.gray)
-            }
+    private var ticketTopArea: some View {
+        HStack(alignment: .top) {
+            ticketTitle
+            Spacer()
+            authButton
         }
-        .padding(.leading, 25)
+        .frame(height: 40)
     }
     
-    func authButton() -> some View {
+    private var ticketTitle: some View {
+        Text(activity.title)
+            .font(.system(size:24))
+            .fontWeight(.bold)
+    }
+    
+    private func authButtonStyle(text: String, color: Color) -> some View {
+        Button {
+            isPresentingPeerAuthView = true
+        } label: {
+            Text(text)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(color)
+    }
+    
+    private var authButton: some View {
         VStack {
             if let userID = userID {
-                if selectedItem == .participant {
-                    if activity.participantID.contains(userID) {
-                        Button(action: {
-                            isPresentingPeerAuthView = true
-                        }, label: {
-                            Text(activity.authentication[userID] == true ? "인증완료": "인증하기")
-                        })
-                        .buttonStyle(.borderedProminent)
-                        .tint(activity.authentication[userID] == true ? .gray : .accent)
-                        .disabled(activity.authentication[userID] == true)
-                    }
+                if selectedItem == .participant && activity.participantID.contains(userID) {
+                    authButtonStyle(text: activity.authentication[userID] == true ? "인증완료": "인증하기", color: activity.authentication[userID] == true ? .gray : .accent)
+                        .disabled((activity.authentication[userID] == true) || activity.status == .closed)
                 } else {
-                    if userID == activity.hostID {
-                        let totalParticipants = activity.authentication.count
-                        let completedAuthentications = activity.authentication.values.filter { $0 == true }.count
-                        
-                        Button(action: {
-                            isPresentingPeerAuthView = true
-                        }, label: {
-                            Text(totalParticipants > 0 && totalParticipants == completedAuthentications ? "인증완료" : "인증하기")
-                        })
-                        .buttonStyle(.borderedProminent)
-                        .tint(.sub)
-                        .disabled(totalParticipants > 0 && totalParticipants == completedAuthentications)
-                    }
+                    let totalParticipants = activity.authentication.count
+                    let completedAuthentications = activity.authentication.values.filter { $0 == true }.count
+                    authButtonStyle(text: totalParticipants > 0 && totalParticipants == completedAuthentications ? "인증완료" : "인증하기", color: .sub)
+                        .disabled((totalParticipants > 0 && totalParticipants == completedAuthentications) || activity.status == .closed)
                 }
+            }
+        }
+    }
+    
+    private var ticketDetailText: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 5) {
+                ticketDescription
+                ticketTime
             }
             
             Spacer()
         }
     }
     
-    func handleModalStatus(content: String) {
+    private var ticketDescription: some View {
+        Text(activity.description)
+            .font(.headline)
+            .foregroundColor(.gray)
+    }
+    
+    private var ticketTime: some View {
+        VStack {
+            if let formattedDate = formatDate() {
+                if let estimatedTime = activity.estimatedTime {
+                    Text(estimatedTime > 0 ? "\(formattedDate)\n\(activity.estimatedTime ?? 0)시간 소요" : formattedDate)
+                }
+            }
+        }
+        .font(.caption)
+        .foregroundColor(.gray)
+    }
+    
+    // MARK: - Functions
+    private func handleModalStatus(content: String) {
         switch content {
         case "리스트":
             showTicketDetailView = true
@@ -169,7 +174,7 @@ fileprivate extension TicketView {
         }
     }
     
-    func loadHostProfile(hostID: String) {
+    private func loadHostProfile(hostID: String) {
         userDataManager.observeSingleData(eventType: .value, id: hostID) { result in
             switch result {
             case .success(let profile):
@@ -185,16 +190,15 @@ fileprivate extension TicketView {
         }
     }
     
-    func formatDate() -> String? {
+    private func formatDate() -> String? {
         let activityDate = activity.startDateTime.toString()
-        
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
         
-        formatter.dateFormat = "yyyy년 MM월 dd일\na HH시 mm분"
         guard let date = formatter.date(from: activityDate) else { return nil }
         
-        formatter.dateFormat = "MM/dd HH:mm분"
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "MM/dd HH시 mm분"
+        
         return formatter.string(from: date)
     }
 }

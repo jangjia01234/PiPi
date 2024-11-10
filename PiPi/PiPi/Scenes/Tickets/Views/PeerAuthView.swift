@@ -11,6 +11,7 @@ import NearbyInteraction
 struct PeerAuthView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var uwb: CBUWB
+    
     @State var lastValidDirections = [NIDiscoveryToken: SIMD3<Float>]()
     @State var isNearbyAuthDone: Bool = false
     
@@ -24,13 +25,11 @@ struct PeerAuthView: View {
     }
     
     var body: some View {
-        ZStack {
-            VStack {
-                if uwb.discoveredPeers.count > 0 {
-                    nowInConnect
-                } else {
-                    readyToConnect
-                }
+        VStack {
+            if uwb.discoveredPeers.count > 0 {
+                nowInConnect
+            } else {
+                readyToConnect
             }
         }
         .onReceive(uwb.$discoveredPeers) { peers in
@@ -68,15 +67,6 @@ struct PeerAuthView: View {
         }
     }
     
-    private func offset(for peer: DiscoveredPeer) -> CGSize {
-        guard let direction = peer.direction ?? lastValidDirections[peer.token] else {
-            return CGSize.zero
-        }
-        let x = CGFloat(direction.x * 150)
-        let y = CGFloat(direction.y * 150)
-        return CGSize(width: x, height: -y)
-    }
-    
     private var readyToConnect: some View {
         VStack {
             Text("핸드폰을 가까이 대서\n인증해주세요!")
@@ -93,19 +83,24 @@ struct PeerAuthView: View {
     
     private var nowInConnect: some View {
         VStack {
-            if let userID = userID {
-                Text(isNearbyAuthDone ? "인증에 성공했어요!" : "핸드폰을 가까이 대서\n인증해주세요!")
-                    .multilineTextAlignment(.center)
-                    .font(.system(size: 28))
-                    .fontWeight(.heavy)
-                
-                Image(isNearbyAuthDone ? "auth_done" : "auth_ing")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 350)
-            } else {
-                Text("유저 정보가 없습니다.")
-            }
+            Text(isNearbyAuthDone ? "인증에 성공했어요!" : "핸드폰을 가까이 대서\n인증해주세요!")
+                .multilineTextAlignment(.center)
+                .font(.system(size: 28))
+                .fontWeight(.heavy)
+            
+            Image(isNearbyAuthDone ? "auth_done" : "auth_ing")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 350)
         }
+    }
+    
+    private func offset(for peer: DiscoveredPeer) -> CGSize {
+        guard let direction = peer.direction ?? lastValidDirections[peer.token] else {
+            return CGSize.zero
+        }
+        let x = CGFloat(direction.x * 150)
+        let y = CGFloat(direction.y * 150)
+        return CGSize(width: x, height: -y)
     }
 }

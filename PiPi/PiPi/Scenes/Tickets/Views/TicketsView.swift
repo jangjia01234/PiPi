@@ -11,45 +11,42 @@ struct TicketsView: View {
     @Binding var isShowingSheet: Bool
     
     @State private var activities: [Activity] = []
+    @State private var selectedItem: TicketType = .participant
     @State private var userProfile: User = User(
         nickname: "",
         affiliation: .postech,
         email: ""
     )
-    @State private var selectedItem: TicketType = .participant
-    
-    var activity: Activity
     
     private let userID = FirebaseAuthManager.shared.currentUser?.uid
     private let activityDataManager = FirebaseDataManager<Activity>()
     private let userDataManager = FirebaseDataManager<User>()
     
+    var activity: Activity
+    
     var body: some View {
         NavigationStack {
-            VStack {
-                TicketSegmentedControl(selectedItem: $selectedItem)
-                    .background(.white)
-                
-                ticketsList
-                    .scrollBounceBehavior(.basedOnSize)
-                    .navigationBarBackButtonHidden(true)
-                
-                Spacer()
-            }
-            .background(.quaternary.opacity(0.4))
+            ticketsView
         }
         .onAppear(perform: loadData)
+    }
+    
+    // MARK: - Subviews
+    private var ticketsView: some View {
+        VStack {
+            TicketSegmentedControl(selectedItem: $selectedItem)
+                .background(.white)
+            ticketsList
+            Spacer()
+        }
+        .background(.quaternary.opacity(0.4))
     }
     
     private var ticketsList: some View {
         ScrollView {
             if let userID = userID {
                 let filteredActivities = activities.filter { activity in
-                    if selectedItem == .participant {
-                        return activity.participantID.contains(userID)
-                    } else {
-                        return activity.hostID == userID
-                    }
+                    return selectedItem == .participant ? activity.participantID.contains(userID) : activity.hostID == userID
                 }
                 
                 if filteredActivities.isEmpty {
@@ -57,7 +54,7 @@ struct TicketsView: View {
                         .foregroundColor(.gray)
                         .padding(.top, 50)
                 } else {
-                    ForEach(filteredActivities, id: \.id) { activity in
+                    ForEach(filteredActivities.sorted(by: { $0.startDateTime > $1.startDateTime }), id: \.id) { activity in
                         TicketView(
                             selectedItem: $selectedItem,
                             isShowingSheet: $isShowingSheet,
@@ -69,8 +66,11 @@ struct TicketsView: View {
                 }
             }
         }
+        .scrollBounceBehavior(.basedOnSize)
+        .navigationBarBackButtonHidden(true)
     }
     
+    // MARK: - Functions
     private func shouldDisplayTicket(for activity: Activity, userID: String?) -> Bool {
         guard let userID else { return false }
         
