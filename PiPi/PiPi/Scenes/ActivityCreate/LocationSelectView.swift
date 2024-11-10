@@ -17,23 +17,23 @@ struct LocationSelectView: View {
     @Binding var coordinates: Coordinates?
     
     init(coordinates: Binding<Coordinates?>) {
-        if let coordinates = coordinates.wrappedValue {
-            self.position = .camera(.init(centerCoordinate: .init(coordinates), distance: 1000))
-        } else {
-            let rect = MKMapRect(origin: .init(.postech), size: .init(width: 2000, height: 2000))
-            let region = MKCoordinateRegion(rect)   
-            self.position = .region(region)
-        }
-        
         self._coordinates = coordinates
+        self.position = coordinates.wrappedValue != nil
+        ? .camera(.init(centerCoordinate: .init(coordinates.wrappedValue!), distance: 1000))
+        : .region(.init(MKMapRect(origin: .init(.postech), size: .init(width: 2000, height: 2000))))
     }
     
     var body: some View {
         ZStack {
             topBackButton
                 .zIndex(2)
-            
-            Map(position: $position)
+             
+            Map(position: $position,
+                bounds: .init(
+                    centerCoordinateBounds: .cameraBoundary,
+                    minimumDistance: 500,
+                    maximumDistance: 4000
+                ))
                 .onMapCameraChange { context in
                     centerCoordinate = context.camera.centerCoordinate
                 }
